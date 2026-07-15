@@ -1,0 +1,22 @@
+{
+    "name": "Loudest Micro",
+    "vendorId": "0xFEED",
+    "productId": "0x4C4D",
+    "lighting": "vialrgb",
+    "matrix": {
+        "rows": 4,
+        "cols": 4
+    },
+    "customKeycodes": [
+        {"name": "JS_MODE", "title": "Cycle joystick mode: gamepad / arrows (8-way) / scroll", "shortName": "JSMODE"},
+        {"name": "TP_TOG", "title": "Enable/disable the touch key", "shortName": "TPTOG"}
+    ],
+    "layouts": {
+        "keymap": [
+            ["0,0", "0,1", "0,2", "0,3"],
+            ["1,0", "1,1", "1,2", "1,3"],
+            ["2,0", "2,1", "2,2", "2,3"],
+            ["3,2", {"w": 2}, "3,0", {"x": 0.5}, "3,1"]
+        ]
+    }
+}

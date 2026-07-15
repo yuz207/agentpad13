@@ -1,0 +1,41 @@
+{
+  "schema_version": "0.2",
+  "kind": "printability",
+  "status": "assertion_failed",
+  "name": "coupon_touch_window_tabs",
+  "method": "FDM",
+  "bbox": {
+    "min": [
+      0.0,
+      -15.0,
+      0.0
+    ],
+    "max": [
+      63.0,
+      9.0000001,
+      2.4
+    ]
+  },
+  "volume_mm3": 2104.1458680490655,
+  "surface_area_mm2": 3180.18567415364,
+  "center_of_mass_mm": [
+    33.11650380138076,
+    -5.179129024884644,
+    0.8775108872726105
+  ],
+  "is_valid": true,
+  "min_wall_mm": 0.057629495424064175,
+  "overhang": null,
+  "assertions": [
+    {
+      "name": "wall_min:0.8",
+      "passed": false,
+      "detail": "min wall 0.0576mm below min 0.8mm"
+    },
+    {
+      "name": "overhang_max:45.0",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

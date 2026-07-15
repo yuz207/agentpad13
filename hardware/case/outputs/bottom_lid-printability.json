@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.2",
+  "kind": "printability",
+  "status": "assertion_failed",
+  "name": "bottom_lid",
+  "method": "FDM",
+  "bbox": {
+    "min": [
+      -2.7000000000004363,
+      -2.6999999999999957,
+      -7.5
+    ],
+    "max": [
+      86.90000000000043,
+      106.4,
+      -1.5999999999999996
+    ]
+  },
+  "volume_mm3": 17818.497571770356,
+  "surface_area_mm2": 22959.98862213026,
+  "center_of_mass_mm": [
+    42.343485890775355,
+    50.589265248315236,
+    -6.21636791059129
+  ],
+  "is_valid": true,
+  "min_wall_mm": 0.18109095392323923,
+  "overhang": {
+    "area_mm2": 452.5188661415416,
+    "max_angle_deg": 90.0
+  },
+  "assertions": [
+    {
+      "name": "wall_min:1.0",
+      "passed": false,
+      "detail": "min wall 0.1811mm below min 1.0mm"
+    },
+    {
+      "name": "overhang_max:45.0",
+      "passed": false,
+      "detail": "overhang 90.0000\u00b0 exceeds max 45.0\u00b0"
+    }
+  ]
+}

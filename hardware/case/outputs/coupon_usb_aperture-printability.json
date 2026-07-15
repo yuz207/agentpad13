@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.2",
+  "kind": "printability",
+  "status": "assertion_failed",
+  "name": "coupon_usb_aperture",
+  "method": "FDM",
+  "bbox": {
+    "min": [
+      -15.0,
+      -8.0,
+      0.0
+    ],
+    "max": [
+      15.0,
+      8.0,
+      14.4
+    ]
+  },
+  "volume_mm3": 1916.0,
+  "surface_area_mm2": 1954.3999999999999,
+  "center_of_mass_mm": [
+    -3.7356310343842935e-18,
+    -2.7150313152400836,
+    4.304384133611692
+  ],
+  "is_valid": true,
+  "min_wall_mm": 2.0,
+  "overhang": {
+    "area_mm2": 24.000000000000004,
+    "max_angle_deg": 89.99999914622636
+  },
+  "assertions": [
+    {
+      "name": "wall_min:0.8",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "overhang_max:45.0",
+      "passed": false,
+      "detail": "overhang 90.0000\u00b0 exceeds max 45.0\u00b0"
+    }
+  ]
+}

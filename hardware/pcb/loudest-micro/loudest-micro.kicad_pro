@@ -1,0 +1,47 @@
+{
+  "board": {
+    "design_settings": {
+      "rules": {}
+    },
+    "layer_presets": [],
+    "viewports": []
+  },
+  "boards": [],
+  "cvpcb": {
+    "equivalence_files": []
+  },
+  "libraries": {
+    "pinned_footprint_libs": [],
+    "pinned_symbol_libs": []
+  },
+  "meta": {
+    "filename": "loudest-micro.kicad_pro",
+    "version": 1
+  },
+  "net_settings": {
+    "classes": [
+      {
+        "name": "Default",
+        "clearance": 0.2,
+        "track_width": 0.25,
+        "via_diameter": 0.6,
+        "via_drill": 0.3
+      }
+    ]
+  },
+  "pcbnew": {
+    "last_paths": {},
+    "page_layout_descr_file": ""
+  },
+  "schematic": {
+    "legacy_lib_dir": "",
+    "legacy_lib_list": []
+  },
+  "sheets": [
+    [
+      "5ffa1eed-8a72-4cb7-b4c0-66d5e0cc55c6",
+      "Root"
+    ]
+  ],
+  "text_variables": {}
+}
