@@ -1,0 +1,29 @@
+References,Qty,Value,MPN,Manufacturer,LCSC,DigiKey,Footprint,Populate,Assembly,Notes
+"C1,C2,C3,C4,C5,C6,C7,C8,C9,C10,C13,C20,C21,C22,C23,C24,C26,C27,C28,C29,C30,C31,C32,C33,C34,C35,C36,C37,C38,C39",30,100n 0402 X7R,CL05B104KO5NNNC,Samsung,C1525,1276-1003-1-ND,C_0402_1005Metric,Place,PCBWay-SMD,decoupling/bypass/RC; always-populated set (C1-C10 C13 C20-C24 C26-C39)
+"C11,C12,C14,C15",4,1u 0402 X5R,CL05A105KA5NQNC,Samsung,C52923,1276-1182-1-ND,C_0402_1005Metric,Place,PCBWay-SMD,VREG + LDO in/out
+"C16,C17",2,10u 0805 X5R,CL21A106KAYNNNE,Samsung,C15850,1276-2892-1-ND,C_0805_2012Metric,Place,PCBWay-SMD,+5V/+3V3 bulk
+"C18,C19",2,15p 0402 C0G,0402CG150J500NT,FH/multi,C1548,by MPN,C_0402_1005Metric,Place,PCBWay-SMD,crystal load (do NOT substitute value)
+C25,1,DNP touch cap,C_0402,generic,,,C_0402_1005Metric,DNP,DNP,touch sensitivity tune; DNP populate if needed
+"C40,C41,C42,C43,C44,C45,C46,C47,C48,C49",10,100n 0402 X7R,CL05B104KO5NNNC,Samsung,C1525,1276-1003-1-ND,C_0402_1005Metric,DNP,PCBWay-SMD/populate-per-variant,"VARIANT: LED15-24 decoupling (C40-C49); populate with underglow, else DNP"
+D1,1,SD05C TVS,SD05C,PANJIT/multi,C1884584,by MPN,D_SOD-323,DNP,DNP,DNP for Rev A; footprint stays; USBLC6 already covers D+/D- ESD
+F1,1,750mA hold,MF-MSMF075/24-2,Bourns,C208467,MF-MSMF075/24-2CT-ND,Fuse_1812_4532Metric,Place,PCBWay-SMD,1.5A trip; 0.45ohm; 15V+ rating (sized up from 0.5A)
+FB1,1,600R@100MHz,BLM15AG601SN1D,Murata,C76884,490-1053-1-ND,L_0402_1005Metric,Place,PCBWay-SMD,ADC_AVDD supply filter (RPi Pico pattern)
+J1,1,USB-C 2.0 16P,TYPE-C-31-M-12,Korean Hroparts (HRO),C165948,by MPN,USB_C_Receptacle_HRO_TYPE-C-31-M-12,Place,PCBWay-SMD,official KiCad FP; 16-pin USB2.0
+J2,1,1x08 header 2.54,PinHeader_1x08,generic,by MPN,,PinHeader_1x08_P2.54mm_Vertical,DNP,DNP,DNP for Rev A (pads/holes stay); populate later for OLED/sensor/debug expansion
+"LED1,LED2,LED3,LED4,LED5,LED6,LED7,LED8,LED9,LED10,LED11,LED12,LED13,LED14",14,SK6812MINI-E,SK6812MINI-E,OPSCO/Normand,C5149201,by MPN,LED_6028R,Place,PCBWay-SMD,reverse-mount per-key + LED14 layer indicator; POPULATED ALWAYS
+"LED15,LED16,LED17,LED18,LED19,LED20,LED21,LED22,LED23,LED24",10,SK6812-SIDE,SK6812SIDE-A,OPSCO/Normand,C5378721,by MPN,LED_WS2812_4020,DNP,PCBWay-SMD/populate-per-variant,"VARIANT: translucent top -> populate; opaque top (Rev A default) -> DNP. Footprint is permanent either way"
+"R1,R2",2,5.1k 0402 1%,0402WGF5101TCE,UNI-ROYAL,C25905,by MPN,R_0402_1005Metric,Place,PCBWay-SMD,USB-C CC pulldowns (one per pin)
+"R3,R4",2,27R 0402,0402WGF270JTCE,UNI-ROYAL,C25100,by MPN,R_0402_1005Metric,Place,PCBWay-SMD,USB D+/D- series (do NOT substitute value)
+"R5,R6,R11,R12",4,1k 0402,0402WGF1001TCE,UNI-ROYAL,C11702,by MPN,R_0402_1005Metric,Place,PCBWay-SMD,XOUT/BOOTSEL/joystick RC series
+R7,1,10k 0402,0402WGF1002TCE,UNI-ROYAL,C25744,by MPN,R_0402_1005Metric,Place,PCBWay-SMD,RUN pull-up
+"R8,R9",2,4.7k 0402,0402WGF4701TCE,UNI-ROYAL,C25900,by MPN,R_0402_1005Metric,Place,PCBWay-SMD,I2C SDA/SCL pull-ups
+R10,1,0R 0402,0402WGF0000TCE,UNI-ROYAL,C17168,by MPN,R_0402_1005Metric,Place,PCBWay-SMD,AHLB strap (GND=active-high)
+"SW1,SW2,SW3,SW4,SW5,SW6,SW7,SW8,SW9,SW10,SW11,SW12,SW13",13,MX hotswap socket,Kailh CPG151101S11,Kailh,C41430893,via KBDfans,SW_MX_HS_CPG151101S11_1u,Place,PCBWay-SMD(back),"Fab-placed by default; hand-solder alternative available. MX-only; socket-on-back, south-facing"
+"SW14,SW15",2,BOOT/RESET tact,TS-1187A,XKB/multi,C318884,by MPN,SW_SPST_PTS645Sx43SMTR92,Place,PCBWay-SMD,reachable through case holes
+U1,1,RP2040,RP2040,Raspberry Pi,C2040,2648-RP2040TR,QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm,Place,PCBWay-SMD,"QFN-56 0.4mm pitch; sole MCU, no drop-in alternate"
+U2,1,W25Q128JVSIQ,W25Q128JVSIQ,Winbond,C97521,W25Q128JVSIQ-ND,SOIC-8_5.3x5.3mm_P1.27mm,Place,PCBWay-SMD,16MB QSPI SOIC-8; 2MB no cheaper so ship 16MB
+U3,1,AP2112K-3.3,AP2112K-3.3TRG1,Diodes Inc,C51118,AP2112K-3.3TRG1DICT-ND,SOT-23-5,Place,PCBWay-SMD,600mA SOT-23-5 LDO; verify pinout
+U4,1,USBLC6-2SC6,USBLC6-2SC6,STMicroelectronics,C7519,497-5235-1-ND,SOT-23-6,Place,PCBWay-SMD,D+/D- ESD array SOT-23-6
+U5,1,SN74LVC1T45,SN74LVC1T45DBVR,Texas Instruments,C7843,296-16972-1-ND,SOT-23-6,Place,PCBWay-SMD,level shifter ship populated; DIR=A->B
+U6,1,TTP223-BA6,TTP223-BA6,Tontek/multi,C42422127,by MPN,SOT-23-6,Place,PCBWay-SMD,SOT-23-6; verify LCSC code at order
+Y1,1,12MHz ABM8-272-T3,ABM8-272-T3,Abracon,C20625731,535-ABM8-272-T3-ND,Crystal_SMD_3225-4Pin_3.2x2.5mm,Place,PCBWay-SMD,12MHz reference crystal

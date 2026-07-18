@@ -1,23 +1,77 @@
-# PCB — Phase 2 (KiCad 9)
+# agentpad13 — PCB (Rev A v4, complete)
 
-D1 resolved: outline = **84.2 × 103.7 top-band layout** per `docs/independent-design/phase0-layout-v2-notes.md` (+ `layout-v2.json` for kbplacer). Remaining gate before layout completion: **Phase-1 joystick selection** (JS1 keep-out). The schematic is layout-independent and can start immediately.
+Finished, fabrication-ready 2-layer RP2040 macropad PCB. Designed in **KiCad 9**.
 
-## Toolchain (locked by research, `research/03`)
-- Libraries: **marbastlib** (MX hotswap + SK6812MINI-E combined, pre-mirrored), **ai03 MX_V2**; infused-kim combined footprints if the Choc-v2 option survives Phase 1. Never hand-draw switch/socket footprints.
-- Placement: `kicad-kbplacer` reads `docs/independent-design/layout.json` for SW1–13 + per-key LEDs; encoder/joystick/touch/USB/holes hand-placed from the mm table.
-- Fab out: **Fabrication Toolkit** (JLC gerber+BOM+CPL) + `kicad-jlcpcb-tools` for LCSC assignment.
-- Review: kicad-happy skills (schematic/PCB analyzers, ERC/DRC vs JLC rules, EMC pre-check).
+- **Outline:** 84.2 × 100 mm octagon (chamfered), 1.6 mm FR-4, 2 layers.
+- **DRC:** clean — **0 violations, 0 unconnected** at a 0.152 mm / 6-mil standard
+  fab tier (min via drill 0.20 mm).
+- **Function:** 13 hot-swap keys (12×1U + 1×2U), EC11 encoder + push, analog
+  PSP-slider joystick, TTP223 capacitive touch key, and a 24-LED SK6812 chain
+  (14 reverse-mount top LEDs incl. 1 layer indicator + 10 side/underglow LEDs)
+  level-shifted for a 5 V VBUS rail. All SMD reflow parts are on the back (B.Cu).
 
-## Schematic blocks (spec §3, all parts with LCSC# in spec §4 BOM)
-1. RP2040 core — per RPi minimal design: 16 MB W25Q128JVS, ABM8-272 12 MHz + 15 pF + 1 kΩ XOUT, AP2112K-3.3, 100 nF/pin + 2× 1 µF VREG, BOOT + RESET tacts, SWD pads.
-2. USB-C front end — HRO C165948, 2× 5.1 kΩ CC (one per pin, never shared), USBLC6-2SC6, 27 Ω D±, MF-MSMF050-2 polyfuse.
-3. 13 switches direct-pin GP0–12 (no diodes), dual-socket combined footprints.
-4. EC11 (GP13/14, push GP15 in matrix), TTP223 + pad pour (GP16, AHLB strap).
-5. Joystick pots → RC filter → GP26/27.
-6. LED chain GP17 → **populated** SN74LVC1T45 → 13 MINI-E + 1 indicator + 10 SK6812-SIDE, 5 V VBUS rail.
-7. I2C (GP18/19) + spares (GP20/21, GP28) expansion header.
+## Files
 
-## Gates before ordering
-ERC clean → every footprint vs its datasheet (the single highest-leverage review hour; hotswap footprints MUST be socket-on-back mirrored) → DRC vs JLC rules → 1:1 paper print with real parts on top → JLC DFM/placement preview → STEP export for the case.
+```
+agentpad13/                 the KiCad 9 project
+  agentpad13.kicad_pcb      board
+  agentpad13.kicad_sch      schematic
+  agentpad13.kicad_pro      project
+  fp-lib-table              footprint library table (KIPRJMOD-relative)
+lib/                        vendored footprint libraries (see lib/LIBS.md)
+BOM.csv                     full bill of materials (MPN / LCSC / DigiKey, pricing)
+gerbers.zip                 bare-board manufacturing files (Gerbers + drill)
+fabpack_opaque.zip          opaque SKU: gerbers + assembly CSVs + ORDERING.md
+fabpack_translucent.zip     translucent SKU: gerbers + assembly CSVs + ORDERING.md
+assembly/                   loose per-SKU assembly files
+  cpl_opaque.csv            pick-and-place, opaque SKU      (89 placements)
+  cpl_translucent.csv       pick-and-place, translucent SKU (109 placements)
+  bom_opaque.csv            assembly BOM, opaque SKU
+  bom_translucent.csv       assembly BOM, translucent SKU
+  hand_solder_afterlist.csv the parts you hand-solder after the boards arrive
+renders/                    top.png, bottom.png
+```
 
-Assembly: **Economic PCBA, MCU side only**; hand-solder sockets/LEDs/encoder/joystick (spec E1). Order FR4 plate set alongside as fallback insurance.
+## Two SKUs, one bare board
+
+The bare PCB is **identical** for both SKUs — only which parts get placed differs:
+
+| SKU | Top shell | Underglow (LED15-24 + C40-49) |
+|---|---|---|
+| **opaque** (Rev A default) | solid | not populated (DNP) |
+| **translucent** | glowing diffuser | populated |
+
+## Ordering
+
+Upload **`gerbers.zip`** to the bare-board quote and the matching SKU's
+`assembly/cpl_<sku>.csv` + `assembly/bom_<sku>.csv` to turnkey (consigned)
+assembly, **bottom side only**. Each `fabpack_*.zip` bundles the Gerbers, that
+SKU's assembly CSVs, and a full step-by-step `ORDERING.md` (board options, tier
+guidance, DNP handling, pricing ballpark, and pre-order gates).
+
+**LED cut-outs are intentional:** the Edge.Cuts layer has 14 small internal
+rounded-rectangle windows (one per top LED) so the reverse-mounted LEDs shine
+through the board — not an outline error.
+
+## Hand-soldered afterlist
+
+Fab-place the SMD parts, then finish these by hand (see `assembly/hand_solder_afterlist.csv`):
+
+- **RE1** — EC11 rotary encoder + push (through-hole).
+- **JS1** — Adafruit 3103 PSP-slider joystick. **The JS1 footprint is provisional:
+  meter the Vcc/X/Y/GND pad order on a physical Adafruit 3103 with a multimeter
+  before soldering** (matches the board silkscreen). Use the genuine Adafruit part.
+- Optionally the 13 hot-swap sockets (SW1-13) and 2 tact switches (SW14/15) if you
+  opt out of fab assembly for them — they are fab-placed by default.
+
+## Firmware / GPIO note
+
+Rev A v4 remapped several RP2040 GPIOs relative to the pin map currently frozen in
+the firmware tree (`firmware/loudest_micro/`). A firmware update to match the final
+board pinout is forthcoming — re-verify the pin map against this board before
+relying on it.
+
+## License
+
+Hardware (schematic, PCB): **CERN-OHL-W-2.0**. Vendored footprint libraries keep
+their upstream licenses (marbastlib: CERN-OHL-P v2; MX_V2: MIT) — see `lib/LIBS.md`.

@@ -1,0 +1,32 @@
+RefDes_Group,Qty_per_board,Value,MPN,Manufacturer,LCSC,DigiKey,Unit_USD_qty5,Unit_USD_qty10,Ext_USD_per_board,Assembly,Alternate_MPN(LCSC),Verified_2026-07-15,Notes
+U1,1,RP2040,RP2040,Raspberry Pi,C2040,2648-RP2040TR,0.873,0.873,0.873,PCBWay-SMD,none,stock 42449,"QFN-56 0.4mm pitch; sole MCU, no drop-in alternate"
+U2,1,W25Q128JVSIQ,W25Q128JVSIQ,Winbond,C97521,W25Q128JVSIQ-ND,1.220,1.220,1.220,PCBWay-SMD,GD25Q128ESIG / W25Q128JVSIM (verify),stock 110435 (JLC-Basic),16MB QSPI SOIC-8; 2MB no cheaper so ship 16MB
+Y1,1,12MHz ABM8-272-T3,ABM8-272-T3,Abracon,C20625731,535-ABM8-272-T3-ND,0.327,0.327,0.327,PCBWay-SMD,"YXC X322512MSB4SI (C9002; do NOT use, adjust load caps)",stock 15726,12MHz reference crystal; no fab-tier reason to substitute
+U3,1,AP2112K-3.3,AP2112K-3.3TRG1,Diodes Inc,C51118,AP2112K-3.3TRG1DICT-ND,0.127,0.127,0.127,PCBWay-SMD,XC6210B332MR-G (C47719) / ME6211C33M5G (C82942),stock 41270,600mA SOT-23-5 LDO; verify pinout
+J1,1,USB-C 2.0 16P,TYPE-C-31-M-12,Korean Hroparts (HRO),C165948,by MPN,0.161,0.161,0.161,PCBWay-SMD,GCT USB4085-GF-A (C7095263 robust) / SHOU HAN 2MD073 (C2765186 cheap),stock 336394,official KiCad FP; 16-pin USB2.0
+U4,1,USBLC6-2SC6,USBLC6-2SC6,STMicroelectronics,C7519,497-5235-1-ND,0.096,0.096,0.096,PCBWay-SMD,PRTR5V0U2X (C5158049),stock 53546,D+/D- ESD array SOT-23-6
+F1,1,750mA hold,MF-MSMF075/24-2,Bourns,C208467,MF-MSMF075/24-2CT-ND,0.075,0.075,0.075,PCBWay-SMD,MF-MSMF110/24X-2 (C210835 more headroom) / MF-MSMF075-2 (C84140),stock 7235,1.5A trip; 0.45ohm; 15V+ rating (sized up from 0.5A)
+FB1,1,600R@100MHz,BLM15AG601SN1D,Murata,C76884,490-1053-1-ND,0.003,0.003,0.003,PCBWay-SMD,BLM15PX601SN1D (C160977),stock 1097222,ADC_AVDD supply filter (RPi Pico pattern)
+U5,1,SN74LVC1T45,SN74LVC1T45DBVR,Texas Instruments,C7843,296-16972-1-ND,0.057,0.057,0.057,PCBWay-SMD,74AHCT1G125SE-7 (C151417 low stock),stock 38783,level shifter ship populated; DIR=A->B
+U6,1,TTP223-BA6,TTP223-BA6,Tontek/multi,C42422127,by MPN,0.137,0.137,0.137,PCBWay-SMD,TTP223-TD (C42422128),stock 27563 (as TTP223-BA6-TD),SOT-23-6; verify LCSC code at order
+LED1-LED14,14,SK6812MINI-E,SK6812MINI-E,OPSCO/Normand,C5149201,by MPN,0.079,0.079,1.100,PCBWay-SMD,SK6812MINI-HS (C2922787 verify FP) / WS2812B-2020 (C965555 diff FP),stock 161209,reverse-mount per-key + LED14 layer indicator; POPULATED ALWAYS
+LED15-LED24,10,SK6812-SIDE,SK6812SIDE-A,OPSCO/Normand,C5378721,by MPN,0.097,0.097,0.969,PCBWay-SMD/populate-per-variant,SK6812SIDE-A-RVS (C2890037 4020) / WS2812B-4020 (C965557),stock 37014,"VARIANT: translucent top -> populate; opaque top (Rev A default) -> DNP. Footprint is permanent either way"
+SW14 SW15,2,BOOT/RESET tact,TS-1187A,XKB/multi,C318884,by MPN,0.018,0.018,0.035,PCBWay-SMD,K2-1114 series (verify),stock 918009 (JLC-Basic),reachable through case holes
+C_100nF_common,30,100n 0402 X7R,CL05B104KO5NNNC,Samsung,C1525,1276-1003-1-ND,0.0011,0.0011,0.033,PCBWay-SMD,any 100nF 0402 X7R (huge stock),stock 54.3M (JLC-Basic),decoupling/bypass/RC; always-populated set (C1-C10 C13 C20-C24 C26-C39)
+C_100nF_underglow,10,100n 0402 X7R,CL05B104KO5NNNC,Samsung,C1525,1276-1003-1-ND,0.0011,0.0011,0.011,PCBWay-SMD/populate-per-variant,any 100nF 0402 X7R,stock 54.3M,"VARIANT: LED15-24 decoupling (C40-C49); populate with underglow, else DNP"
+C_1uF,4,1u 0402 X5R,CL05A105KA5NQNC,Samsung,C52923,1276-1182-1-ND,0.0027,0.0027,0.011,PCBWay-SMD,any 1uF 0402 X5R,stock 14.5M (JLC-Basic),VREG + LDO in/out
+C_10uF,2,10u 0805 X5R,CL21A106KAYNNNE,Samsung,C15850,1276-2892-1-ND,0.0091,0.0091,0.018,PCBWay-SMD,any 10uF 0805 X5R,stock 12.7M (JLC-Basic),+5V/+3V3 bulk
+C_15pF,2,15p 0402 C0G,0402CG150J500NT,FH/multi,C1548,by MPN,0.0009,0.0009,0.002,PCBWay-SMD,any 15pF 0402 C0G,stock 881940 (JLC-Basic),crystal load (do NOT substitute value)
+R_5.1k,2,5.1k 0402 1%,0402WGF5101TCE,UNI-ROYAL,C25905,by MPN,0.0004,0.0004,0.001,PCBWay-SMD,any 5.1k 0402 1%,stock 8.4M (JLC-Basic),USB-C CC pulldowns (one per pin)
+R_27R,2,27R 0402,0402WGF270JTCE,UNI-ROYAL,C25100,by MPN,0.0005,0.0005,0.001,PCBWay-SMD,any 27R 0402,stock 272584 (JLC-Extended),USB D+/D- series (do NOT substitute value)
+R_1k,4,1k 0402,0402WGF1001TCE,UNI-ROYAL,C11702,by MPN,0.0005,0.0005,0.002,PCBWay-SMD,any 1k 0402,stock 12.6M (JLC-Basic),XOUT/BOOTSEL/joystick RC series
+R_10k,1,10k 0402,0402WGF1002TCE,UNI-ROYAL,C25744,by MPN,0.0005,0.0005,0.0005,PCBWay-SMD,any 10k 0402,stock 20.7M (JLC-Basic),RUN pull-up
+R_4.7k,2,4.7k 0402,0402WGF4701TCE,UNI-ROYAL,C25900,by MPN,0.0005,0.0005,0.001,PCBWay-SMD,any 4.7k 0402,stock 9.4M (JLC-Basic),I2C SDA/SCL pull-ups
+R_0R,1,0R 0402,0402WGF0000TCE,UNI-ROYAL,C17168,by MPN,0.0005,0.0005,0.0005,PCBWay-SMD,any 0R 0402,stock 18.4M (JLC-Basic),AHLB strap (GND=active-high)
+SW1-SW13,13,MX hotswap socket,Kailh CPG151101S11,Kailh,C41430893,via KBDfans,0.037,0.037,0.481,PCBWay-SMD(back),KBDfans $0.10 / Chosfox $0.145 (hand-solder alt),stock 93689,"Fab-placed by default; hand-solder alternative available. MX-only; socket-on-back, south-facing"
+RE1,1,EC11 encoder+push,PEC11R-4215F-S0024,Bourns,C143790,4499665,2.357,2.357,2.357,hand-solder,ALPS EC11E18244AU (C202365 verify push variant),stock 797 (low - buy early or via DigiKey),THT plugin; hand-solder to avoid fab through-hole fee tier
+JS1,1,2-axis PSP-slider,Adafruit 3103,Adafruit,by distributor,6193574,4.950,4.950,4.950,hand-solder,Adafruit 444 (same-class ONLY),In stock @ DigiKey; $4.95 Adafruit,"Adafruit 3103; custom 4-pad footprint; pinout TBD - meter before hand-soldering. Use genuine Adafruit part (clones not qualified)"
+J2,1,1x08 header 2.54,PinHeader_1x08,generic,by MPN,,0.050,0.050,0.000,DNP,any 1x08 2.54mm header,generic,DNP for Rev A (pads/holes stay); populate later for OLED/sensor/debug expansion
+D1,1,SD05C TVS,SD05C,PANJIT/multi,C1884584,by MPN,0.026,0.026,0.000,DNP,PSD05C-LF-T7 (C3011179),stock 129268,DNP for Rev A; footprint stays; USBLC6 already covers D+/D- ESD
+C25,1,DNP touch cap,C_0402,generic,,,0.001,0.001,0.000,DNP,any 0402 0-50pF,generic,touch sensitivity tune; DNP populate if needed
+TP1-TP5,5,test/SWD/pad,TestPoint,n/a,,,0.000,0.000,0.000,copper,n/a,n/a,SWCLK/SWDIO/3V3/GND pads + TP5 14x14 touch pour

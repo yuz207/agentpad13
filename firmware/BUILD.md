@@ -64,7 +64,7 @@ qmk config user.qmk_home="$PWD"
 qmk git-submodule                               # chibios, chibios-contrib, pico-sdk, printf
 
 # Drop our keyboard tree in:
-cp -R /path/to/work-loudest/firmware/loudest_micro keyboards/loudest_micro
+cp -R /path/to/agentpad13/firmware/loudest_micro keyboards/loudest_micro
 ```
 
 ## 3. Build

@@ -7,7 +7,7 @@ EC11 encoder with push, planar analog joystick, TTP223 touch pad, 24 addressable
 LEDs (13 per-key + 1 layer indicator + 10 underglow) driven as a live agent-status
 display over Raw HID.
 
-* Keyboard Maintainer: [work-loudest](https://github.com/work-loudest)
+* Keyboard Maintainer: [yuz207](https://github.com/yuz207)
 * Hardware Supported: Loudest Micro Rev A PCB (RP2040)
 * Hardware Availability: open source (CERN-OHL-W v2)
 

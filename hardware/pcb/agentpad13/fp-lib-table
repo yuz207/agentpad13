@@ -1,0 +1,11 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "marbastlib-mx")(type "KiCad")(uri "${KIPRJMOD}/../lib/marbastlib/footprints/marbastlib-mx.pretty")(options "")(descr "marbastlib MX: Kailh CPG151101S11 hotswap sockets, per-key LED add-ons (LED_MX_6028R = SK6812MINI-E), MX stabilizers"))
+	(lib (name "marbastlib-various")(type "KiCad")(uri "${KIPRJMOD}/../lib/marbastlib/footprints/marbastlib-various.pretty")(options "")(descr "marbastlib various: LED_6028R (SK6812MINI-E reverse-mount), ROT_Alps_EC11E-Switch, HRO USB-C, misc"))
+	(lib (name "marbastlib-xp-various")(type "KiCad")(uri "${KIPRJMOD}/../lib/marbastlib/footprints/marbastlib-xp-various.pretty")(options "")(descr "marbastlib experimental: LED_WS2812_4020 (side-firing 4020, SK6812-SIDE), WS2812_2020_rearmount"))
+	(lib (name "marbastlib-choc")(type "KiCad")(uri "${KIPRJMOD}/../lib/marbastlib/footprints/marbastlib-choc.pretty")(options "")(descr "marbastlib Choc hotswap/solder (unused after Choc-socket removal; kept for reference)"))
+	(lib (name "MX_V2_Hotswap")(type "KiCad")(uri "${KIPRJMOD}/../lib/MX_V2/MX_Hotswap.pretty")(options "")(descr "ai03 MX_V2 hotswap footprints (alternative MX hotswap source)"))
+	(lib (name "MX_V2_Solderable")(type "KiCad")(uri "${KIPRJMOD}/../lib/MX_V2/MX_Solderable.pretty")(options "")(descr "ai03 MX_V2 solderable MX footprints (plate-mount fallback, spec gate D3)"))
+	(lib (name "MX_V2_Alps_MX_Stabilizers")(type "KiCad")(uri "${KIPRJMOD}/../lib/MX_V2/Alps_MX_Stabilizers.pretty")(options "")(descr "ai03 MX_V2 MX/Alps stabilizer footprints (2U key SW13 alternative)"))
+	(lib (name "loudest")(type "KiCad")(uri "${KIPRJMOD}/../lib/loudest.pretty")(options "")(descr "agentpad13 custom footprints: JS1 PSP-slider hand-solder landing (pinout metered-before-solder)"))
+)
