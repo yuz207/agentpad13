@@ -13,8 +13,8 @@ underglow) driven over Raw HID by an open agent-status protocol
 - **Case: v2 — COMPLETE.** FR4 plate-as-deck + printed tray, designed for Rev A
   v4. Print files (STL/STEP), orderable plate fab files, and fit-check coupons
   under `hardware/case/` — see its README for print/order/assembly guidance.
-- **Firmware: builds and runs**, pending a pin-map update for the Rev A v4 GPIO
-  remap (see note below).
+- **Firmware: VALIDATED.** Emulator-boot tested, Raw HID protocol-conformant, and
+  the pin map matches Rev A v4.
 
 ### PCB (complete)
 
@@ -29,9 +29,10 @@ underglow) driven over Raw HID by an open agent-status protocol
 - **Hand-soldered afterlist:** rotary encoder, joystick, hot-swap sockets, and
   tact switches are finished by hand after the assembled boards arrive.
 
-> **Firmware note:** Rev A v4 remapped several RP2040 GPIOs from the pin map
-> frozen in the current firmware tree; a firmware update to match the final pinout
-> is forthcoming. Re-verify the pin map against the board before relying on it.
+> **Firmware note:** the firmware pin map matches Rev A v4 and has been validated —
+> it boots in an RP2040 emulator and its Raw HID status protocol is
+> conformance-tested. Build recipe and validation assets live in `firmware/`
+> (`BUILD.md`, `FIRMWARE-V4-NOTES.md`, `tests/`).
 
 > **JS1 joystick:** the JS1 footprint is provisional for the Adafruit 3103 PSP
 > slider — **verify the pinout with a multimeter before hand-soldering** (this

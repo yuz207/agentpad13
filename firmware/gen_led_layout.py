@@ -1,42 +1,96 @@
 #!/usr/bin/env python3
-"""Generate the QMK rgb_matrix layout block from the Phase-0 v2 mm coordinate table.
+"""Generate the QMK rgb_matrix.layout block from the Rev A board file.
 
-Source of truth: docs/independent-design/phase0-layout-v2-notes.md (mm table, D1 top-band).
-QMK rgb_matrix space: x 0-224, y 0-64.
+Usage:
+    python3 gen_led_layout.py path/to/agentpad13.kicad_pcb
 
-Chain order: 0-12 per-key (SW1-SW13), 13 layer indicator, 14-23 underglow
-(clockwise from top-left; underglow positions provisional until PCB routing).
+Reads the LED1..LED24 footprint centroids and the Edge.Cuts outline straight
+out of the KiCad board file (v4_r27 is the shipped Rev A board, see
+hardware/pcb/v4/ORDER-READINESS.md), scales them into QMK rgb_matrix space
+(x 0-224, y 0-64, origin top-left), and prints the JSON "layout" array to
+paste into keyboard.json.
+
+Chain order (electrical, verified on the board: U5.B -> RGB_D00 -> LED1 ...
+LED14 -> RGB_D14 -> LED15 ... LED24):
+    chain 0-12  = LED1-LED13  = per-key, under SW1-SW13   (flags 4)
+    chain 13    = LED14       = layer indicator           (flags 8)
+    chain 14-23 = LED15-LED24 = edge underglow            (flags 2)
+
+Per-key chain positions carry the QMK "matrix" association: SW1-SW4 = row 0,
+SW5-SW8 = row 1, SW9-SW12 = row 2, SW13 (2U hero) = [3, 0].
 """
 import json
+import re
+import sys
 
-PCB_W, PCB_H = 84.2, 103.7  # mm — Phase-0 v2 outline (D1 resolved: top band)
 
-def led(x_mm, y_mm, flags):
-    return {
-        "x": round(x_mm / PCB_W * 224),
-        "y": round(y_mm / PCB_H * 64),
-        "flags": flags,  # 4 = per-key, 8 = indicator, 2 = underglow
-    }
+def footprint_positions(board_text):
+    """Map footprint reference -> (x_mm, y_mm) for every footprint."""
+    refs = {}
+    for m in re.finditer(r'\(footprint\s+"[^"]+"', board_text):
+        depth, i = 0, m.start()
+        while i < len(board_text):
+            c = board_text[i]
+            if c == "(":
+                depth += 1
+            elif c == ")":
+                depth -= 1
+                if depth == 0:
+                    break
+            i += 1
+        block = board_text[m.start() : i + 1]
+        at = re.search(r"\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+[-\d.]+)?\)", block)
+        ref = re.search(r'\(property\s+"Reference"\s+"([^"]+)"', block)
+        if at and ref:
+            refs[ref.group(1)] = (float(at.group(1)), float(at.group(2)))
+    return refs
 
-leds = []
-# SW1-SW12: 4x3 grid, pitch 19.05, column centers from x=13.525
-for row, y in enumerate((33.35, 52.40, 71.45)):
-    for col in range(4):
-        e = led(13.525 + 19.05 * col, y, 4)
-        e["matrix"] = [row, col]
-        leds.append(e)
-# SW13 (2U, bottom row)
-e = led(42.100, 90.50, 4)
-e["matrix"] = [3, 0]
-leds.append(e)
-# Layer indicator (chain 13), adjacent to touch pad
-leds.append(led(13.525, 82.0, 8))
-# Underglow 14-23: perimeter ring, clockwise from top-left (provisional)
-perimeter = [
-    (25, 5), (59, 5), (79, 30), (79, 62), (79, 90),
-    (55, 99), (28, 99), (5, 90), (5, 62), (5, 30),
-]
-for x, y in perimeter:
-    leds.append(led(x, y, 2))
 
-print(json.dumps({"layout": leds}, indent=4))
+def outline_bbox(board_text):
+    xs, ys = [], []
+    for m in re.finditer(
+        r"\(gr_(?:line|arc|rect|circle)[^)]*?\(start\s+([-\d.]+)\s+([-\d.]+)\)"
+        r".*?\(end\s+([-\d.]+)\s+([-\d.]+)\).*?\(layer\s+\"Edge\.Cuts\"\)",
+        board_text,
+        re.S,
+    ):
+        xs += [float(m.group(1)), float(m.group(3))]
+        ys += [float(m.group(2)), float(m.group(4))]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def main():
+    if len(sys.argv) != 2:
+        sys.exit(__doc__)
+    board_text = open(sys.argv[1]).read()
+    refs = footprint_positions(board_text)
+    x0, y0, x1, y1 = outline_bbox(board_text)
+    w, h = x1 - x0, y1 - y0
+
+    def qmk(ref, flags, matrix=None):
+        x_mm, y_mm = refs[ref]
+        entry = {}
+        if matrix is not None:
+            entry["matrix"] = matrix
+        entry["x"] = round((x_mm - x0) / w * 224)
+        entry["y"] = round((y_mm - y0) / h * 64)
+        entry["flags"] = flags
+        return entry
+
+    leds = []
+    # chain 0-11: LED1-LED12 under the SW1-SW12 4x3 grid
+    for chain in range(12):
+        leds.append(qmk(f"LED{chain + 1}", 4, matrix=[chain // 4, chain % 4]))
+    # chain 12: LED13 under SW13 (2U hero)
+    leds.append(qmk("LED13", 4, matrix=[3, 0]))
+    # chain 13: LED14 layer indicator
+    leds.append(qmk("LED14", 8))
+    # chain 14-23: LED15-LED24 underglow ring
+    for n in range(15, 25):
+        leds.append(qmk(f"LED{n}", 2))
+
+    print(json.dumps({"layout": leds}, indent=4))
+
+
+if __name__ == "__main__":
+    main()

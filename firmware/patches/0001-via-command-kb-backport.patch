@@ -1,0 +1,52 @@
+diff --git a/quantum/via.c b/quantum/via.c
+index 1911c4a579..ba9045b7ae 100644
+--- a/quantum/via.c
++++ b/quantum/via.c
+@@ -201,6 +201,15 @@ __attribute__((weak)) void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
+     *command_id         = id_unhandled;
+ }
+ 
++// Backport of upstream QMK's via_command_kb() pre-hook (added upstream after
++// this fork point). Keyboard level code can override this to intercept raw
++// HID frames before VIA's command switch runs - the only way to receive
++// command IDs that VIA would otherwise consume itself. Return true when the
++// frame was fully handled, including any raw_hid_send() reply.
++__attribute__((weak)) bool via_command_kb(uint8_t *data, uint8_t length) {
++    return false;
++}
++
+ // VIA handles received HID messages first, and will route to
+ // raw_hid_receive_kb() for command IDs that are not handled here.
+ // This gives the keyboard code level the ability to handle the command
+@@ -223,6 +232,14 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
+     }
+ #endif
+ 
++    // Backported upstream pre-hook: if the keyboard fully handled this frame
++    // (including any reply), VIA must not process or echo it. Deliberately
++    // placed after the Vial unlock gate so the restricted command subset
++    // during an unlock sequence is preserved.
++    if (via_command_kb(data, length)) {
++        return;
++    }
++
+     switch (*command_id) {
+         case id_get_protocol_version: {
+             command_data[0] = VIA_PROTOCOL_VERSION >> 8;
+diff --git a/quantum/via.h b/quantum/via.h
+index 5aa0614092..50b2797d9c 100644
+--- a/quantum/via.h
++++ b/quantum/via.h
+@@ -137,6 +137,12 @@ void via_eeprom_set_valid(bool valid);
+ void eeconfig_init_via(void);
+ void via_init(void);
+ 
++// Backport of upstream QMK's keyboard-level raw HID pre-hook: called with
++// every incoming raw HID frame before VIA parses it. Return true if the
++// command was fully handled (including calling raw_hid_send() for any
++// reply); VIA will then neither process nor echo the frame.
++bool via_command_kb(uint8_t *data, uint8_t length);
++
+ // Used by VIA to store and retrieve the layout options.
+ uint32_t via_get_layout_options(void);
+ void     via_set_layout_options(uint32_t value);

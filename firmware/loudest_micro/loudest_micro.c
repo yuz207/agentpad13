@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// Loudest Micro Rev A - shared keyboard-level firmware.
+// agentpad13 Rev A - shared keyboard-level firmware.
 //
 // Lives at keyboard level (not keymap) so the default and vial keymaps share one
-// implementation. The spec asks for rgb_matrix_indicators_user; we use the
-// keyboard-level _kb hooks instead so both keymaps inherit the behavior. Each _kb
-// hook still calls through to its _user counterpart.
+// implementation. The keyboard-level _kb hooks are used (rather than _user
+// hooks in each keymap) so both keymaps inherit the behavior. Each _kb hook
+// still calls through to its _user counterpart.
 #include "loudest_micro.h"
 #include "analog.h"
 #include <string.h>
@@ -24,7 +24,7 @@
 #endif
 
 // ---------------------------------------------------------------------------
-// Raw-HID status protocol v0 - device side of loudestd (spec 3.9). LOCKED wire
+// Raw-HID status protocol v0 - device side of loudestd. LOCKED wire
 // format; the single source of truth is daemon/loudestd/protocol.py. 32-byte
 // report-ID-less frames:
 //   0x01 SET_KEY   {chain_idx(0..23), r, g, b, effect(0 solid / 1 pulse / 2 blink)}
@@ -105,9 +105,78 @@ static void loudest_status_handle(uint8_t *data, uint8_t length) {
 }
 
 #    ifdef VIA_ENABLE
-// Under VIA/Vial the strong raw_hid_receive() belongs to VIA; it forwards command
-// IDs it does not recognize here. NOTE: VIA claims low IDs (0x01..), so the vial
-// build only receives protocol IDs VIA ignores - see PHASE4-TODO in BUILD.md.
+// --- VIA/Vial coexistence (the "VIA shadow" fix) ---------------------------
+// Under VIA/Vial the strong raw_hid_receive() belongs to via.c, whose command
+// switch consumes IDs 0x01-0x04 (id_get_protocol_version, id_get/
+// id_set_keyboard_value, id_dynamic_keymap_get_keycode) before the
+// raw_hid_receive_kb() fallback ever sees them - which used to shadow the
+// entire status protocol in the vial build. Fix per upstream QMK practice:
+// the via_command_kb() pre-hook (mainline QMK; backported into the vial-qmk
+// fork by firmware/patches/0001-via-command-kb-backport.patch) sees every
+// frame before VIA parses it and claims only frames that are byte-valid v0
+// protocol commands (32-byte zero-padded, per daemon/loudestd/protocol.py).
+//
+// Dispatch rules, from the observed VIA/Vial client traffic (vial-gui sends
+// 0x01 with an all-zero payload at connect, 0x02 only with value ids 0x02
+// layout_options / 0x03 switch_matrix_state, 0x03 only with nonzero value
+// ids, and never sends per-key 0x04 - it bulk-reads keymaps via 0x12):
+//   0x01 SET_KEY   -> ours iff payload is a valid {index<24, r,g,b, fx<=2}
+//                     and NOT the all-zero VIA protocol-version handshake.
+//   0x02 SET_LAYER -> ours iff layer < LOUDEST_MAX_LAYERS, EXCEPT layers
+//                     1/2/3 which are byte-identical to the VIA keyboard
+//                     value ids uptime/layout_options/switch_matrix_state
+//                     and stay VIA's (documented vial-build limitation;
+//                     the plain-QMK build has the full range).
+//   0x03 CLEAR     -> ours iff the payload is all zero (VIA set_keyboard_
+//                     value ids start at 0x01).
+//   0x04 PING      -> ours iff bytes 2.. are zero (vial-gui never sends
+//                     per-key get_keycode; a legacy VIA client reading key
+//                     [row 0, col 0] would collide - documented).
+// Frames we claim are fully handled here (incl. the CAPS reply); VIA never
+// sees them and sends no echo, exactly like the plain-QMK build.
+static bool loudest_tail_zero(const uint8_t *data, uint8_t from, uint8_t upto) {
+    for (uint8_t i = from; i < upto; i++) {
+        if (data[i] != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool via_command_kb(uint8_t *data, uint8_t length) {
+    switch (data[0]) {
+        case LOUDEST_CMD_SET_KEY:
+            if (length >= 6 && data[1] < LOUDEST_LED_COUNT && data[5] <= LOUDEST_FX_BLINK && loudest_tail_zero(data, 6, length) && !loudest_tail_zero(data, 1, 6)) {
+                loudest_status_handle(data, length);
+                return true;
+            }
+            return false; // incl. all-zero payload = VIA get_protocol_version
+        case LOUDEST_CMD_SET_LAYER:
+            if (length >= 2 && data[1] < LOUDEST_MAX_LAYERS && data[1] != 0x01 && data[1] != 0x02 && data[1] != 0x03 && loudest_tail_zero(data, 2, length)) {
+                loudest_status_handle(data, length);
+                return true;
+            }
+            return false; // 0x01-0x03 = VIA uptime/layout_options/matrix_state
+        case LOUDEST_CMD_CLEAR:
+            if (loudest_tail_zero(data, 1, length)) {
+                loudest_status_handle(data, length);
+                return true;
+            }
+            return false; // nonzero value id = VIA set_keyboard_value
+        case LOUDEST_CMD_PING:
+            if (length >= 2 && loudest_tail_zero(data, 2, length)) {
+                loudest_status_handle(data, length);
+                return true;
+            }
+            return false; // nonzero row/col = VIA dynamic_keymap_get_keycode
+        default:
+            return false; // everything else (incl. 0xFE vial prefix) is VIA's
+    }
+}
+
+// Fallback for frames VIA's inner switches forward (e.g. a get_keyboard_value
+// id VIA does not know). The bounds checks in loudest_status_handle() make
+// stray VIA frames harmless here.
 void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
     loudest_status_handle(data, length);
 }
@@ -120,10 +189,11 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 #endif // RAW_ENABLE
 
 // ---------------------------------------------------------------------------
-// Joystick modes (spec C2). Native QMK exposes GP26/GP27 as a HID gamepad; the
-// arrow (8-way) and scroll modes are custom code reading analogReadPin. JS_MODE
-// cycles gamepad -> arrows -> scroll. PHASE1-PENDING: real deadzone/curve from
-// the ADC sweep; RP2040 analogReadPin is 10-bit so center ~512 is the placeholder.
+// Joystick modes. Native QMK exposes GP26/GP27 as a HID gamepad; the arrow
+// (8-way) and scroll modes are custom code reading analogReadPin. JS_MODE
+// cycles gamepad -> arrows -> scroll. CALIBRATION-PENDING: real deadzone/curve
+// from the bring-up ADC sweep; RP2040 analogReadPin is 10-bit so center ~512
+// is the placeholder.
 // ---------------------------------------------------------------------------
 enum js_mode {
     JS_MODE_GAMEPAD = 0,
@@ -157,7 +227,7 @@ static void js_cycle_mode(void) {
 }
 
 // ---------------------------------------------------------------------------
-// Touch enable/disable (spec improvement #7). TP_TOG gates the GP16 touch key
+// Touch enable/disable. TP_TOG gates the GP16 touch key
 // at matrix [3, 2]. Default enabled.
 // ---------------------------------------------------------------------------
 #define TOUCH_MATRIX_ROW 3

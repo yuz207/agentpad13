@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// Loudest Micro Rev A - default (plain QMK) keymap.
+// agentpad13 Rev A - default (plain QMK) keymap.
 //
 // Physical layout (LAYOUT order, 15 keys):
 //   [ SW1  SW2  SW3  SW4 ]

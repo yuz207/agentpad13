@@ -66,10 +66,9 @@ Fab-place the SMD parts, then finish these by hand (see `assembly/hand_solder_af
 
 ## Firmware / GPIO note
 
-Rev A v4 remapped several RP2040 GPIOs relative to the pin map currently frozen in
-the firmware tree (`firmware/loudest_micro/`). A firmware update to match the final
-board pinout is forthcoming — re-verify the pin map against this board before
-relying on it.
+The firmware pin map (`firmware/loudest_micro/`) matches Rev A v4 and has been
+validated — it boots in an RP2040 emulator and its Raw HID status protocol is
+conformance-tested. See `firmware/FIRMWARE-V4-NOTES.md` and `firmware/tests/`.
 
 ## License
 

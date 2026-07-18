@@ -1,8 +1,16 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// Loudest Micro Rev A - shared keyboard-level definitions.
+// agentpad13 Rev A - shared keyboard-level definitions.
+// (QMK keyboard/module name stays "loudest_micro"; see readme.md.)
 #pragma once
 
 #include "quantum.h"
+
+#if defined(RAW_ENABLE) && defined(VIA_ENABLE)
+// Pre-VIA raw HID dispatch hook (upstream QMK mechanism; backported into the
+// vial-qmk fork by firmware/patches/0001-via-command-kb-backport.patch).
+// Returns true when the frame was fully handled, including any reply.
+bool via_command_kb(uint8_t *data, uint8_t length);
+#endif
 
 // Keyboard-level custom keycodes (shared by the default and vial keymaps).
 // QK_KB_0.. is the keyboard custom range; these also appear in vial.json

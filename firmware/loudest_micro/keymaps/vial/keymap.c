@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// Loudest Micro Rev A - Vial keymap. These layers are the compiled-in defaults
+// agentpad13 Rev A - Vial keymap. These layers are the compiled-in defaults
 // loaded into the dynamic keymap on first boot; Vial then owns them in EEPROM.
 // Layout + custom keycodes match the default keymap (see that file's header).
 #include QMK_KEYBOARD_H

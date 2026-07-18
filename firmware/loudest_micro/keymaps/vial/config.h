@@ -8,6 +8,7 @@
 #define VIAL_UNLOCK_COMBO_ROWS {0, 3}
 #define VIAL_UNLOCK_COMBO_COLS {0, 0}
 
-// >= 8 dynamic layers (spec 3.9). Dynamic keymaps live in emulated EEPROM and
+// 8 dynamic layers (matches the compiled-in default keymap and the CAPS
+// layer_count in the status protocol). Dynamic keymaps live in EEPROM and
 // survive reflash (documented migration rule in BUILD.md).
 #define DYNAMIC_KEYMAP_LAYER_COUNT 8
