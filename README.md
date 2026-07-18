@@ -10,9 +10,9 @@ underglow) driven over Raw HID by an open agent-status protocol
 ## Status
 
 - **PCB: Rev A — COMPLETE.** Finished and fabrication-ready (details below).
-- **Case: redesign in progress.** The case files under `hardware/case/` target the
-  previous board revision and do **not** fit Rev A v4; a redesigned case
-  (FR4 plate-as-deck + printed tray) is in progress.
+- **Case: v2 — COMPLETE.** FR4 plate-as-deck + printed tray, designed for Rev A
+  v4. Print files (STL/STEP), orderable plate fab files, and fit-check coupons
+  under `hardware/case/` — see its README for print/order/assembly guidance.
 - **Firmware: builds and runs**, pending a pin-map update for the Rev A v4 GPIO
   remap (see note below).
 
@@ -43,10 +43,9 @@ underglow) driven over Raw HID by an open agent-status protocol
 hardware/
   pcb/    KiCad 9 project (agentpad13.kicad_pcb/.kicad_sch/.kicad_pro), vendored
           footprint libs, final BOM, Gerbers, per-SKU assembly bundles, renders.
-  case/   Parametric build123d case (unibody shell + plate + bottom lid),
-          tolerance coupons, STL/STEP exports. NOTE: targets the previous board
-          revision (84.2 × 103.7, round corners) and does NOT fit Rev A v4
-          (84.2 × 100, chamfered) — a redesigned case is in progress.
+  case/   v2 case for Rev A v4: FR4 plate-as-deck + printed band/tray.
+          STL/STEP print files, orderable plate + coupon fab files
+          (.kicad_pcb/.dxf), and fit-check coupons. See hardware/case/README.md.
 firmware/
   loudest_micro/  vial-qmk keyboard tree (RP2040, direct-pin, ENCODER_MAP,
                   analog joystick modes, Raw HID status protocol).
