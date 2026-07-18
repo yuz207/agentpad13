@@ -7,6 +7,13 @@ joystick, a capacitive-touch key, and a 24-LED RGB chain (per-key + edge
 underglow) driven over Raw HID by an open agent-status protocol
 (thinking / running / waiting / done, one key per agent).
 
+<p align="center">
+  <img src="hardware/case/renders/agentpad13-v2-hero.png" alt="agentpad13 case v2 three-quarter product render" width="55%">
+  <img src="hardware/case/renders/agentpad13-v2-top.png" alt="agentpad13 case v2 top product render" width="42%">
+</p>
+
+<p align="center"><sub>Current case-v2 concept: frosted RGB-diffusing band, matte-black FR4 plate, and printed tray.</sub></p>
+
 ## Status
 
 - **PCB: Rev A — COMPLETE.** Finished and fabrication-ready (details below).
