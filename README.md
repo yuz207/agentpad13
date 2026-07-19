@@ -18,7 +18,10 @@ underglow) driven over Raw HID by an open agent-status protocol
 
 - **PCB: Rev A — COMPLETE.** Finished and fabrication-ready (details below).
 - **Case: v2 — COMPLETE.** FR4 plate-as-deck + printed tray, designed for Rev A
-  v4. Print files (STL/STEP), orderable plate fab files, and fit-check coupons
+  v4. Two plate options: the default carries the capacitive-touch electrode
+  with an exposed ENIG **gold-disc** touch marker (order ENIG), and a blank
+  no-copper variant for anyone skipping the pad. Print files (STL/STEP),
+  orderable plate fab files, and fit-check coupons
   under `hardware/case/` — see its README for print/order/assembly guidance.
 - **Firmware: VALIDATED.** Emulator-boot tested, Raw HID protocol-conformant, and
   the pin map matches Rev A v4.
@@ -52,7 +55,8 @@ hardware/
   pcb/    KiCad 9 project (agentpad13.kicad_pcb/.kicad_sch/.kicad_pro), vendored
           footprint libs, final BOM, Gerbers, per-SKU assembly bundles, renders.
   case/   v2 case for Rev A v4: FR4 plate-as-deck + printed band/tray.
-          STL/STEP print files, orderable plate + coupon fab files
+          STL/STEP print files, orderable plate fab files (gold-disc touch
+          plate + blank variant) + coupon fab files
           (.kicad_pcb/.dxf), and fit-check coupons. See hardware/case/README.md.
 firmware/
   loudest_micro/  vial-qmk keyboard tree (RP2040, direct-pin, ENCODER_MAP,
