@@ -53,7 +53,14 @@ full parts and the plate order:
   prints are translucent rather than water-clear and can yellow with UV
   exposure. An opaque FDM band will block the underglow.
 - **Tray:** PETG, printed upright, 0.16–0.20 mm layers. Check the slicer
-  preview for thin walls before the first print.
+  preview for thin walls before the first print. The plate's screw holes are
+  close-fit (Ø3.2 over M3), which keeps the deck reveal even but asks the
+  tray print to hold its 4-boss pattern to roughly ±0.1 mm — calibrate your
+  slicer's XY scale if you haven't. If the screws fight at assembly, opening
+  the FR4 plate holes to Ø3.3–3.4 with a pin vise is a clean fallback.
+- The plate drops into the band with 0.3 mm side clearance (the visible
+  reveal line around the deck) — sized so a typical FDM band still swallows
+  a worst-case fab plate. A resin band has clearance to spare.
 
 ## Hardware
 
