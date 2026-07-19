@@ -22,14 +22,20 @@ screws clamp plate + band + tray as one stack. Outer size 89.6 × 105.4 mm,
 
 | File | What it is |
 |------|-----------|
-| `agentpad13_v2_plate.kicad_pcb` | The plate/deck — 1.5 mm FR4 switch plate, blank (no copper), matte black soldermask both sides. `agentpad13_v2_plate.dxf` is an alternative input. `step/agentpad13_v2_plate.step` is the 3D model. |
+| `agentpad13_v2_plate.kicad_pcb` | **Default plate/deck** — 1.5 mm FR4 switch plate, matte black soldermask, with the capacitive-touch electrode built in: an exposed **gold disc** (Ø12, ENIG) marks the touch key at lower-left, via-stitched to an underside landing pad that a conductive-foam pillar couples down to the board's touch pad. Order with **ENIG** surface finish so the disc is flat gold. |
+| `agentpad13_v2_plate_blank.kicad_pcb` | **Blank variant** — the same plate with no copper at all, for anyone skipping the touch pad or the ENIG cost (the touch key then relies on much weaker through-air sensing). If the fab queries "no copper on this board?", answer that it is a switch plate and to proceed. |
 | `agentpad13_v2_coupon_panel.kicad_pcb` | FR4 test panel — switch cutouts + 2U stabilizer slots to verify switch/stab fit and the router's corner radius before ordering the full plate |
-| `agentpad13_v2_touch_chip.kicad_pcb` | 20 × 20 mm FR4 chip used with the touch jig to test the capacitive-touch key through the plate |
+| `agentpad13_v2_touch_chip.kicad_pcb` | 20 × 20 mm FR4 chip carrying the **identical touch-electrode construction** as the default plate, used with the touch jig to test the touch key (with and without the foam pillar) before ordering the plate |
 
-Order all three in one cart at any PCB fab. A standard 2-layer service is
-fine; thickness 1.5 mm as set in the plate file. The plate carries no
-copper — if the fab queries "no copper on this board?", answer that it is a
-switch plate and to proceed.
+Order in one cart at any PCB fab. A standard 2-layer service is fine;
+thickness 1.5 mm as set in the plate files. `agentpad13_v2_plate.dxf` is an
+alternative outline input; `step/agentpad13_v2_plate.step` is the 3D model.
+
+Touch-key hardware (default plate): one conductive-foam pillar (EMI-gasket
+type), ≈Ø8–10 mm × 5 mm uncompressed, compressed to the 3.5 mm plate-to-board
+gap between the board's bare center pad and the plate's underside landing
+pad. Test with the coupon chip first — through-air sensing without the foam
+may work for light use; the foam makes it robust.
 
 ### Fit-check coupons (`stl/`, `step/`) — print these first
 
