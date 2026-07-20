@@ -73,7 +73,7 @@ affects RGB animation geometry only, not the protocol's chain indexing).
 
 ## 2. Product rebrand → agentpad13
 
-User-visible identity strings renamed "Loudest Micro" → **"agentpad13"**:
+User-visible identity strings renamed to **"agentpad13"** (from the legacy internal project name):
 `keyboard_name` (USB product string) and top-level comments in
 `keyboard.json`, `name` in `keymaps/vial/vial.json` (Vial sidebar), the
 `readme.md` heading and body, `BUILD.md`, and all C file header comments.

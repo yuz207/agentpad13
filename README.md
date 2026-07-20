@@ -1,7 +1,6 @@
 # agentpad13
 
-Open-source 13-key macropad for agentic work — in the spirit of the Work Louder
-Creator Micro 2 / OpenAI Codex Micro, built from scratch. Bare RP2040, USB-C,
+Open-source 13-key macropad for agentic work, built from scratch. Bare RP2040, USB-C,
 12×1U + 1×2U hot-swap keys, clickable EC11 rotary encoder, analog 2-axis tilt
 joystick, a capacitive-touch key, and a 24-LED RGB chain (per-key + edge
 underglow) driven over Raw HID by an open agent-status protocol
@@ -91,4 +90,3 @@ firmware/
 Vendored footprint libraries under `hardware/pcb/lib/` keep their upstream
 licenses (marbastlib: CERN-OHL-P v2; MX_V2: MIT) — see `hardware/pcb/lib/LIBS.md`.
 
-Built from scratch; not affiliated with Work Louder or OpenAI.
