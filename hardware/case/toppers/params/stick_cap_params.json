@@ -1,0 +1,137 @@
+{
+  "part": "stick_cap",
+  "for": "YTL YA13-FL7.4 (LCSC C37323742)",
+  "datum": "z=0 at PCB top face (agentpad13 case v2 convention)",
+  "deck_z": 5.0,
+  "pivot_z": 6.1,
+  "tilt_deg": 30.0,
+  "deck_floor_z": 5.6,
+  "deck_zone_r": 8.6,
+  "blade": {
+    "x": 1.85,
+    "y": 1.15,
+    "tip_z": 18.4
+  },
+  "socket_depth_DESIGN_CHOICE": 4.0,
+  "socket_mouth_z": 14.4,
+  "socket_roof_z": 18.4,
+  "roof_t": 1.2,
+  "cap_top_z": 19.6,
+  "fit_ladder_mm": [
+    0.0,
+    0.05,
+    0.1
+  ],
+  "default_variant": "taper",
+  "variants": {
+    "dome": {
+      "od": 13.0,
+      "top_style": "dome",
+      "cap_bottom_z": 14.4,
+      "cap_top_z": 19.6,
+      "socket_wall_mm": 5.525,
+      "sockets": {
+        "nom": [
+          1.85,
+          1.15
+        ],
+        "p05": [
+          1.9,
+          1.2
+        ],
+        "p10": [
+          1.95,
+          1.25
+        ]
+      },
+      "sweep_r": 6.5,
+      "sweep_h": 8.3,
+      "sweep_lowest_z": 10.038,
+      "sweep_margin_vs_5p6": 4.438
+    },
+    "dish": {
+      "od": 14.0,
+      "top_style": "dish",
+      "cap_bottom_z": 14.4,
+      "cap_top_z": 19.6,
+      "socket_wall_mm": 6.025,
+      "sockets": {
+        "nom": [
+          1.85,
+          1.15
+        ],
+        "p05": [
+          1.9,
+          1.2
+        ],
+        "p10": [
+          1.95,
+          1.25
+        ]
+      },
+      "sweep_r": 7.0,
+      "sweep_h": 8.3,
+      "sweep_lowest_z": 9.788,
+      "sweep_margin_vs_5p6": 4.188
+    },
+    "knurl": {
+      "od": 12.0,
+      "top_style": "knurl",
+      "cap_bottom_z": 14.4,
+      "cap_top_z": 19.6,
+      "socket_wall_mm": 5.025,
+      "sockets": {
+        "nom": [
+          1.85,
+          1.15
+        ],
+        "p05": [
+          1.9,
+          1.2
+        ],
+        "p10": [
+          1.95,
+          1.25
+        ]
+      },
+      "sweep_r": 6.0,
+      "sweep_h": 8.3,
+      "sweep_lowest_z": 10.288,
+      "sweep_margin_vs_5p6": 4.688
+    },
+    "taper": {
+      "od": 11.285,
+      "top_style": "taper",
+      "cap_bottom_z": 14.4,
+      "cap_top_z": 19.6,
+      "socket_wall_mm": 2.358,
+      "sockets": {
+        "nom": [
+          1.85,
+          1.15
+        ],
+        "p05": [
+          1.9,
+          1.2
+        ],
+        "p10": [
+          1.95,
+          1.25
+        ]
+      },
+      "sweep_r": 5.643,
+      "sweep_h": 8.3,
+      "sweep_lowest_z": 10.467,
+      "sweep_margin_vs_5p6": 4.867,
+      "taper_bottom_d": 11.285,
+      "taper_spring_d": 6.667,
+      "taper_spring_z": 18.4,
+      "wall_deg_from_vertical": 30.0,
+      "sw4_clearance_target_mm": 0.25,
+      "sw4_radial_margin_mm": 0.05,
+      "sw4_min_clearance_mm": 0.2933,
+      "sw4_swept_overlap_mm3": 0,
+      "sw4_keycap_edge_y": 22.7
+    }
+  }
+}

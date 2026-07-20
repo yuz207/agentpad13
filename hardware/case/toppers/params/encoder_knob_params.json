@@ -1,0 +1,76 @@
+{
+  "part": "encoder_knob",
+  "for": "EC11 rotary encoder, 6 mm knurled/D shaft",
+  "datum": "z=0 at PCB top face (agentpad13 case v2 convention)",
+  "deck_z": 5.0,
+  "body_top_z": 7.5,
+  "body_square": 11.7,
+  "knob_top_z": 17.5,
+  "height_above_deck": 12.5,
+  "knob_od_floor": 18.0,
+  "opening_corner_reach": 8.57,
+  "bore_ladder_mm": [
+    5.9,
+    6.0,
+    6.1
+  ],
+  "bore_depth": 6.5,
+  "bore_blind": true,
+  "bore_strategy": "plain round bore + fit ladder (no modeled ribs)",
+  "default_variant": "knurled_cup",
+  "variants": {
+    "knurled_cup": {
+      "od": 18.0,
+      "top_style": "flat",
+      "skirt_bottom_z": 8.0,
+      "knob_top_z": 17.5,
+      "height_above_deck": 12.5,
+      "hides_opening_by_mm": 0.43,
+      "body_relief": null,
+      "bore_roof_z": 14.5,
+      "solid_roof_mm": 3.0,
+      "bores": {
+        "5p9": 5.9,
+        "6p0": 6.0,
+        "6p1": 6.1
+      }
+    },
+    "dome_cup": {
+      "od": 19.0,
+      "top_style": "dome",
+      "skirt_bottom_z": 8.0,
+      "knob_top_z": 17.5,
+      "height_above_deck": 12.5,
+      "hides_opening_by_mm": 0.93,
+      "body_relief": null,
+      "bore_roof_z": 14.5,
+      "solid_roof_mm": 3.0,
+      "bores": {
+        "5p9": 5.9,
+        "6p0": 6.0,
+        "6p1": 6.1
+      }
+    },
+    "ribbed_skirt": {
+      "od": 20.0,
+      "top_style": "flat",
+      "skirt_bottom_z": 5.6,
+      "knob_top_z": 17.5,
+      "height_above_deck": 12.5,
+      "hides_opening_by_mm": 1.43,
+      "body_relief": {
+        "cavity_d": 17.4,
+        "cavity_ceil_z": 8.5,
+        "corner_clearance_mm": 0.427,
+        "wall_mm": 1.3
+      },
+      "bore_roof_z": 15.0,
+      "solid_roof_mm": 2.5,
+      "bores": {
+        "5p9": 5.9,
+        "6p0": 6.0,
+        "6p1": 6.1
+      }
+    }
+  }
+}

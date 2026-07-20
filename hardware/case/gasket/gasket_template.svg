@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="190.0mm" height="250.0mm" viewBox="0 0 190 250">
+<rect x="0" y="0" width="190.0" height="250.0" fill="#ffffff"/>
+<text x="95.00" y="12.00" font-size="4.6" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="bold" fill="#111">agentpad13 v2 — optional PORON ledge-gasket kit</text>
+<text x="95.00" y="18.50" font-size="2.5" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="normal" fill="#555">1:1 cutting template &#183; derived from band rabbet-ledge constants &#183; NO geometry change</text>
+<text x="95.00" y="24.80" font-size="2.5" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="normal" fill="#555">Material: 0.5 mm PORON foam, 3M 468/9471-class adhesive back &#183; 10 segments &#183; 15 &#215; 1.2 mm each</text>
+<text x="95.00" y="30.60" font-size="2.3" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="normal" fill="#777">Stick to the BAND ledge underside (z +0.3); 0.5 into 0.3 = 40% compression (PORON 20-50% band). OPTIONAL — bare ledge is already the 0.3 mm backstop.</text>
+<path d="M 66.100 55.600 L 122.500 55.600 L 137.100 70.200 L 137.100 141.000 L 122.500 155.600 L 67.500 155.600 L 52.900 141.000 L 52.900 68.800 Z" fill="none" stroke="#d9d9d9" stroke-width="0.18" stroke-dasharray="1.6 1.6"/>
+<rect x="52.600" y="55.300" width="84.800" height="100.600" rx="5.600" ry="5.600" fill="none" stroke="#8a8a8a" stroke-width="0.22"/>
+<rect x="53.800" y="56.500" width="82.400" height="98.200" rx="4.400" ry="4.400" fill="none" stroke="#8a8a8a" stroke-width="0.22"/>
+<circle cx="56.600" cy="59.300" r="10.000" fill="#f4e4e4" fill-opacity="0.5" stroke="#c98a8a" stroke-width="0.16" stroke-dasharray="0.9 0.9"/>
+<path d="M 55.20 59.30 h 2.8 M 56.60 57.90 v 2.8" stroke="#c98a8a" stroke-width="0.16"/>
+<circle cx="133.400" cy="59.300" r="10.000" fill="#f4e4e4" fill-opacity="0.5" stroke="#c98a8a" stroke-width="0.16" stroke-dasharray="0.9 0.9"/>
+<path d="M 132.00 59.30 h 2.8 M 133.40 57.90 v 2.8" stroke="#c98a8a" stroke-width="0.16"/>
+<circle cx="56.600" cy="151.900" r="10.000" fill="#f4e4e4" fill-opacity="0.5" stroke="#c98a8a" stroke-width="0.16" stroke-dasharray="0.9 0.9"/>
+<path d="M 55.20 151.90 h 2.8 M 56.60 150.50 v 2.8" stroke="#c98a8a" stroke-width="0.16"/>
+<circle cx="133.400" cy="151.900" r="10.000" fill="#f4e4e4" fill-opacity="0.5" stroke="#c98a8a" stroke-width="0.16" stroke-dasharray="0.9 0.9"/>
+<path d="M 132.00 151.90 h 2.8 M 133.40 150.50 v 2.8" stroke="#c98a8a" stroke-width="0.16"/>
+<rect x="89.000" y="52.300" width="12.000" height="4.200" fill="#e4ecf4" fill-opacity="0.6" stroke="#8aa8c9" stroke-width="0.16" stroke-dasharray="0.9 0.9"/>
+<text x="95.00" y="51.10" font-size="2.0" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="normal" fill="#5f7fa0">USB &#8212; skip</text>
+<rect x="52.600" y="73.100" width="1.200" height="15.000" rx="0.3" fill="#ffdccf" stroke="#b3300a" stroke-width="0.4"/>
+<rect x="136.200" y="73.100" width="1.200" height="15.000" rx="0.3" fill="#ffdccf" stroke="#b3300a" stroke-width="0.4"/>
+<rect x="52.600" y="98.100" width="1.200" height="15.000" rx="0.3" fill="#ffdccf" stroke="#b3300a" stroke-width="0.4"/>
+<rect x="136.200" y="98.100" width="1.200" height="15.000" rx="0.3" fill="#ffdccf" stroke="#b3300a" stroke-width="0.4"/>
+<rect x="52.600" y="123.100" width="1.200" height="15.000" rx="0.3" fill="#ffdccf" stroke="#b3300a" stroke-width="0.4"/>
+<rect x="136.200" y="123.100" width="1.200" height="15.000" rx="0.3" fill="#ffdccf" stroke="#b3300a" stroke-width="0.4"/>
+<rect x="70.300" y="55.300" width="15.000" height="1.200" rx="0.3" fill="#ffdccf" stroke="#b3300a" stroke-width="0.4"/>
+<rect x="70.300" y="154.700" width="15.000" height="1.200" rx="0.3" fill="#ffdccf" stroke="#b3300a" stroke-width="0.4"/>
+<rect x="104.700" y="55.300" width="15.000" height="1.200" rx="0.3" fill="#ffdccf" stroke="#b3300a" stroke-width="0.4"/>
+<rect x="104.700" y="154.700" width="15.000" height="1.200" rx="0.3" fill="#ffdccf" stroke="#b3300a" stroke-width="0.4"/>
+<text x="49.60" y="105.60" font-size="2.6" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="end" font-weight="bold" fill="#b3300a">W&#215;3</text>
+<text x="140.40" y="105.60" font-size="2.6" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="start" font-weight="bold" fill="#b3300a">E&#215;3</text>
+<text x="95.00" y="160.90" font-size="2.6" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="bold" fill="#b3300a">S&#215;2</text>
+<text x="95.00" y="47.80" font-size="2.6" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="bold" fill="#b3300a">N&#215;2</text>
+<text x="56.20" y="103.60" font-size="2.2" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="start" font-weight="normal" fill="#333">15 mm</text>
+<text x="56.20" y="106.60" font-size="2.2" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="start" font-weight="normal" fill="#333">&#215; 1.2 mm</text>
+<line x1="22.0" y1="205.0" x2="72.0" y2="205.0" stroke="#111" stroke-width="0.5"/>
+<line x1="22.0" y1="205.0" x2="22.0" y2="202.6" stroke="#111" stroke-width="0.4"/>
+<text x="22.00" y="201.80" font-size="2.1" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="normal" fill="#111">0</text>
+<line x1="32.0" y1="205.0" x2="32.0" y2="202.6" stroke="#111" stroke-width="0.4"/>
+<text x="32.00" y="201.80" font-size="2.1" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="normal" fill="#111">10</text>
+<line x1="42.0" y1="205.0" x2="42.0" y2="202.6" stroke="#111" stroke-width="0.4"/>
+<text x="42.00" y="201.80" font-size="2.1" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="normal" fill="#111">20</text>
+<line x1="52.0" y1="205.0" x2="52.0" y2="202.6" stroke="#111" stroke-width="0.4"/>
+<text x="52.00" y="201.80" font-size="2.1" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="normal" fill="#111">30</text>
+<line x1="62.0" y1="205.0" x2="62.0" y2="202.6" stroke="#111" stroke-width="0.4"/>
+<text x="62.00" y="201.80" font-size="2.1" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="normal" fill="#111">40</text>
+<line x1="72.0" y1="205.0" x2="72.0" y2="202.6" stroke="#111" stroke-width="0.4"/>
+<text x="72.00" y="201.80" font-size="2.1" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" font-weight="normal" fill="#111">50</text>
+<text x="22.00" y="209.40" font-size="2.4" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="start" font-weight="bold" fill="#111">50 mm scale bar</text>
+<text x="22.00" y="213.40" font-size="2.3" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="start" font-weight="normal" fill="#b3300a">PRINT AT 100% / ACTUAL SIZE (no 'fit to page'/'shrink to fit'). Then measure this bar &#8212; it MUST read 50 mm.</text>
+<text x="22.00" y="222.00" font-size="2.3" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="start" font-weight="bold" fill="#111">Legend:</text>
+<text x="22.00" y="226.20" font-size="2.3" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="start" font-weight="normal" fill="#b3300a">  solid red rect = CUT LINE (0.5 mm PORON segment, adhesive side down)</text>
+<text x="22.00" y="230.40" font-size="2.3" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="start" font-weight="normal" fill="#666">  grey outline = band ledge ring (reference)   grey dashed = board edge</text>
+<text x="22.00" y="234.60" font-size="2.3" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="start" font-weight="normal" fill="#666">  pink circle = corner-cap / socket keep-out   blue = USB aperture keep-out</text>
+<text x="22.00" y="238.80" font-size="2.3" font-family="DejaVu Sans, Arial, sans-serif" text-anchor="start" font-weight="normal" fill="#333">  10 segments: W&#215;3 E&#215;3 (y 25/50/75) + N&#215;2 S&#215;2 (x 24.9/59.3); ~180 mm&#178; foam total.</text>
+</svg>
