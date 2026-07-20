@@ -17,6 +17,8 @@ underglow) driven over Raw HID by an open agent-status protocol
 
 <p align="center"><sub>Case concept: frosted RGB-diffusing band, matte-black FR4 plate, and printed tray.</sub></p>
 
+![agentpad13 — assembled](renders/hero.png)
+
 ## Status
 
 - **PCB: v5 — COMPLETE.** Finished and fabrication-ready (details below). v5
