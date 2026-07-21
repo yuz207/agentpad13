@@ -73,7 +73,9 @@ hardware/
   case/   v2.5 case for the v5 board: FR4 plate-as-deck + printed band/tray.
           STL/STEP print files, three orderable plate variants
           (.kicad_pcb/.dxf + gerber zips), printable toppers (encoder knobs +
-          stick caps), optional gasket kit. See hardware/case/README.md.
+          stick caps), printable keycaps (case/keycaps/ — vertical-wall
+          plateau/dish, Box + MX), optional gasket kit. See
+          hardware/case/README.md.
 firmware/
   loudest_micro/  vial-qmk keyboard tree (RP2040, direct-pin, ENCODER_MAP,
                   analog joystick modes, Raw HID status protocol).

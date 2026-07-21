@@ -77,6 +77,13 @@ Renders of every style are in `toppers/renders/`.
 - `params/*.json` — the dimensional fit-reference data (socket and bore sizes
   per ladder rung) for both topper families.
 
+### Keycaps (`keycaps/`) — printed caps for the 13 keys
+
+Custom vertical-wall (chiclet-style, no taper) keycaps: **plateau** or **dish**
+top, **17.5 mm** (primary) or 18.0 mm footprint, for Kailh **Box** (default) or
+**generic MX** switches. One keyboard = 12 × 1U + 1 × 2U; batch plates for a
+5-unit run are included. See `keycaps/README.md`.
+
 ### Gasket (`gasket/`) — optional
 
 A user-cut 0.5 mm PORON foam kit that converts the band ledge's 0.3 mm air
