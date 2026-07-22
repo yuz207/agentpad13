@@ -2,108 +2,103 @@
 
 Custom **vertical-wall keycaps** for the agentpad13 — chiclet-style, no taper:
 the walls run straight up at 90°, so the caps read as flat-sided tiles rather
-than the sculpted, inward-sloping profile of a normal keycap. They are designed
-for this board's 13-key layout (12 × 1U + 1 × 2U) and print stem-down, top-face
-up, with no supports.
+than the sculpted, inward-sloping profile of a normal keycap. They fit the
+board's 13-key layout (12 × 1U + 1 × 2U) and print stem-down, top-face up, with
+no supports.
 
-There are three independent choices. Pick one from each row.
+## One universal cap
+
+There is **one keycap** here. It is MX-compatible and fits **Kailh Box (e.g.
+Box Jade), Cherry MX, and Gateron KS-9** alike — those switches all present the
+same exposed MX cross (4.00 mm span, 1.30 / 1.10 mm arms, 3.60 mm tall,
+confirmed against four manufacturer drawings), so one stem socket and one cap
+body serve all of them.
+
+> Earlier versions of this repo shipped a separate, taller "Box" cap on the
+> theory that a Kailh Box hides its cross inside a fixed shroud that the cap has
+> to swallow. That was wrong: the Box's box is one piece with the *moving* stem,
+> so it travels down with the cap and never intrudes. Keycap height has nothing
+> to do with switch travel. The cap here is the correct height for all three
+> switch families.
+
+You have two independent choices — pick one from each row:
 
 | Choice | Options |
 |--------|---------|
-| **Top treatment** | **plateau** — a raised rounded-square pad · **dish** — a recessed concave top |
+| **Top treatment** | **plateau** — a raised rounded-square pad · **dish** — a recessed concave scoop |
 | **Footprint size** | **17.5 mm (primary)** · **18.0 mm (alternate)** |
-| **Switch target** | **Box (default)** — Kailh Box switches (e.g. Box Jade) · **generic MX** — any standard Cherry-MX-cross switch |
 
-## The three choices, explained
+**Top treatment.** Purely feel/look — same walls, footprint, and stem socket, so
+they are interchangeable on the board (mix them if you like). Plateau tops are
+**6.6 mm** tall, dish tops **6.0 mm**.
 
-**Top treatment — plateau or dish.** Purely feel/look. The plateau is a raised
-pad; the dish is a shallow concave scoop. Both share the same walls, footprint,
-and stem socket — they are interchangeable on the board, so mix them if you
-like. Print whichever you prefer.
-
-**Footprint size — 17.5 mm or 18.0 mm.** The board's key pitch is fixed at
-19.05 mm. The **17.5 mm** set is the primary: a 1U cap is 17.50 × 17.50 mm and
-the 2U is 36.55 × 17.50 mm, which leaves an even **1.55 mm gap** on every side
-of every key. The **18.0 mm** set is the alternate (1U 18.00 × 18.00 mm, 2U
-37.00 × 18.00 mm) — slightly tighter gaps, kept for anyone who prefers a
-larger cap face. Start with 17.5 mm.
-
-**Switch target — Box or generic MX.** Both mount on the MX-compatible cross,
-but the two switch families present that cross differently, so the caps are
-**not** the same height:
-
-- On a **Kailh Box** switch the cross sits flush with the top of the box
-  housing, so the cap needs a deeper socket — and therefore a taller body — to
-  reach down over the housing and grip the cross. Box caps: **plateau 9.9 mm,
-  dish 9.3 mm** tall.
-- On a **standard Cherry-MX** switch the cross protrudes above the housing, so
-  a shorter cap reaches it. MX caps are correspondingly lower: **plateau
-  6.6 mm, dish 6.0 mm** tall.
-
-Use the **Box** files (the default) if you are running Kailh Box switches; use
-the **generic MX** files for ordinary Cherry-MX-style switches. Everything else
-about the caps is identical between the two.
+**Footprint size.** The board pitch is fixed at 19.05 mm. The **17.5 mm** set is
+the primary: a 1U cap is 17.50 × 17.50 mm and the 2U is 36.55 × 17.50 mm,
+leaving an even **1.55 mm gap** on every side of every key. The **18.0 mm** set
+is the alternate (1U 18.00 × 18.00, 2U 37.00 × 18.00) — tighter gaps, a larger
+cap face. Start with 17.5 mm.
 
 ## Files
 
 ```
 keycaps/
-  box/       Box-switch caps (default) — 17.5 mm + 18.0 mm, plateau + dish
-  mx/        generic Cherry-MX caps    — 17.5 mm + 18.0 mm, plateau + dish
-  plates/    print-ready batch sheets (Box) — enough caps for 5 keyboards
+  cap_plateau_1u_17p5.stl        1U, plateau, 17.5 mm  (primary)
+  cap_plateau_2u_17p5.stl        2U, plateau, 17.5 mm  — plain stem
+  cap_plateau_2u_stab_17p5.stl   2U, plateau, 17.5 mm  — with stabilizer sockets
+  cap_dish_1u_17p5.stl           1U, dish,    17.5 mm
+  cap_dish_2u_17p5.stl           2U, dish,    17.5 mm  — plain stem
+  cap_dish_2u_stab_17p5.stl      2U, dish,    17.5 mm  — with stabilizer sockets
+  cap_plateau_1u.stl  · cap_plateau_2u.stl  · cap_plateau_2u_stab.stl   ] 18.0 mm
+  cap_dish_1u.stl     · cap_dish_2u.stl     · cap_dish_2u_stab.stl      ] alternate
 ```
 
-`_17p5` in a filename is the 17.5 mm primary size; **no suffix** is the 18.0 mm
-alternate. `_stab` is explained under 2U below.
+`_17p5` is the 17.5 mm primary size; **no suffix** is the 18.0 mm alternate.
 
 ### What to print for one keyboard
 
 One agentpad13 needs **12 × 1U + 1 × 2U** in a single top treatment and size.
-For the default build — Box switches, 17.5 mm, plateau tops — that is:
+For the default build — 17.5 mm, plateau tops — that is:
 
-- `box/cap_plateau_1u_17p5.stl` × **12**
-- `box/cap_plateau_2u_17p5.stl` × **1**
+- `cap_plateau_1u_17p5.stl` × **12**
+- one 2U: `cap_plateau_2u_stab_17p5.stl` **if you are fitting stabilizers**
+  (the board plate is cut for them), or `cap_plateau_2u_17p5.stl` if not.
 
-Swap `plateau`→`dish` for the recessed top, drop `_17p5` for the 18.0 mm size,
-or use the `mx/cap_mx_*` files for Cherry-MX switches — same 12 + 1 recipe.
+Swap `plateau` → `dish` for the recessed top, or drop `_17p5` for the 18.0 mm
+size — same 12 + 1 recipe.
 
-### The 2U key (`_stab` variants)
+### The 2U key — stabilizers
 
-The board ships **without** stabilizers, so the default 2U cap
-(`cap_..._2u_*`) has a plain stem and is the one to print. The `_stab` files
-(`cap_..._2u_stab_*`) add Cherry plate-mount **stabilizer sockets** for builders
-who fit stabilizers to the 2U position — print one and test-fit it against your
-stabilizer before committing to a batch.
+The board plate **is** cut for Cherry plate-mount stabilizers at ±11.938 mm. If
+you fit them, print the **`_stab`** 2U (it adds the two matching stabilizer
+sockets); the plain 2U will not seat once stabilizers are in the plate. If you
+run the 2U un-stabilized, print the plain `cap_..._2u_*` instead. Test-fit one
+against your actual stabilizers before committing to a batch — the ±11.938 mm
+socket spacing is the Cherry spec but hand-fit clearances vary by brand.
 
-### Batch plates (`plates/`) — optional, for printing 5 units at once
+## How it mounts
 
-Print-ready sheets that tile many caps per plate, for anyone making a run of
-keyboards. They are the **Box** caps at both sizes:
+The central stem socket is a **1.25 mm square cross-slot** — the MX wide arm
+(1.30) minus 0.05 mm of designed interference, so it grips on the wide axis and
+floats the narrow one (Cherry's own arrangement). It press-fits safely across
+the whole manufacturing tolerance band of the MX cross and was validated in both
+SLA resin and FDM. Four diagonal (45°) webs stiffen the boss against pull-off.
 
-- `plate_<treatment>_1u_<size>_x20_{1of3,2of3,3of3}.stl` — 20 × 1U per sheet,
-  three sheets = **60 × 1U** (= 12 × 1U for 5 keyboards).
-- `plate_<treatment>_2u_<size>_x5.stl` — **5 × 2U** on one sheet (= 1 × 2U for
-  5 keyboards).
-
-So one full 5-keyboard set of one style is the three `_1u_..._x20` sheets plus
-the one `_2u_..._x5` sheet. For single builds, print the individual caps from
-`box/` instead. (Generic-MX caps are supplied as individual files only.)
+On a **Kailh Box** switch specifically, the Ø5.5 mm boss drops into the square
+box bore as a light slip-fit (guiding the cap and resisting wobble), while the
+four webs are sized to **clear** that box bore — so the same cap that fits a
+bare Cherry/Gateron also fits inside a Box's box without fouling.
 
 ## Printing
 
-**Any common rigid keycap material works — the caps are not restricted to one.**
-The stem socket is engineered for this: four diagonal (45°) webs stiffen the
-boss around a **1.25 mm square cross-slot**, sized to press-fit safely across
-the full manufacturing tolerance band of the MX cross, and it was validated in
-**both SLA resin and FDM**. PETG, ABS/ASA, or resin all work. Print stem-down,
-top-face up, no supports.
+**Any common rigid keycap material works** — PETG, ABS/ASA, or resin. Print
+**stem-down, top-face up, no supports**: the cross slot is then a clean vertical
+hole and the flat top / plateau / dish are the upward-facing last layers.
 
-**The STL is the final part.** Every dimension in these files is the true,
-finished physical size of the keycap — there is **no** process compensation
-baked in (no FDM undersize allowance, no SLA light-bleed allowance, no shrink
-factor). If your printer or material needs an offset, apply your own slicer /
-machine compensation downstream. Do not expect the files to pre-correct for
-your process.
+**The STL is the final part.** Every dimension is the true finished size of the
+keycap — there is **no** process compensation baked in (no FDM undersize
+allowance, no SLA light-bleed allowance, no shrink factor). If your printer or
+material needs an offset, apply your own slicer / machine compensation
+downstream; do not expect the files to pre-correct for your process.
 
 ## Licensing
 
