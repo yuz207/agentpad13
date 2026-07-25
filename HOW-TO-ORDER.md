@@ -64,10 +64,25 @@ pad on the PCB), and slightly softer switch-clip feel.
 
 ## Card 3 — the band (the case's translucent middle)
 
-**Fab path:** upload `hardware/case/stl/agentpad13_v2_band_1.6mm.stl` to any SLA resin service
+**Fab path:** upload `hardware/case/stl/agentpad13_v2_band_1.6mm_w5.4.stl` to any SLA resin service
 (PCBWay 3D-print works): **clear/transparent resin, standard finish — do NOT order polishing**
 (unpolished prints frosted, which is the desired LED-diffusing look). Keep out of prolonged direct
 sun or apply a UV-blocking matte clear coat.
+
+**Which file?** The `_w{N}` suffix is the **sidewall thickness in mm** — the one aesthetic knob on
+this part (thicker wall = wider frosted diffuser ring around the plate, and a stronger corner).
+**`_w5.4` is the default and the recommended file.** `_w3.0` (slimmer) and `_w7.4` (chunkiest) are
+equally valid, equally gated builds — every internal and mating dimension is identical across all
+three, including the USB port, which keeps a 2.10 mm plug-shell bridge at any wall thanks to a
+relief pocket at the port. **Pick exactly one; do not print
+`agentpad13_v2_band_1.6mm.stl`-without-a-suffix if you find it in an old copy** — that is the
+retired 2.4 mm-wall geometry whose corners a fab review flagged as too thin.
+
+| file | sidewall | outer size | corner minimum |
+|---|---|---|---|
+| `…_w3.0.stl` | 3.0 mm | 90.8 × 106.6 mm | 1.59 mm |
+| **`…_w5.4.stl` (default)** | **5.4 mm** | **95.6 × 111.4 mm** | **4.40 mm** |
+| `…_w7.4.stl` | 7.4 mm | 99.6 × 115.4 mm | 6.40 mm |
 
 **Home path:** same STL — home resin (frosted look) or FDM in a translucent filament
 (layered glow; print upright per `hardware/case/README.md` guidance).
@@ -75,6 +90,12 @@ sun or apply a UV-blocking matte clear coat.
 ## Card 4 — printed at home, always
 
 - **Tray**: `hardware/case/stl/agentpad13_v2_tray_v5.stl` — PETG, upright, 0.16–0.20 mm layers.
+- **Keycaps (optional — or buy MX caps)**: `hardware/case/keycaps/` — one universal cap that fits
+  Kailh Box / Cherry MX / Gateron KS-9. Pick a top (plateau or dish) and a size (`_17p5` primary,
+  no-suffix = 18.0 mm), then print 12 × 1U + one 2U (`_stab` if you fitted stabilizers). Print
+  stem-down, no supports. **Material is a requirement, not a preference: use a tough / ABS-like
+  resin (elongation at break ≳ 8%) or a rigid filament.** The stem socket grips via 0.07 mm crush
+  ribs that must *yield*; in a brittle standard resin they shatter and leave debris in the socket.
 - **Toppers**: `hardware/case/toppers/stl/` — pick ONE encoder knob (3 styles × 3 bore fits:
   5.9/6.0/6.1 — print the 6.0 first, size up/down if tight/loose) and ONE stick cap (4 styles ×
   3 socket fits: nom/p05/p10 — start nom). Renders in `hardware/case/toppers/renders/` show the

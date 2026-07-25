@@ -27,9 +27,11 @@ underglow) driven over Raw HID by an open agent-status protocol
   orientation is corrected** (mouth to the case wall aperture), and the
   **joystick is now a fab-placed YA13 tilt gimbal** with datasheet-verified
   wiring.
-- **Case: v2.5 — COMPLETE.** FR4 plate-as-deck + printed tray, matched to the
+- **Case: v2.7 — COMPLETE.** FR4 plate-as-deck + printed tray, matched to the
   v5 board. Three plate variants (exposed ENIG **gold-disc** touch marker /
-  tented disc with silk ring / blank no-copper), plus **printable toppers**
+  tented disc with silk ring / blank no-copper), the band in **three gated
+  sidewall thicknesses** (3.0 / **5.4 default** / 7.4 mm — same part inside,
+  different outside), plus **printable keycaps**, **printable toppers**
   (encoder knobs + stick caps in fit ladders) and an **optional PORON gasket
   kit**. Print files (STL/STEP) and orderable plate fab files under
   `hardware/case/` — see its README for print/order/assembly guidance.
@@ -70,11 +72,12 @@ HOW-TO-ORDER.md   Start here to build one: tiers, per-part order/print cards,
 hardware/
   pcb/    KiCad 9 project (agentpad13.kicad_pcb/.kicad_sch/.kicad_pro), vendored
           footprint libs, final BOM, Gerbers, per-SKU assembly bundles, renders.
-  case/   v2.5 case for the v5 board: FR4 plate-as-deck + printed band/tray.
-          STL/STEP print files, three orderable plate variants
-          (.kicad_pcb/.dxf + gerber zips), printable toppers (encoder knobs +
-          stick caps), printable keycaps (case/keycaps/ — vertical-wall
-          plateau/dish, Box + MX), optional gasket kit. See
+  case/   v2.7 case for the v5 board: FR4 plate-as-deck + printed band/tray.
+          STL/STEP print files (band in 3.0/5.4/7.4 mm sidewalls, 5.4 the
+          default), three orderable plate variants (.kicad_pcb/.dxf + gerber
+          zips), printable toppers (encoder knobs + stick caps), printable
+          keycaps (case/keycaps/ — vertical-wall plateau/dish, one universal
+          MX-compatible cap), optional gasket kit. See
           hardware/case/README.md.
 firmware/
   loudest_micro/  vial-qmk keyboard tree (RP2040, direct-pin, ENCODER_MAP,
