@@ -15,9 +15,15 @@ underglow) driven over Raw HID by an open agent-status protocol
   <img src="hardware/case/renders/agentpad13-v2-top.png" alt="agentpad13 case v2 top product render" width="42%">
 </p>
 
-<p align="center"><sub>Case concept: frosted RGB-diffusing band, matte-black FR4 plate, and printed tray.</sub></p>
+<p align="center"><sub>Case concept: frosted RGB-diffusing band, matte-black FR4 plate, and printed tray.
+<b>Concept art only</b> — drawn against the earlier thin band; the shipping v2.7 band has a
+<b>5.4 mm sidewall</b> (95.6 × 111.4 mm outside), as in the CAD renders below.</sub></p>
 
 ![agentpad13 — assembled](renders/hero.png)
+
+<p align="center"><sub>Assembled v5 board in the v2.7 case, straight from the CAD model — 5.4 mm band
+(5.3 mm visible rim), FR4 plate deck, encoder NW, YA13 tilt stick NE, USB-C on the north wall.
+Six-view turntable: <a href="renders/turntable.png"><code>renders/turntable.png</code></a>.</sub></p>
 
 ## Status
 
