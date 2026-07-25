@@ -1,4 +1,4 @@
-# agentpad13 case v2.5
+# agentpad13 case v2.7
 
 Case for the **v5 board** (84.2 × 100 mm octagon). Architecture:
 **FR4 plate-as-deck + printed tray** — a screwed-down 1.6 mm FR4 plate on top
@@ -6,8 +6,8 @@ Case for the **v5 board** (84.2 × 100 mm octagon). Architecture:
 (never screwed), and a printed tray on the bottom carrying the heat-set
 inserts and feet. A printed **band** forms the visible side wall; the plate
 drops into a ledge inside the band and sits flush with its rim. Four M3
-screws clamp plate + band + tray as one stack. Outer size 89.6 × 105.4 mm,
-~12.5 mm tall plus feet.
+screws clamp plate + band + tray as one stack. Outer size **95.6 × 111.4 mm**
+with the default 5.4 mm sidewall, ~12.5 mm tall plus feet.
 
 What changed versus the earlier v2 file set: the plate is **1.6 mm** and
 carries the **v5 joystick opening** (the YA13 tilt stick's asymmetric
@@ -15,6 +15,17 @@ rounded-rect instead of the old circle), the band seats that 1.6 mm plate
 (`band_1.6mm`), the tray matches the v5 board's chamfered corner and joystick
 underside (`tray_v5`), and the kit adds **printable toppers** (encoder knobs +
 stick caps) and an **optional gasket**.
+
+**v2.7 — the band sidewall is now 5.4 mm** (was 2.4). A fab 3D-print review
+flagged the old 2.4 mm wall's corners as too thin to print reliably, so the
+band grew outward. It is offered in **three gated wall thicknesses** — the
+only thing that differs between them is the outside of the band. Every
+internal and mating dimension is identical across all three: the ledge, the
+plate recess, the boss sockets, the screw pass and the USB aperture are
+frozen, so the plate, tray, PCB and gasket kit are the *same parts* at any
+wall. **The 2.4 mm band is retired and is no longer in this repo** — if you
+have an old copy of `agentpad13_v2_band_1.6mm.stl` with no `_w` suffix, do not
+print it.
 
 For the full build path — what to order where, firmware, bring-up — start at
 [`HOW-TO-ORDER.md`](../../HOW-TO-ORDER.md) in the repo root.
@@ -25,8 +36,22 @@ For the full build path — what to order where, firmware, bring-up — start at
 
 | File | What it is | How to make |
 |------|-----------|-------------|
-| `agentpad13_v2_band_1.6mm` | Top case — the visible side band, seated for the 1.6 mm plate | Frosted/clear resin (SLA) for the default look, or FDM in a translucent filament |
+| `agentpad13_v2_band_1.6mm_w5.4` | Top case — the visible side band, seated for the 1.6 mm plate. **The default**; see the wall table below | Frosted/clear resin (SLA) for the default look, or FDM in a translucent filament |
 | `agentpad13_v2_tray_v5` | Bottom case — locating posts, insert bosses, feet; v5-board fit | FDM PETG **always** (resin cannot take heat-set inserts) |
+
+**Band wall — pick exactly ONE.** The `_w{N}` suffix is the sidewall thickness
+in mm. It is the one aesthetic knob on this part: a thicker wall means a wider
+frosted diffuser ring around the plate and a stronger corner. All three are
+equally valid, equally gated builds.
+
+| File | Sidewall | Outer size | Corner minimum |
+|------|---------|-----------|----------------|
+| `…_w3.0` | 3.0 mm | 90.8 × 106.6 mm | 1.59 mm |
+| **`…_w5.4` (default)** | **5.4 mm** | **95.6 × 111.4 mm** | **4.40 mm** |
+| `…_w7.4` | 7.4 mm | 99.6 × 115.4 mm | 6.40 mm |
+
+The USB port keeps a 2.10 mm plug-shell bridge at every wall — a relief pocket
+at the port deepens with the wall so the connector never gets buried.
 
 `step/agentpad13_v2_plate.step` is the plate's 3D model — reference geometry
 for the FR4 order, and the file you print if you take the plate's home path.
@@ -80,9 +105,12 @@ Renders of every style are in `toppers/renders/`.
 ### Keycaps (`keycaps/`) — printed caps for the 13 keys
 
 Custom vertical-wall (chiclet-style, no taper) keycaps: **plateau** or **dish**
-top, **17.5 mm** (primary) or 18.0 mm footprint, for Kailh **Box** (default) or
-**generic MX** switches. One keyboard = 12 × 1U + 1 × 2U; batch plates for a
-5-unit run are included. See `keycaps/README.md`.
+top, **17.5 mm** (primary) or 18.0 mm footprint. **One universal cap** fits
+Kailh Box, Cherry MX and Gateron KS-9 alike — they all present the same MX
+cross. One keyboard = 12 × 1U + 1 × 2U. The stem socket uses **compliant
+crush ribs**, which makes the material a requirement rather than a preference:
+print them in a **tough / ABS-like resin** (or a rigid filament), never a
+brittle standard resin. See `keycaps/README.md`.
 
 ### Gasket (`gasket/`) — optional
 

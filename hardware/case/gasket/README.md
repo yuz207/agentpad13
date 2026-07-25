@@ -10,9 +10,18 @@ band's rabbet ledge.
 > is wrong.
 
 > **No design geometry changed anywhere.** This kit is a paper/foam accessory
-> *derived* from the existing band geometry. The band, tray, plate and board
-> files (and their md5s) are byte-for-byte untouched — the band STL remains
-> `36980cc2ff011dc32d923fb04f7429f7`. Nothing here is ordered from a fab.
+> *derived* from the existing band geometry. Nothing here is ordered from a fab.
+>
+> **The kit is the same part at every band wall.** The band's sidewall grew
+> twice (2.4 → 3.0 in v2.6, then 3.0 → **5.4** in v2.7, both after fab reviews
+> of the old thin corner), and the band is now shipped in three gated wall
+> thicknesses — `_w3.0`, **`_w5.4` (the default)** and `_w7.4`. **None of that
+> touches this kit.** The ledge is derived from the band's *inner* geometry,
+> which is frozen: the band only ever grew outward, removing no material and
+> adding none into any mating void. Re-measured against the 5.4 mm band, the
+> ledge underside and ring come back to exactly the numbers in the table below,
+> and the template art regenerates byte-identical. Cut one kit; it fits
+> whichever band you printed.
 
 ---
 
@@ -27,7 +36,7 @@ ring is cut in the case model's `band()` step from these constants
 |---|---|---|
 | ledge width `LEDGE_W` | `1.2 mm` | case model |
 | ledge underside `LEDGE_Z0` | `+0.3 mm` above PCB top | case model |
-| band inner wall `INNER_W × INNER_H` (ledge OUTER outline) | `84.8 × 100.6 mm`, R`5.6` | derived `PCB + 2·PCB_CLEARANCE`, `OUTER_R − WALL` |
+| band inner wall `INNER_W × INNER_H` (ledge OUTER outline) | `84.8 × 100.6 mm`, R`5.6` | derived `PCB + 2·PCB_CLEARANCE`; the corner radius is **frozen** (v2.6) rather than `OUTER_R − WALL`, so a sidewall change cannot move the ledge, the plate's R5.4 or the tray's R5.35 |
 | ledge INNER outline `INNER_ − 2·LEDGE_W` | `82.4 × 98.2 mm`, R`4.4` | derived |
 | PCB outline | `84.2 × 100.0 mm` octagon | the board (`hardware/pcb/agentpad13/agentpad13.kicad_pcb`) |
 
