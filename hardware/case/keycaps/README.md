@@ -77,22 +77,61 @@ socket spacing is the Cherry spec but hand-fit clearances vary by brand.
 
 ## How it mounts
 
-The central stem socket is a **1.25 mm square cross-slot** — the MX wide arm
-(1.30) minus 0.05 mm of designed interference, so it grips on the wide axis and
-floats the narrow one (Cherry's own arrangement). It press-fits safely across
-the whole manufacturing tolerance band of the MX cross and was validated in both
-SLA resin and FDM. Four diagonal (45°) webs stiffen the boss against pull-off.
+The central stem socket is a cross-slot **4.20 mm across and 3.80 mm deep**. It
+grips on the wide axis and floats the narrow one (Cherry's own arrangement):
 
-On a **Kailh Box** switch specifically, the Ø5.5 mm boss drops into the square
-box bore as a light slip-fit (guiding the cap and resisting wobble), while the
-four webs are sized to **clear** that box bore — so the same cap that fits a
-bare Cherry/Gateron also fits inside a Box's box without fouling.
+- **Wide (X) axis — a compliant crush-rib fit.** The bore itself measures
+  **1.42 mm**, which is a *hard stop* wider than any MX cross in evidence, so
+  the bore can never squeeze the stem. Retention comes instead from **eight
+  small integral ribs**, 0.07 mm proud and 0.50 mm wide at the base, that give
+  an **effective opening of 1.28 mm**. The ribs deform slightly as the stem
+  goes in, so the grip is set by how far a rib yields rather than by how big
+  your particular switch's cross turned out to be. A 45° mouth flare and an
+  11.3° lead-in ramp mean the stem meets a ramp, never a step.
+- **Narrow (Y) axis — a plain 1.25 mm clearance slot**, 0.075 mm/side over the
+  1.10 mm arm. It has never been the gripping axis and stays free.
+
+Why compliant rather than a plain dimensional slot: manufacturer drawings put
+the MX wide arm at 1.30 ± 0.02 mm, but caliper reports on real switches run
+nearer 1.39 mm — a 0.09 mm disagreement, 3.5× the drawing's own tolerance. A
+fixed slot has to bet on one of those being right; a rib that yields covers the
+whole range. It also absorbs print variance, which lands on the rib crest
+instead of going straight into interference.
+
+Four diagonal (45°) webs stiffen the boss against pull-off.
+
+On a **Kailh Box** switch specifically, the boss drops into the square box bore
+as a light slip-fit (guiding the cap and resisting wobble), while the four webs
+are sized to **clear** that bore — so the same cap that fits a bare
+Cherry/Gateron also fits inside a Box's box without fouling. The boss profile
+is **lobed** rather than round (a Ø6.00 mm circle intersected with a 5.50 mm
+square): across the flats it is still 5.50 mm, holding the same 0.15 mm slip
+fit to the bore, but it reaches further out on the diagonals — where the
+switch's cross arms are not — which thickens the thinnest socket wall to a
+uniform **0.650 mm** at no cost in clearance anywhere.
 
 ## Printing
 
-**Any common rigid keycap material works** — PETG, ABS/ASA, or resin. Print
-**stem-down, top-face up, no supports**: the cross slot is then a clean vertical
-hole and the flat top / plateau / dish are the upward-facing last layers.
+> **Material is a REQUIREMENT, not a preference: use a tough / ABS-like resin
+> (elongation at break roughly ≥ 8%), or a rigid filament such as PETG or
+> ABS/ASA. Do not use a brittle standard resin.** The socket's retention ribs
+> work by *yielding* — in a brittle resin a 0.07 mm rib shatters instead of
+> deforming, which throws away the retention and leaves debris inside the
+> socket. The same brittleness is what would turn the socket's 0.650 mm wall
+> into a crack. If you are ordering these from a print bureau, say so on the
+> order, and ask them to stop and check with you rather than substitute a
+> standard resin.
+
+Print **stem-down, top-face up, no supports**: the cross slot is then a clean
+vertical hole, the ribs are grounded vertical material, and the flat top /
+plateau / dish are the upward-facing last layers.
+
+The socket wall is **0.650 mm** at its thinnest, which is below the usual
+1.2 mm rule of thumb and is deliberate: that wall sits in the 0.90 mm moat
+between the switch's cross and its surrounding box wall, and 0.650 mm is the
+geometric ceiling — a 1.0 mm wall would put the boss 0.20 mm *into* the switch
+body and the cap would never seat. A print bureau may flag it; the answer is
+the material above, not a thicker wall.
 
 **The STL is the final part.** Every dimension is the true finished size of the
 keycap — there is **no** process compensation baked in (no FDM undersize
