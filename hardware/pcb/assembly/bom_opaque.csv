@@ -20,7 +20,7 @@ R7,1,10k 0402,0402WGF1002TCE,UNI-ROYAL,C25744,by MPN,R_0402_1005Metric,Place,PCB
 "R8,R9",2,4.7k 0402,0402WGF4701TCE,UNI-ROYAL,C25900,by MPN,R_0402_1005Metric,Place,PCBWay-SMD,I2C SDA/SCL pull-ups
 R10,1,0R 0402,0402WGF0000TCE,UNI-ROYAL,C17168,by MPN,R_0402_1005Metric,Place,PCBWay-SMD,AHLB strap (GND=active-high)
 "SW1,SW2,SW3,SW4,SW5,SW6,SW7,SW8,SW9,SW10,SW11,SW12,SW13",13,MX hotswap socket,Kailh CPG151101S11,Kailh,C41430893,via KBDfans,SW_MX_HS_CPG151101S11_1u,Place,PCBWay-SMD(back),DELTA: fab-placed BASELINE (owner: no fine-SMD hand work). Hand-solder alt priced in COST-ANALYSIS ($79.6 vs $81.8/bd qty5). MX-only; Choc path deleted; socket-on-back south-facing
-"SW14,SW15",2,BOOT/RESET tact,TS-1187A,XKB/multi,C318884,by MPN,SW_SPST_PTS645Sx43SMTR92,Place,PCBWay-SMD,reachable through case holes
+"SW14,SW15",2,BOOT/RESET tact,PTS645SM43SMTR92 LFS,C&K,C221880,CKN9112CT-ND,SW_SPST_PTS645Sx43SMTR92,Place,PCBWay-SMD,"6.0x6.0mm H4.3 SMT gull-wing 160gf SPST-NO; matches FP SW_SPST_PTS645Sx43SMTR92. 2026-08-04 CORRECTION: prior TS-1187A (C318884) REJECTED by PCBWay component verification - 5.1x5.1mm body / 6.5mm lead span vs 7.96mm pad span (not solderable). DO NOT substitute PTS645SM43JSMTR92 LFS (C2801847) - J-lead, DIFFERENT land pattern. Reachable through case holes"
 U1,1,RP2040,RP2040,Raspberry Pi,C2040,2648-RP2040TR,QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm,Place,PCBWay-SMD,QFN-56 0.4mm pitch; only active with no alt by decision
 U2,1,W25Q128JVSIQ,W25Q128JVSIQ,Winbond,C97521,W25Q128JVSIQ-ND,SOIC-8_5.3x5.3mm_P1.27mm,Place,PCBWay-SMD,16MB QSPI SOIC-8; 2MB no cheaper so ship 16MB
 U3,1,AP2112K-3.3,AP2112K-3.3TRG1,Diodes Inc,C51118,AP2112K-3.3TRG1DICT-ND,SOT-23-5,Place,PCBWay-SMD,600mA SOT-23-5 LDO; verify pinout at FP bind
