@@ -35,7 +35,7 @@
             {"pin_a": "GP13", "pin_b": "GP14"}
         ]
     },
-    "$joystick_comment": "PLACEHOLDER calibration - 512 center, 0..1023 span. Real low/rest/high come from the bring-up ADC sweep on the Adafruit 3103 module (meter its pinout before soldering; see the hand-solder afterlist). QMK native output is HID gamepad; arrow/scroll modes are custom code in loudest_micro.c (JS_MODE keycode). JOY_X_ADC = GP26/ADC0, JOY_Y_ADC = GP27/ADC1 per ORDER-READINESS.md Layer 4.",
+    "$joystick_comment": "PLACEHOLDER calibration - 512 center, 0..1023 span. Real low/rest/high come from the bring-up ADC sweep on the assembled board. JS1 = YTL YA13-FL7.4-B5Ka(45-10)-R-Y06, LCSC C37323742, footprint Joystick:YA13-FL7.4-B5Ka_C37323742 - machine-placed THT, wiring datasheet-verified: nothing to meter, nothing to hand-solder (CORRECTED 2026-07-19; this line used to say 'the Adafruit 3103 module (meter its pinout before soldering; see the hand-solder afterlist)' - that part was dropped and JS1 is no longer on the afterlist). Only other bring-up item is axis direction: firmware/POLARITY-NOTE.md in the release, a one-line config flip per reversed axis. QMK native output is HID gamepad; arrow/scroll modes are custom code in loudest_micro.c (JS_MODE keycode). JOY_X_ADC = GP26/ADC0, JOY_Y_ADC = GP27/ADC1 per ORDER-READINESS.md Layer 4.",
     "joystick": {
         "driver": "analog",
         "button_count": 0,

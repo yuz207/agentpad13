@@ -304,8 +304,16 @@ patch, Arm GNU Toolchain 15.2.Rel1, zero warnings (`-Werror`).
 
 1. **Joystick calibration** ships as placeholder `0/512/1023`
    (`CALIBRATION-PENDING` markers) — needs the bring-up ADC sweep on the real
-   Adafruit 3103 module (which itself must be pinout-metered before
-   soldering, per the hardware hand-solder afterlist).
+   ~~Adafruit 3103 module (which itself must be pinout-metered before
+   soldering, per the hardware hand-solder afterlist).~~
+   🔻 **CORRECTED 2026-07-19:** JS1 is the YTL **YA13-FL7.4-B5Ka(45-10)-R-Y06**
+   (LCSC **C37323742**, footprint `Joystick:YA13-FL7.4-B5Ka_C37323742`) —
+   **machine-placed THT**, wiring datasheet-verified. There is **nothing to meter
+   and nothing to hand-solder**: JS1 has left the hand-solder afterlist (RE1 is
+   the only entry left). The ADC sweep is still needed for real low/rest/high on
+   the assembled board; the only other bring-up item is axis direction —
+   `firmware/POLARITY-NOTE.md` (in the release), a one-line config flip per
+   reversed axis.
 2. **Vial-build protocol edge cases** (§3, by design, documented): host-side
    SET_LAYER 1–3 and SET_KEY(0, #000000, solid) route to VIA; during a Vial
    security-unlock sequence the protocol is paused (frames echoed unhandled).

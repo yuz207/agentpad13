@@ -3,7 +3,12 @@
 // hardware/pcb/v4/ORDER-READINESS.md (Layer 4 per-GPIO table, board v4_r27).
 #pragma once
 
-// --- Joystick (analog PSP-slider on ADC, planar) ---
+// --- Joystick (analog 2-axis tilt gimbal on ADC) ---
+// JS1 = YTL YA13-FL7.4-B5Ka(45-10)-R-Y06, LCSC C37323742, machine-placed THT.
+// (Corrected 2026-07-19; this used to read "analog PSP-slider on ADC, planar"
+// for the dropped Adafruit 3103 hand-solder part. Electrically identical from
+// firmware's side: dual pot, wiper -> ADC. Axis DIRECTION may need inverting --
+// see firmware/POLARITY-NOTE.md in the release; one-line flip, no rebuild.)
 // Axes + placeholder calibration (512 center, 0..1023) live in keyboard.json
 // ("joystick": {"driver": "analog", "axes": ...}) which auto-generates
 // joystick_axes[]. JOYSTICK_AXIS_COUNT (=2) and JOYSTICK_BUTTON_COUNT (=0) are

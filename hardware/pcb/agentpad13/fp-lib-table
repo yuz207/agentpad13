@@ -7,5 +7,6 @@
 	(lib (name "MX_V2_Hotswap")(type "KiCad")(uri "${KIPRJMOD}/../lib/MX_V2/MX_Hotswap.pretty")(options "")(descr "ai03 MX_V2 hotswap footprints (alternative MX hotswap source)"))
 	(lib (name "MX_V2_Solderable")(type "KiCad")(uri "${KIPRJMOD}/../lib/MX_V2/MX_Solderable.pretty")(options "")(descr "ai03 MX_V2 solderable MX footprints (plate-mount fallback, spec gate D3)"))
 	(lib (name "MX_V2_Alps_MX_Stabilizers")(type "KiCad")(uri "${KIPRJMOD}/../lib/MX_V2/Alps_MX_Stabilizers.pretty")(options "")(descr "ai03 MX_V2 MX/Alps stabilizer footprints (2U key SW13 alternative)"))
-	(lib (name "loudest")(type "KiCad")(uri "${KIPRJMOD}/../lib/loudest.pretty")(options "")(descr "agentpad13 custom footprints: JS1 PSP-slider hand-solder landing (pinout metered-before-solder)"))
+	(lib (name "loudest")(type "KiCad")(uri "${KIPRJMOD}/../lib/loudest.pretty")(options "")(descr "agentpad13 custom footprints: JS1 PSP-slider hand-solder landing - SUPERSEDED 2026-07-19 by the Joystick lib below; retained as the record of what was replaced, referenced by no live file"))
+	(lib (name "Joystick")(type "KiCad")(uri "${KIPRJMOD}/../lib/Joystick.pretty")(options "")(descr "agentpad13 JS1: YTL YA13-FL7.4-B5Ka(45-10)-R-Y06 2-axis tilt joystick (LCSC C37323742), THT machine-placed, 6 signal Ø1.0 + 4 GND frame lugs Ø1.2 - exported 2026-08-05 from v5/hardware/pcb/v5_6.kicad_pcb"))
 )
