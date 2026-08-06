@@ -71,11 +71,13 @@ The `.kicad_pcb` files are the sources behind the zips;
 `agentpad13_v2_plate_v5.dxf` is an alternative outline input, and
 `agentpad13_v2_plate_v5_top.png` / `.svg` are previews.
 
-**Order settings** (any PCB fab, as a bare board): 2 layers · **1.6 mm
-thickness** (do not leave a different default!) · single pieces, 1 design ·
-soldermask color = the face color of your build. Remarks field: *"Mechanical
-switch plate — minimal copper by design; please proceed despite low copper
-density."*
+**Order settings** (any PCB fab, as a bare board): 2 layers · **84.4 × 100.0 mm**
+(all three variants — the long axis is deliberately trimmed to land inside the
+common ≤100 mm promo tier, so if the fab's form quotes a larger size, re-check
+the upload) · **1.6 mm thickness** (do not leave a different default!) · single
+pieces, 1 design · soldermask color = the face color of your build. Remarks
+field: *"Mechanical switch plate — minimal copper by design; please proceed
+despite low copper density."*
 
 **Home path:** print `step/agentpad13_v2_plate.step` (modern slicers open STEP
 directly) in PETG or resin, 100% infill. Trade-offs: no copper — the touch key

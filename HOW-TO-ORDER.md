@@ -15,7 +15,9 @@ cards below — every orderable or printable part of the build appears in exactl
 Parts shopping list (all tiers): 13× MX-compatible switches (hot-swap, no soldering), keycaps
 (12×1U + 1×2U), EC11 encoder + knob hardware if not printing a topper, M3×8 button-head screws (4),
 M3 heat-set inserts Ø4.2 pilot (4), conductive foam (touch pillar, ~Ø8–10×5 mm), PORON/EVA sheet
-1–2 mm (optional gasket), rubber feet, USB-C cable.
+**0.5 mm** (optional gasket — buy 0.5 mm, not thicker: the kit is sized for ~40 % compression into
+the band's 0.3 mm ledge gap, and 1–2 mm stock will not compress into that gap at all), rubber feet,
+USB-C cable.
 
 ---
 
@@ -53,7 +55,9 @@ the choice is mostly a COST decision, because one of the three requires the ENIG
 | `plate_v5_ring_gerbers.zip` | same electrode, fully tented under the soldermask — senses through the mask at ~90% signal | a Ø16 white silkscreen ring | **any finish — HASL-LF fine** (cheapest) | the budget build |
 | `plate_v5_blank_gerbers.zip` | no copper at all — plain FR4 skeleton | none | any | skipping the touch feature (it degrades to through-air sensing at best; treat the touch key as absent) |
 
-Settings: 2 layers · **1.6 mm** (do not leave a different default!) · single pieces, 1 design ·
+Settings: 2 layers · **84.4 × 100.0 mm** (all three variants; deliberately trimmed to land inside
+the ≤100 mm promo tier — if the fab's form quotes you a larger size, re-check the upload) ·
+**1.6 mm** (do not leave a different default!) · single pieces, 1 design ·
 mask color = the face color of your build. Remarks: *"Mechanical switch plate — minimal copper by
 design; please proceed despite low copper density."*
 
