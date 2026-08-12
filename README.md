@@ -1,3 +1,6 @@
+
+</think>
+
 # agentpad13
 
 Open-source 13-key macropad for agentic work, built from scratch. Bare RP2040, USB-C,
@@ -41,7 +44,7 @@ Six-view turntable: <a href="renders/turntable.png"><code>renders/turntable.png<
   (encoder knobs + stick caps in fit ladders) and an **optional PORON gasket
   kit**. Print files (STL/STEP) and orderable plate fab files under
   `hardware/case/` — see its README for print/order/assembly guidance.
-- **Firmware: VALIDATED.** Emulator-boot tested, Raw HID protocol-conformant,
+- **Firmware: VALIDATED.** Boot-tested in the `rp2040js` emulator, Raw HID protocol-conformant,
   and the pin map matches the v5 board (unchanged from Rev A v4 — v5 needed
   zero firmware changes).
 
@@ -102,4 +105,3 @@ firmware/
 
 Vendored footprint libraries under `hardware/pcb/lib/` keep their upstream
 licenses (marbastlib: CERN-OHL-P v2; MX_V2: MIT) — see `hardware/pcb/lib/LIBS.md`.
-
