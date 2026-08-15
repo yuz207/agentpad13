@@ -13,10 +13,17 @@ the repo; the multi-gigabyte vial-qmk checkout does not.
 Status: **both keymaps compile to a clean `.uf2` with zero code warnings**
 (`-Werror` is on). No features were stubbed — the joystick, RGB status
 protocol, touch toggle, encoder map, Vial + VialRGB, and joystick modes are
-all real code. The pin map targets the shipped Rev A board (`v4_r27`); its
-single source of truth is the Layer 4 per-GPIO table in
-`hardware/pcb/v4/ORDER-READINESS.md`, and `check_pins_v4.py` (below) asserts
-the tree against it.
+all real code. The pin map targets the **shipped board
+`v5/hardware/pcb/v5_6.kicad_pcb`** (md5 `221ebb98fcf44f860ed65f7ed8d1bc45`) —
+check this tree against **that** file. The map is **unchanged from v4** and was
+re-verified 20/20 GPIO directly against `v5_6` on 2026-08-13 (`v5/V5-NOTES.md`,
+firmware-verification pass, Task 3), so the Layer 4 per-GPIO table in
+`hardware/pcb/v4/ORDER-READINESS.md` is where it came from and still describes
+`v5_6` correctly; `check_pins_v4.py` (below) asserts the tree against that
+table. *(Corrected 2026-08-13; this used to read "the pin map targets the
+shipped Rev A board (`v4_r27`); its single source of truth is …", naming a
+superseded board file as the thing to verify firmware against. The values were
+correct; the citation was not.)*
 
 ---
 
@@ -150,10 +157,43 @@ matrix or layer count is the only thing that forces a `Reset EEPROM`
 
 ---
 
-## 5. Pin map (Rev A, board v4_r27)
+## 4a. Bring-up: first-power-on calibration (`calibrate` keymap)
 
-Single source of truth: `hardware/pcb/v4/ORDER-READINESS.md` Layer 4 (the
-definitive 30-GPIO table, extracted twice from the final copper). Direct-pin
+**The procedure now lives in [`firmware/BRING-UP.md`](BRING-UP.md) — that file is
+the single source of truth for it and is not duplicated here.** It was moved out
+of this section on 2026-08-15 so that it can ship in `v5-release-compiled/`
+byte-identical (the same arrangement `firmware/POLARITY-NOTE.md` already has):
+the audience for bring-up is the owner assembling and powering the first boards,
+who needs the Step 0 layer-LED check, the BOOTSEL flash, the four guided `SW1`
+presses, the touch/encoder verification lines and what to do with the typed
+config block — **not** the 400-line toolchain guide around it. Nothing was
+rewritten in the move; only the maintainer-side block below stayed, because its
+commands need a QMK build tree and repo paths that a bundle reader does not have.
+
+### For maintainers
+
+```bash
+qmk compile -kb loudest_micro -km calibrate     # clean under -Werror
+node firmware/sim/calibrate.cjs                 # referee -> CALIBRATE SIM: PASS
+node firmware/sim/calibrate.cjs --no-adc-fix    # A/B arm -> must FAIL
+```
+
+The build is byte-for-byte reproducible like `default`
+(md5 `aabf7954f1e2b46880f298fd620d63ff`, 96768 bytes — *rebuilt 2026-08-15 for
+the isotropic RGB layout and the `housekeeping_task_user()` de-duplication;
+supersedes `a81ce4a137e667d73e3cd9da5c82a98a`, same 96768 bytes*). Source and
+rationale: `firmware/loudest_micro/keymaps/calibrate/`.
+
+---
+
+## 5. Pin map (Rev A — shipped board `v5_6`; map unchanged from `v4_r27`)
+
+Source table: `hardware/pcb/v4/ORDER-READINESS.md` Layer 4 (the
+definitive 30-GPIO table, extracted twice from the final copper) — **re-verified
+20/20 GPIO against the shipped `v5/hardware/pcb/v5_6.kicad_pcb` on 2026-08-13**
+(`v5/V5-NOTES.md`), which is the board file to check against. *(Corrected
+2026-08-13; this heading and line used to say "board v4_r27" / "single source of
+truth", which pointed a future verifier at a superseded board.)* Direct-pin
 matrix — logical `[row][col]` positions unchanged, physical GPIOs follow the
 board's x-monotonic routing remap:
 
@@ -162,7 +202,21 @@ board's x-monotonic routing remap:
 | row 0 | SW1 SW2 SW3 SW4 | GP12 GP9 GP5 GP2 |
 | row 1 | SW5 SW6 SW7 SW8 | GP11 GP8 GP4 GP1 |
 | row 2 | SW9 SW10 SW11 SW12 | GP10 GP7 GP3 GP0 |
-| row 3 | SW13 (2U) · encoder push · touch | GP6 · GP15 · GP16 |
+| row 3 | SW13 (2U) · encoder push · touch\* | GP6 · GP15 · *(GP16, see below)* |
+
+\* **GP16 is deliberately NOT in `matrix_pins.direct`** (it is `null` at
+`[3][2]`). The board straps the TTP223 **active-HIGH** — `R10` (0 Ω) ties
+`TOUCH_AHLB → GND` on `v5_6.kicad_pcb`, so `GP16` idles LOW and drives HIGH while
+touched — which is the opposite of the 13 switch-to-GND keys. QMK's only
+direct-pin polarity knob, `MATRIX_INPUT_PRESSED_STATE`, is applied **globally**
+in `quantum/matrix.c` `readMatrixPin()`, so using it would invert all 13
+switches. Instead `loudest_micro.c` configures `GP16` in `keyboard_pre_init_kb()`
+(input, pull-**down**) and polls it in `matrix_scan_kb()` with a 5 ms debounce,
+injecting `action_exec(MAKE_KEYEVENT(3, 2, pressed))` — so the key keeps its
+logical position, keycode, `TO()` layer chain and `TP_TOG` gate. Fixed
+2026-08-13; before that the mismatch made `[3,2]` read permanently pressed and
+the pad booted into layer 1. Only side effect: Vial's matrix tester cannot show
+`[3,2]`, since it reads the scanned `matrix[]`.
 
 Encoder A/B = GP13/GP14 · WS2812 data = GP17 (through the SN74LVC1T45 level
 shifter) · joystick X/Y = GP26/GP27 (ADC0/ADC1). GP18/GP19 (I2C1), GP20 and
@@ -243,7 +297,10 @@ echoed unhandled — by design, matching Vial's restricted-command window.
   `analogReadPin` is 10-bit (0–1023) so center ≈512 is structurally right, but
   the real deadzone/curve/rest values come from a bring-up ADC sweep on the
   real module (`config.h`, `keyboard.json`, and `JS_CENTER/JS_THRESHOLD` in
-  `loudest_micro.c` are marked `CALIBRATION-PENDING`).
+  `loudest_micro.c` are marked `CALIBRATION-PENDING`). **The sweep now has a
+  mechanism — see [`firmware/BRING-UP.md`](BRING-UP.md)**: flash the `calibrate`
+  keymap and the board types its own measurements plus the finished config
+  lines. `JS_THRESHOLD` is re-derived there too, not just the endpoints.
 * **Joystick mode exclusivity.** In arrows/scroll mode the native HID gamepad
   axes keep reporting (QMK's `JOYSTICK_AXIS_IN` task reads every housekeeping
   cycle); the arrow/scroll events are layered on top. To make the modes
@@ -262,3 +319,8 @@ If a fresh build dies with `stdint.h: No such file or directory`, your PATH is
 finding the Homebrew `arm-none-eabi-gcc` formula (no newlib) instead of the
 official Arm toolchain. Put the extracted `arm-gnu-toolchain/bin` **first** on
 PATH.
+
+**Build SERIALLY on macOS.** `qmk compile -j N` adds `--output-sync=target`,
+which the GNU Make **3.81** that ships with macOS rejects — the build dies before
+compiling anything. The plain `qmk compile` lines in §3 are already serial; do
+not add `-j`.

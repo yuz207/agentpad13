@@ -2,8 +2,9 @@
 //
 // Loads the real production UF2, boots it, then verifies against the
 // ORDER-READINESS Layer 4 pin table:
-//   1. pin muxing: matrix/encoder pins on SIO with pull-ups, GP17 on PIO
-//      (ws2812 vendor driver), GP26/27 handed to the ADC
+//   1. pin muxing: matrix/encoder pins on SIO with pull-ups, GP16 (TTP223 OUT,
+//      active-high strap, handled outside the matrix) on SIO with a pull-DOWN,
+//      GP17 on PIO (ws2812 vendor driver), GP26/27 handed to the ADC
 //   2. WS2812 data activity on GP17 (edge count)
 //   3. full USB HID enumeration (device descriptor, config, interfaces)
 //   4. key scan: drive SW1 (GP12) low -> keyboard IN report; release -> clear
@@ -87,11 +88,19 @@ console.log(`loaded ${blocks} UF2 blocks from ${uf2Path}`);
   dma.readUint32 = (offset) => (offset === 0x444 ? 0 : origRead(offset));
 }
 
-// The emulator does not fold pull-ups into inputValue, so idle-high matrix /
-// encoder / touch lines must be driven high explicitly (otherwise every key
-// reads pressed and bootmagic [SW1 held] would jump to the bootloader).
-const INPUT_PINS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+// The emulator does not fold pulls into inputValue, so idle levels must be
+// driven explicitly (otherwise every key reads pressed and bootmagic [SW1 held]
+// would jump to the bootloader).
+// GP0-GP15 are switch/encoder lines to GND: idle HIGH.
+const INPUT_PINS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 for (const p of INPUT_PINS) mcu.gpio[p].setInputValue(true);
+// GP16 is the TTP223 output, and it is the OPPOSITE sense: R10 (0R) straps
+// TOUCH_AHLB -> GND on v5_6.kicad_pcb, and AHLB low selects the TTP223's
+// ACTIVE-HIGH output, so Q idles LOW and drives HIGH while touched. (Corrected
+// 2026-08-13; this line used to drive GP16 high with the switch lines, which
+// modelled the polarity the firmware wrongly assumed. firmware/sim/behavior.cjs
+// makes the same idle level selectable via --touch= and is the polarity gate.)
+mcu.gpio[16].setInputValue(false);
 
 // --- WS2812 activity probe on GP17
 let gp17Edges = 0;
@@ -320,10 +329,20 @@ for (const chan of mcu.dma.channels) {
 const edgesBefore = gp17Edges;
 runForMicros(300000);
 console.log('-- pin configuration after boot (funcsel: 5=SIO, 6/7=PIO, 31=NULL/ADC)');
-const expectSio = { 0: 'SW12', 1: 'SW8', 2: 'SW4', 3: 'SW11', 4: 'SW7', 5: 'SW3', 6: 'SW13', 7: 'SW10', 8: 'SW6', 9: 'SW2', 10: 'SW9', 11: 'SW5', 12: 'SW1', 13: 'ENC_A', 14: 'ENC_B', 15: 'ENC_SW', 16: 'TOUCH_OUT' };
+const expectSio = { 0: 'SW12', 1: 'SW8', 2: 'SW4', 3: 'SW11', 4: 'SW7', 5: 'SW3', 6: 'SW13', 7: 'SW10', 8: 'SW6', 9: 'SW2', 10: 'SW9', 11: 'SW5', 12: 'SW1', 13: 'ENC_A', 14: 'ENC_B', 15: 'ENC_SW' };
 for (const [pin, name] of Object.entries(expectSio)) {
   const g = mcu.gpio[pin];
   verdict(`GP${pin} (${name}): SIO input, pull-up`, g.functionSelect === 5 && g.inputEnable && g.pullupEnabled && !g.rawOutputEnable, `funcsel=${g.functionSelect} ie=${g.inputEnable} pue=${g.pullupEnabled} oe=${g.rawOutputEnable}`);
+}
+// GP16 (TTP223 OUT) is NOT a scanned matrix pin - it is active-HIGH (R10 strap),
+// so loudest_micro.c takes it out of matrix_pins.direct and configures it itself
+// in keyboard_pre_init_kb() with a pull-DOWN, so an unpopulated/high-Z U6 reads
+// as "not touched". Asserting pull-up here would be asserting the defect.
+{
+  const g = mcu.gpio[16];
+  verdict('GP16 (TOUCH_OUT): SIO input, pull-DOWN (active-high strap, non-matrix)',
+    g.functionSelect === 5 && g.inputEnable && g.pulldownEnabled && !g.pullupEnabled && !g.rawOutputEnable,
+    `funcsel=${g.functionSelect} ie=${g.inputEnable} pue=${g.pullupEnabled} pde=${g.pulldownEnabled} oe=${g.rawOutputEnable}`);
 }
 const g17 = mcu.gpio[17];
 verdict('GP17 (RGB_MCU): PIO function', g17.functionSelect === 6 || g17.functionSelect === 7, `funcsel=${g17.functionSelect}`);

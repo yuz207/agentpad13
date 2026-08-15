@@ -5,19 +5,45 @@ YA13 datasheet datum because the part is mounted **180° clocked** from the
 datasheet datum on the v5 board (pot bodies face West + North instead of the
 datasheet's South/East). If, at first power-on, the stick drives the cursor /
 arrows / scroll in the **opposite** direction from what you push, invert the
-affected axis in the firmware config — **one line per axis, no rebuild is
-shipped in this bundle.**
+affected axis in the firmware config — **one line per axis, then rebuild.** (A
+polarity flip is compile-time; `firmware/BUILD.md` has the flow. **No axis flip
+is pre-applied** in the shipped UF2s.)
 
 ## What is shipped
 
-The prebuilt UF2s in `firmware/prebuilt/` (`loudest_micro_default.uf2`,
-`loudest_micro_vial.uf2`) are **unchanged from Rev A** — byte-for-byte identical
-to the Rev-A release (md5 `4af788ae…` default / `e5008942…` vial). The v5 board
-changes (RE1 move, J1 flip, JS1→YA13) required **zero** firmware changes: the
-joystick pin map is untouched — `JOY_X_ADC = GP26/ADC0`, `JOY_Y_ADC = GP27/ADC1`
-— and the YA13 wipers land on the same `+3V3 / JOY_X / JOY_Y / GND` nets as the
-retired slider. So no rebuilt UF2 is included; this note is the pointer for the
-one-line fix if a direction feels reversed.
+The prebuilt UF2s in `firmware/prebuilt/` were **rebuilt 2026-08-13** to fix the
+TTP223 touch-polarity defect — the board straps `AHLB → GND` (active-**high**)
+while the firmware had assumed active-low, so matrix `[3,2]` read permanently
+pressed and the pad booted into layer 1 — and **rebuilt again 2026-08-15** for
+the isotropic RGB layout (finding 7) and the duplicate `housekeeping_task_user()`
+call. Details in `firmware/loudest_micro/config.h` and `v5/V5-NOTES.md`.
+**Neither rebuild touched the joystick, so everything below still applies
+unchanged.** Shipped bytes:
+
+| file | md5 | bytes | replaces |
+|---|---|---|---|
+| `loudest_micro_default.uf2` | `1c0ff911d545d0943c11a5971279d3ae` | 88576 | `cf5bd628…`, 88576 |
+| `loudest_micro_vial.uf2` | `286fb09d0ce1d96c74f2a0baf8348378` | 104448 | `b31673a7…`, 104448 |
+| `loudest_micro_calibrate.uf2` | `aabf7954f1e2b46880f298fd620d63ff` | 96768 | `a81ce4a1…`, 96768 |
+
+*(Superseded 2026-08-15, kept for provenance: the 2026-08-13 touch-fix pair was
+`loudest_micro_default.uf2` `cf5bd62853ea591b39a1ce7246848229` / 88576 and
+`loudest_micro_vial.uf2` `b31673a7ba6a6219a0d5a3b9aee52e42` / 104448, which in
+turn replaced the Rev-A binaries `4af788ae…` / 88064 and `e5008942…` / 104448.
+The `calibrate` bring-up UF2 was added 2026-08-13 as `a81ce4a1…`. All sizes are
+unchanged across the 2026-08-15 rebuild — the changes were a coordinate table
+and one removed call.)*
+
+The **default** and **calibrate** builds reproduce byte-for-byte from these
+sources (proved again on 2026-08-15: two clean-`.build` rebuilds each, identical
+bytes); the **vial** build is non-deterministic run-to-run (LTO/link ordering),
+so its md5 records the shipped bytes and is **not** a reproducibility target.
+
+The v5 board changes (RE1 move, J1 flip, JS1→YA13) still required **zero**
+joystick firmware changes: the pin map is untouched — `JOY_X_ADC = GP26/ADC0`,
+`JOY_Y_ADC = GP27/ADC1` — and the YA13 wipers land on the same
+`+3V3 / JOY_X / JOY_Y / GND` nets as the retired slider. This note remains the
+pointer for the one-line axis fix if a direction feels reversed.
 
 ## Why the sense is inverted (board fact, not a firmware bug)
 
@@ -68,3 +94,13 @@ with the standard QMK/Vial flow in `firmware/BUILD.md`.
 must come from a **bring-up ADC sweep on the actual YA13** at assembly; the
 placeholder is a nominal 10-bit span, not metered values. Do the sweep and the
 polarity fix together in one firmware pass — both are config-only, one rebuild.
+
+**The sweep now has a mechanism** (added 2026-08-13): flash
+`firmware/prebuilt/loudest_micro_calibrate.uf2`, open a text editor, and the
+board types its own rest/min/max, per-axis `inverted=YES/NO`, a re-derived
+`JS_CENTER`/`JS_THRESHOLD`, and finished copy-pasteable config lines **with the
+`low`/`high` swap above already applied** to any inverted axis. Step-by-step
+instructions: `firmware/BRING-UP.md` *(moved there 2026-08-15 from
+`firmware/BUILD.md` §4a, which now forwards to it, so that the procedure ships
+in the release bundle alongside this note)*. Source and reasoning:
+`firmware/loudest_micro/keymaps/calibrate/`.

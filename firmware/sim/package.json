@@ -1,0 +1,12 @@
+{
+    "name": "agentpad13-behavior-sim",
+    "private": true,
+    "description": "Behavioral simulation of the shipped agentpad13 UF2 on rp2040js: full 13-switch sweep, encoder, TTP223 touch polarity, joystick ADC->HID gamepad, and per-index LED addressability read back from the ws2812 DMA buffer. Reuses ../tests/emulator/node_modules; no dependencies of its own. The default --touch=board model (board truth) PASSES 33/33 on the current firmware and is the gate; the --touch=firmware arm models the pre-fix assumption and FAILS 4 by design, which is what proves the harness still discriminates. (CORRECTED 2026-08-15: this line used to say '--touch=board FAILS on the current firmware by design', which was true only until the 2026-08-13 TTP223 touch fix - see README 'The defect this harness catches', kept as a historical record.)",
+    "scripts": {
+        "sim:default": "node behavior.cjs ../prebuilt/loudest_micro_default.uf2 --touch=board",
+        "sim:vial": "node behavior.cjs ../prebuilt/loudest_micro_vial.uf2 --touch=board",
+        "sim:default:fwpolarity": "node behavior.cjs ../prebuilt/loudest_micro_default.uf2 --touch=firmware",
+        "sim:vial:fwpolarity": "node behavior.cjs ../prebuilt/loudest_micro_vial.uf2 --touch=firmware",
+        "sim:all": "npm run sim:default:fwpolarity && npm run sim:vial:fwpolarity"
+    }
+}

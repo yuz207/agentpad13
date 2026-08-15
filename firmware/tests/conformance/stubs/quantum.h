@@ -5,12 +5,20 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+typedef struct { uint8_t col; uint8_t row; } keypos_t;
 typedef struct {
-    struct {
-        struct { uint8_t col; uint8_t row; } key;
-        bool pressed;
-    } event;
+    keypos_t key;
+    bool     pressed;
+    uint16_t time;
+} keyevent_t;
+typedef struct {
+    keyevent_t event;
 } keyrecord_t;
+
+// loudest_micro.c injects the GP16 touch key as a synthetic event at [3,2]
+// (the pin is out of the scanned matrix; see that file's touch section).
+#define MAKE_KEYEVENT(row_num, col_num, press) \
+    ((keyevent_t){.key = {.col = (col_num), .row = (row_num)}, .pressed = (press), .time = 0})
 
 enum { QK_KB_0 = 0x7E00 };
 
@@ -21,6 +29,7 @@ enum {
 };
 
 // Pins
+#define GP16 16
 #define GP26 26
 #define GP27 27
 
@@ -35,3 +44,13 @@ static inline void unregister_code16(uint16_t kc) { (void)kc; }
 static inline void tap_code16(uint16_t kc) { (void)kc; }
 static inline uint32_t timer_read32(void) { return 0; }
 static inline uint32_t timer_elapsed32(uint32_t t) { (void)t; return 0; }
+static inline uint16_t timer_read(void) { return 0; }
+static inline uint16_t timer_elapsed(uint16_t t) { (void)t; return 0; }
+static inline void     keyboard_pre_init_user(void) {}
+static inline void     matrix_scan_user(void) {}
+static inline void     action_exec(keyevent_t event) { (void)event; }
+// GP16 touch pin. Off target there is no pad, so it reads its idle level: the
+// board straps the TTP223 ACTIVE-HIGH (R10: TOUCH_AHLB->GND), i.e. LOW == not
+// touched, so 0 keeps the injected key released through the whole run.
+static inline void    gpio_set_pin_input_low(uint8_t pin) { (void)pin; }
+static inline uint8_t gpio_read_pin(uint8_t pin) { (void)pin; return 0; }

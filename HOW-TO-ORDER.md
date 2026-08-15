@@ -113,6 +113,7 @@ retired 2.4 mm-wall geometry whose corners a fab review flagged as too thin.
 
 1. Heat-set the four inserts into the tray posts (~245 °C).
 2. Flash firmware over USB (`firmware/prebuilt/*.uf2` — hold BOOTSEL, drag the file on).
+   - **First power-on: do the calibration in `firmware/BRING-UP.md`** — flash `loudest_micro_calibrate.uf2` once, press one key four times, and the board types its own joystick numbers (and confirms touch + encoder); then flash the real build back.
 3. First-boot config: see `firmware/POLARITY-NOTE.md` — joystick axis inversion + calibration is a
    one-time config edit after you feel the stick.
 4. Hand-solder the afterlist (encoder last: seat it flush).

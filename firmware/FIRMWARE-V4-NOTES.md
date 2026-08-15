@@ -64,6 +64,20 @@ Edge.Cuts outline from `v4_r27.kicad_pcb`** (84.2×100.0) and emit the QMK
 224×64 layout; `keyboard.json` now carries the generated values (cosmetic —
 affects RGB animation geometry only, not the protocol's chain indexing).
 
+> **Superseded 2026-08-15 — the transform is now ISOTROPIC** (finding 7 of the
+> firmware-verification pass). The mapping described above normalised each axis
+> independently to the bbox, i.e. x·224/84.2 = 2.660 units/mm against
+> y·64/100.0 = 0.640 units/mm — a 4.16:1 distortion that visibly skews the four
+> geometry-bearing animations enabled here. `gen_led_layout.py` now applies
+> **one** scale to both axes (`s = 64/bbox_height` = 0.640 u/mm) and centers x
+> on **112**, QMK's default effect center (`k_rgb_matrix_center`,
+> `quantum/rgb_matrix/rgb_matrix.c:32`), so no `RGB_MATRIX_CENTER` override is
+> required. Every `y`, `flags` and `matrix` value is unchanged; only `x` moved,
+> on 23 of the 24 entries (LED13 is the bbox center and was already 112). The
+> LED cloud now spans x 88–136, y 3–62. Still cosmetic: chain indexing, and
+> therefore the protocol, is untouched. Re-run the generator against
+> `v5/hardware/pcb/v5_6.kicad_pcb`, not `v4_r27.kicad_pcb`.
+
 ### Other keyboard.json changes
 
 * `usb.device_version` 0.0.1 → **1.0.0** (Rev A production build). VID/PID
@@ -294,11 +308,51 @@ here; that is what first-power-on hardware bring-up is for.
 
 | File | SHA-256 |
 |---|---|
-| `loudest_micro_default.uf2` (88064 bytes) | `49642d69a53aef4308cb03a1d3e1b3c73c18d54946c6350adecfca47202ce39a` |
-| `loudest_micro_vial.uf2` (104448 bytes) | `5d33fffc57807bfdda263f36f919139e157b6b3cadccc0edc3fb06601f948fd0` |
+| `loudest_micro_default.uf2` (88576 bytes) | `d37efc5f375af822a72273ad86c76950fa005edc28bcc2c675f0bcefb5ef3926` |
+| `loudest_micro_vial.uf2` (104448 bytes) | `d5dcb85f0185bf02b66ab657829222bc0354a845e8b76efde03c79497a4e3284` |
+| `loudest_micro_calibrate.uf2` (96768 bytes) | `f9c5de9ba5834e0c810688520fa53d58ac72229c628be270b4987ceb57ff1541` |
+
+md5, for the drag-and-drop check: default `1c0ff911d545d0943c11a5971279d3ae`,
+vial `286fb09d0ce1d96c74f2a0baf8348378`, calibrate
+`aabf7954f1e2b46880f298fd620d63ff`.
 
 Built from the exact tree in this commit + vial-qmk `00fc4627` + the §3
 patch, Arm GNU Toolchain 15.2.Rel1, zero warnings (`-Werror`).
+
+> **Superseded 2026-08-13 — TTP223 touch-polarity fix.** The table above is the
+> current shipped pair. It replaces the Rev-A binaries
+> `loudest_micro_default.uf2` (88064 B,
+> `49642d69a53aef4308cb03a1d3e1b3c73c18d54946c6350adecfca47202ce39a`, md5
+> `4af788ae…`) and `loudest_micro_vial.uf2` (104448 B,
+> `5d33fffc57807bfdda263f36f919139e157b6b3cadccc0edc3fb06601f948fd0`, md5
+> `e5008942…`), which shipped a permanently-pressed matrix `[3,2]` because the
+> board straps the TTP223 `AHLB → GND` (**active-high**) while `config.h` and
+> `keyboard.json` asserted active-low. GP16 is now polled outside the direct-pin
+> matrix with its own sense (`loudest_micro.c`), so the default image grew by one
+> 512-byte UF2 block. Gate: `firmware/sim/behavior.cjs --touch=board` **33/33
+> PASS** on both builds (it was 4 failures before). Note the **vial** build is
+> non-deterministic run-to-run; only the default UF2 hash is reproducible.
+
+> **Superseded 2026-08-15 — isotropic RGB layout + `housekeeping_task_user()`
+> de-duplication.** The table above is the current shipped set. It replaces the
+> 2026-08-13 touch-fix binaries `loudest_micro_default.uf2` (88576 B,
+> `35f34ea4f229eb65f0b3d9ad8d9cc0444a399af2c5943a25c06131d58b0f2ad3`, md5
+> `cf5bd628…`), `loudest_micro_vial.uf2` (104448 B,
+> `7056e6ad0ebe9673f077f69fb6d32873fbcf0cdd233e78d163ef940254f814c5`, md5
+> `b31673a7…`) and `loudest_micro_calibrate.uf2` (96768 B,
+> `7230a4de95851909f78893def51d49bcda68ff34670934495eabf760a31a61e7`, md5
+> `a81ce4a1…`). Two changes, both above: (1) `rgb_matrix.layout` regenerated
+> under the isotropic transform (finding 7 — see §1's superseded note; `x` only,
+> 23 of 24 entries, cosmetic, chain indexing untouched); (2)
+> `housekeeping_task_kb()` no longer calls `housekeeping_task_user()`, which
+> `quantum/keyboard.c:433-437` already calls itself — the keymap hook had been
+> firing **twice** per loop, latent until the `calibrate` keymap implemented it.
+> **All three sizes are unchanged.** Gates: `behavior.cjs --touch=board` **33/33
+> PASS** on default and vial with `--touch=firmware` still failing 4 (the A/B
+> still discriminates); `calibrate.cjs` **37/37 PASS** with `--no-adc-fix` still
+> failing 15; 30/30, 56/56, 80/80 unchanged. `default` **and** `calibrate`
+> reproduce byte-for-byte (two clean-`.build` rebuilds each); `vial` remains
+> non-deterministic.
 
 ## 6. Remaining gaps (honest, none hidden)
 
@@ -323,7 +377,25 @@ patch, Arm GNU Toolchain 15.2.Rel1, zero warnings (`-Werror`).
    collisions (worst case: a stray CAPS-shaped reply or an ignored layer
    move — never a crash; bounds checks hold).
 4. **On-hardware validation** (real board) is inherently pending until Rev A
-   arrives: touch AHLB strap polarity, encoder detent direction, LED chain on
+   arrives: ~~touch AHLB strap polarity~~, encoder detent direction, LED chain on
    real silicon, joystick sweep. The emulator run covers everything software.
+   **[2026-08-13 — the AHLB item is CLOSED from the board file, not from
+   silicon.]** `R10` (0 Ω) pad 1 → `TOUCH_AHLB`, pad 2 → `GND` on
+   `v5_6.kicad_pcb` = **active-HIGH**, and the firmware now matches (see §5's
+   superseded-artifacts note). What still needs the real board is whether the pad
+   *senses* through the case at all — pad sensitivity, the DNP `C25` tuning, and
+   false triggering — not which way the logic runs.
 5. `qmk lint` false positive on the vial keymap name (upstream rule; see
    `BUILD.md` §3.1).
+6. **No SKU awareness in `LOUDEST_LED_COUNT` / `CAPS.led_count`** (finding 4 of
+   the 2026-08-13 firmware-verification pass: both are hard-24 while the opaque
+   SKU populates LED1–14, so `loudestd` may address indexes 14–23 to no visible
+   effect on an opaque unit).
+   🔻 **CLOSED-BY-DECISION 2026-08-15 — stays 24 on both SKUs.** The byte is
+   redefined as the **addressable chain length**, which is electrically true on
+   both SKUs (on opaque, LED14's DOUT clocks pixels 14–23 into an unpopulated
+   pad, so host writes there are harmless no-ops), because that byte is part of
+   **LOCKED protocol v0** and forking per-SKU UF2s would multiply the shipped
+   artifacts against the drag-and-drop standard for zero visible benefit. No
+   code changed; the semantics are now stated at the definition site
+   (`loudest_micro.h`).

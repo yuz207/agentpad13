@@ -41,9 +41,16 @@ Six-view turntable: <a href="renders/turntable.png"><code>renders/turntable.png<
   (encoder knobs + stick caps in fit ladders) and an **optional PORON gasket
   kit**. Print files (STL/STEP) and orderable plate fab files under
   `hardware/case/` — see its README for print/order/assembly guidance.
-- **Firmware: VALIDATED.** Emulator-boot tested, Raw HID protocol-conformant,
-  and the pin map matches the v5 board (unchanged from Rev A v4 — v5 needed
-  zero firmware changes).
+- **Firmware: VALIDATED, and rebuilt since Rev A — reflash before you judge a
+  board.** Emulator-boot tested, Raw HID protocol-conformant, and the pin map
+  matches the v5 board (unchanged from Rev A v4 — v5 needed zero *pin*
+  changes). The shipped UF2s have moved twice since Rev A: a **capacitive-touch
+  polarity fix** (the board straps the TTP223 active-high, but the Rev-A
+  binaries read that pin active-low, so the pad booted with the touch key stuck
+  pressed — it jumped straight to the second layer and the touch key then
+  triggered on finger-lift), and an **isotropic RGB layout fix** (the four
+  geometry-based animations were drawn into a 4:1-distorted coordinate space).
+  Both are fixed in `firmware/prebuilt/` as shipped here.
 
 ### PCB (complete)
 
@@ -60,10 +67,18 @@ Six-view turntable: <a href="renders/turntable.png"><code>renders/turntable.png<
   sockets and tact switches are hand-solder only if you opt out).
 
 > **Firmware note:** the firmware pin map matches the v5 board and has been
-> validated — it boots in an RP2040 emulator and its Raw HID status protocol is
-> conformance-tested. Build recipe and validation assets live in `firmware/`
-> (`BUILD.md`, `FIRMWARE-V4-NOTES.md`, `tests/`).
+> validated — it boots in an RP2040 emulator, its Raw HID status protocol is
+> conformance-tested, and a behavioral simulation drives the shipped UF2 through
+> every switch, the encoder, the touch key's real board polarity, the joystick
+> ADC and all 24 LEDs. Build recipe and validation assets live in `firmware/`
+> (`BUILD.md`, `FIRMWARE-V4-NOTES.md`, `tests/`, `sim/`).
 
+> **First power-on:** flash `firmware/prebuilt/loudest_micro_calibrate.uf2`,
+> open a text editor and press one key four times — the board types out its own
+> joystick calibration numbers and confirms the touch key and encoder. The whole
+> procedure is [`firmware/BRING-UP.md`](firmware/BRING-UP.md); flash the real
+> build back when you are done.
+>
 > **Joystick polarity/calibration:** the fab-placed YA13 is mounted 180° from
 > its datasheet datum, so both axes' direction sense read inverted out of the
 > box, and the shipped config carries placeholder calibration values. Both are
@@ -88,7 +103,12 @@ hardware/
 firmware/
   loudest_micro/  vial-qmk keyboard tree (RP2040, direct-pin, ENCODER_MAP,
                   analog joystick modes, Raw HID status protocol).
-  prebuilt/       Flashable UF2s (default + vial), built per BUILD.md.
+  prebuilt/       Flashable UF2s (default + vial, plus the calibrate bring-up
+                  build), built per BUILD.md.
+  sim/            Behavioral simulation of the shipped UF2 on rp2040js — the
+                  referee that caught the touch-polarity defect.
+  BRING-UP.md     First-power-on procedure: the board types its own joystick
+                  calibration and confirms touch + encoder.
   POLARITY-NOTE.md  Joystick axis-sense + calibration config note (v5).
   BUILD.md        Reproducible toolchain + build recipe.
 ```

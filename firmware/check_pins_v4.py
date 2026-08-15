@@ -8,6 +8,10 @@ read, identical on all 57 U1 pads).
 
 Checks, in order:
   1. keyboard.json matrix_pins.direct == the table, per logical key position.
+  1b. TOUCH_OUT (GP16) is deliberately NOT in that matrix (the board straps the
+     TTP223 active-HIGH and QMK's polarity knob is global), so instead: it is
+     bound and read active-HIGH in loudest_micro.c and injected at [3,2], and
+     MATRIX_INPUT_PRESSED_STATE stays undefined.
   2. keyboard.json encoder / ws2812 / joystick pins == the table.
   3. No firmware reference to any spare/NC GPIO (GP18-GP25, GP28, GP29) -
      including the "GP21" J2 net-name trap: that NET is silicon GPIO24 and
@@ -61,13 +65,24 @@ TABLE = {
 
 # Logical key grid -> function name. SW1-SW4 = row 0 left-to-right, SW5-SW8 =
 # row 1, SW9-SW12 = row 2, SW13 (2U hero) = [3,0], encoder push = [3,1],
-# touch = [3,2], [3,3] unused (None).
+# [3,2] = touch (NOT a scanned matrix pin - see below), [3,3] unused.
+#
+# [3,2] is None ON PURPOSE (2026-08-13). The board straps the TTP223 ACTIVE-HIGH
+# (R10 0R: TOUCH_AHLB -> GND on v5_6.kicad_pcb), the opposite sense of the 13
+# switch-to-GND keys, and QMK's MATRIX_INPUT_PRESSED_STATE is global. So GP16 is
+# removed from matrix_pins.direct and polled with its own sense in
+# loudest_micro.c, which injects the key event at logical [3,2]. The check that
+# GP16 is still claimed by firmware moved to check_touch_outside_matrix().
 MATRIX_FUNCTIONS = [
     ["SW1", "SW2", "SW3", "SW4"],
     ["SW5", "SW6", "SW7", "SW8"],
     ["SW9", "SW10", "SW11", "SW12"],
-    ["SW13", "ENC_SW", "TOUCH_OUT", None],
+    ["SW13", "ENC_SW", None, None],
 ]
+
+# Reporting labels for positions with no scanned pin, so a `null` that is
+# deliberate does not print as "unused".
+MATRIX_LABELS = {(3, 2): "TOUCH_OUT (GP16, out of matrix by design)"}
 
 # GPIOs firmware must never reference: I2C spares to the DNP J2 header
 # (GP18 SDA / GP19 SCL / GP20 / GP28) plus every NC pad (GPIO21/22/23/25/29)
@@ -105,7 +120,7 @@ def assert_pin_config(cfg, source_name):
             # qmk info resolves null to the string "NO_PIN"
             if got in (None, "NO_PIN"):
                 got = None
-            label = func or "unused"
+            label = func or MATRIX_LABELS.get((r, c), "unused")
             check(f"{source_name}: [{r},{c}] {label} = {want or 'null'}",
                   got == want, f"got {got}")
     enc = cfg["encoder"]["rotary"][0]
@@ -137,6 +152,45 @@ def assert_pin_config(cfg, source_name):
           not hits, f"found {hits}")
 
 
+def check_touch_outside_matrix():
+    """TOUCH_OUT (GP16) left the scanned matrix, so assert it is still claimed.
+
+    The board straps the TTP223 active-HIGH (R10 0R: TOUCH_AHLB -> GND), so GP16
+    cannot ride the direct-pin matrix, whose polarity knob is global. It must
+    instead be bound to its own pin, read with an active-HIGH sense, and injected
+    at logical [3,2]. Without these assertions, dropping GP16 from
+    matrix_pins.direct would silently look like "touch removed".
+    """
+    print("-- touch (GP16) handled outside the matrix")
+    src = (KEYBOARD_DIR / "loudest_micro.c").read_text()
+    check(f"loudest_micro.c binds TOUCH_PIN to {TABLE['TOUCH_OUT']}",
+          re.search(r"#define\s+TOUCH_PIN\s+" + TABLE["TOUCH_OUT"] + r"\b", src) is not None)
+    check("loudest_micro.c declares the touch input ACTIVE-HIGH "
+          "(TOUCH_PRESSED_STATE 1; board strap R10 TOUCH_AHLB->GND)",
+          re.search(r"#define\s+TOUCH_PRESSED_STATE\s+1\b", src) is not None)
+    check("loudest_micro.c injects the touch event at logical [3,2]",
+          re.search(r"#define\s+TOUCH_MATRIX_ROW\s+3\b", src) is not None
+          and re.search(r"#define\s+TOUCH_MATRIX_COL\s+2\b", src) is not None
+          and "action_exec(MAKE_KEYEVENT(TOUCH_MATRIX_ROW, TOUCH_MATRIX_COL" in src)
+    check("loudest_micro.c configures GP16 itself (matrix_init_pins no longer does)",
+          "gpio_set_pin_input_low(TOUCH_PIN)" in src)
+    # The global knob would invert the 13 genuinely active-low switches. Only a
+    # real #define / config key counts here - the comments that explain WHY it
+    # must not be used name the token on purpose.
+    defs = []
+    for f in sorted(KEYBOARD_DIR.rglob("*")):
+        if not f.is_file() or f.suffix not in (".c", ".h", ".json", ".mk"):
+            continue
+        text = f.read_text()
+        if re.search(r"^[ \t]*#[ \t]*define[ \t]+MATRIX_INPUT_PRESSED_STATE\b",
+                     text, re.M):
+            defs.append(f"{f.name} (#define)")
+        if re.search(r'"MATRIX_INPUT_PRESSED_STATE"[ \t]*:', text):
+            defs.append(f"{f.name} (json key)")
+    check("MATRIX_INPUT_PRESSED_STATE is NOT defined (it is global; it would "
+          "invert all 13 active-low switches)", not defs, f"defined in {defs}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--qmk-info", type=Path,
@@ -150,6 +204,7 @@ def main():
 
     kb_json = json.loads((KEYBOARD_DIR / "keyboard.json").read_text())
     assert_pin_config(kb_json, "keyboard.json")
+    check_touch_outside_matrix()
 
     print("-- source scan")
     src_pins = set()

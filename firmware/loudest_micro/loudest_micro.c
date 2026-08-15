@@ -3,8 +3,17 @@
 //
 // Lives at keyboard level (not keymap) so the default and vial keymaps share one
 // implementation. The keyboard-level _kb hooks are used (rather than _user
-// hooks in each keymap) so both keymaps inherit the behavior. Each _kb hook
-// still calls through to its _user counterpart.
+// hooks in each keymap) so both keymaps inherit the behavior.
+//
+// Each _kb hook here calls through to its _user counterpart -- EXCEPT
+// housekeeping_task_kb(), which must not, because quantum/keyboard.c's
+// housekeeping_task() calls _kb and _user itself. The rule is "call _user iff
+// the weak _kb default we are overriding was its only caller"; that holds for
+// keyboard_pre_init (quantum/keyboard.c:300-302), matrix_scan
+// (quantum/matrix_common.c:40-42), process_record (quantum/quantum.c:190-192)
+// and rgb_matrix_indicators_advanced (quantum/rgb_matrix/rgb_matrix.c:468-470),
+// and does NOT hold for housekeeping_task. All five were re-verified against
+// the vial-qmk fork's sources on 2026-08-15.
 #include "loudest_micro.h"
 #include "analog.h"
 #include <string.h>
@@ -227,13 +236,67 @@ static void js_cycle_mode(void) {
 }
 
 // ---------------------------------------------------------------------------
-// Touch enable/disable. TP_TOG gates the GP16 touch key
-// at matrix [3, 2]. Default enabled.
+// Capacitive touch (TTP223 U6 -> GP16), presented at matrix [3, 2].
+//
+// WHY THIS IS NOT A MATRIX PIN. The fabricated board straps the TTP223 for
+// ACTIVE-HIGH output: R10 (0R) ties TOUCH_AHLB -> GND on v5_6.kicad_pcb, and on
+// a TTP223 an AHLB low selects active-high, so Q idles LOW and drives HIGH while
+// the pad is touched. The 13 mechanical switches are the opposite - plain
+// switch-to-GND, idle high, pressed low. QMK's direct-pin matrix has exactly one
+// polarity knob, MATRIX_INPUT_PRESSED_STATE, and quantum/matrix.c applies it
+// inside readMatrixPin() to EVERY direct pin, so using it here would invert all
+// 13 switches to fix one input. Instead GP16 is removed from the scanned matrix
+// (keyboard.json: matrix_pins.direct[3][2] = null) and polled below with its own
+// sense, injecting the key event at the SAME logical position [3, 2].
+//
+// Nothing else moves: MATRIX_ROWS/COLS stay 4x4, LAYOUT still carries [3,2], and
+// both keymaps keep their existing keycode there (the TO() layer chain). TP_TOG
+// still gates the key, because process_record_kb() matches on row/col and
+// action_exec(MAKE_KEYEVENT(...)) carries row/col unchanged. The one cost is
+// that Vial's matrix tester cannot light [3,2] - it reads the scanned matrix[].
+//
+// (Before this change config.h and keyboard.json both asserted the strap was
+// active-LOW while MATRIX_INPUT_PRESSED_STATE was defined nowhere, so QMK's
+// default LOW-is-pressed made [3,2] read held from power-on: the pad booted into
+// layer 1, layer 0 was unreachable, SW1 emitted nothing, and touch fired on
+// finger lift. Fixed 2026-08-13; boards are already fabricated and populated, so
+// the R10-to-+3V3 rework alternative is not available.)
 // ---------------------------------------------------------------------------
 #define TOUCH_MATRIX_ROW 3
 #define TOUCH_MATRIX_COL 2
+#define TOUCH_PIN GP16
+#define TOUCH_PRESSED_STATE 1 // ACTIVE-HIGH per the R10 strap: HIGH == touched
+#define TOUCH_DEBOUNCE_MS 5   // same window as QMK's default matrix DEBOUNCE
 
 static bool touch_enabled = true;
+
+void keyboard_pre_init_kb(void) {
+    // GP16 is no longer in direct_pins, so matrix_init_pins() never configures
+    // it. Pull-DOWN (not the matrix's pull-up): the output is active-high, so an
+    // unpopulated or high-Z U6 must read as "not touched".
+    gpio_set_pin_input_low(TOUCH_PIN);
+    keyboard_pre_init_user();
+}
+
+// Runs once per matrix scan (quantum/matrix.c calls matrix_scan_kb() at the end
+// of matrix_scan()), i.e. the touch input is sampled at exactly the same cadence
+// as the real matrix keys.
+void matrix_scan_kb(void) {
+    static bool     touch_reported = false; // debounced state already injected
+    static bool     touch_sample   = false; // previous raw sample
+    static uint16_t touch_since    = 0;     // when the raw sample last changed
+
+    const bool touch_raw = (gpio_read_pin(TOUCH_PIN) == TOUCH_PRESSED_STATE);
+    if (touch_raw != touch_sample) {
+        touch_sample = touch_raw;
+        touch_since  = timer_read();
+    } else if (touch_raw != touch_reported && timer_elapsed(touch_since) >= TOUCH_DEBOUNCE_MS) {
+        touch_reported = touch_raw;
+        action_exec(MAKE_KEYEVENT(TOUCH_MATRIX_ROW, TOUCH_MATRIX_COL, touch_reported));
+    }
+
+    matrix_scan_user();
+}
 
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     // Swallow the touch key entirely (press and release) while touch is disabled.
@@ -299,7 +362,23 @@ void housekeeping_task_kb(void) {
         }
     }
 
-    housekeeping_task_user();
+    // DELIBERATELY NOT calling housekeeping_task_user() here. Unlike every other
+    // _kb hook in this file, the weak housekeeping_task_kb() default is NOT the
+    // only caller of the _user hook: quantum/keyboard.c:433-437
+    //     void housekeeping_task(void) {
+    //         housekeeping_task_modules();
+    //         housekeeping_task_kb();     // :435 -> this function
+    //         housekeeping_task_user();   // :436 -> the keymap's hook, already
+    //     }
+    // invokes BOTH itself, and the weak _kb default (quantum/keyboard.c:420) is
+    // an empty body that calls nothing. Calling _user here as well made the
+    // keymap hook run TWICE per loop.
+    //
+    // (FIXED 2026-08-15. Latent while no keymap defined the hook, but the
+    // `calibrate` bring-up keymap now does -- it drains its typing queue there,
+    // and only survived the double call because draining a queue is idempotent.
+    // Ledgered 2026-08-13 as "a trap for anyone who later implements that hook
+    // in a keymap"; this closes the trap.)
 }
 
 // ---------------------------------------------------------------------------
