@@ -24,6 +24,21 @@ and stores the result in its own memory.
    md5 `a7b8da85a7d3f0de96b983be8c782ba2`.
 4. The drive disappears by itself. That means it worked.
 
+> **If your Mac says "there isn't enough space" — that is not a real disk-space
+> problem, and there is nothing wrong with your board.** The bootloader drive is
+> not a normal disk: it is a small pretend filesystem that accepts exactly one
+> file write and then reboots. Finder tries to write its own hidden metadata
+> alongside your file, the drive refuses, and Finder reports it as a space
+> error. Copy from a terminal instead and it works every time:
+>
+> ```
+> cp firmware/prebuilt/agentpad13.uf2 /Volumes/RPI-RP2/
+> ```
+>
+> On Linux the same applies if your file manager misbehaves —
+> `cp firmware/prebuilt/agentpad13.uf2 /media/$USER/RPI-RP2/`. On Windows,
+> dragging in Explorer is normally fine.
+
 > **Do not hold SW1 while plugging in.** SW1 is the top-left key, and holding it
 > at plug-in is QMK's **Reset EEPROM** gesture — it wipes your saved settings,
 > including the joystick calibration you are about to make.
