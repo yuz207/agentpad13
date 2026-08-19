@@ -24,25 +24,31 @@ and stores the result in its own memory.
    md5 `a7b8da85a7d3f0de96b983be8c782ba2`.
 4. The drive disappears by itself. That means it worked.
 
-> **If your Mac says "there isn't enough space" — that is not a real disk-space
-> problem, and there is nothing wrong with your board.** The bootloader drive is
-> not a normal disk: it is a small pretend filesystem that accepts exactly one
-> file write and then reboots. Finder tries to write its own hidden metadata
-> alongside your file, the drive refuses, and Finder reports it as a space
-> error. Copy from a terminal instead and it works every time:
+> **If dragging the file fails, use the terminal — this is common on macOS.**
+> The bootloader drive is not a real disk. It is a small pretend filesystem
+> that accepts exactly one file write and then reboots the board. Anything that
+> writes more than the plain file — metadata, extended attributes, a
+> preallocation — gets rejected, and you see one of these:
+>
+> | what you did | what you get |
+> |---|---|
+> | dragged it in Finder | *"there isn't enough space"* (there is; 132 MB free) |
+> | `cp file.uf2 /Volumes/RPI-RP2/` | `Invalid argument` |
+> | `cp -X file.uf2 /Volumes/RPI-RP2/` | usually `Invalid argument` too |
+>
+> **This always works:**
 >
 > ```
-> cp -X firmware/prebuilt/agentpad13.uf2 /Volumes/RPI-RP2/
+> dd if=firmware/prebuilt/agentpad13.uf2 of=/Volumes/RPI-RP2/fw.uf2 bs=1m
 > ```
 >
-> **The `-X` matters.** Without it macOS still tries to attach extended
-> attributes and resource forks to the copy, the drive rejects that second
-> write, and you get `cp: ... Invalid argument` instead. `-X` copies the file
-> and nothing else.
+> `dd` writes plain sequential blocks — no metadata, no preallocation, nothing
+> the bootloader can refuse. The destination filename is irrelevant; the
+> bootloader reads the contents, not the name. You should see roughly
+> `109568 bytes transferred`, then the drive disappears on its own.
 >
-> On Linux the same applies if your file manager misbehaves —
-> `cp firmware/prebuilt/agentpad13.uf2 /media/$USER/RPI-RP2/` (no `-X` needed).
-> On Windows, dragging in Explorer is normally fine.
+> On Linux, plain `cp` to the mount point normally works. On Windows, dragging
+> in Explorer normally works. It is macOS that is fussy here.
 
 > **Do not hold SW1 while plugging in.** SW1 is the top-left key, and holding it
 > at plug-in is QMK's **Reset EEPROM** gesture — it wipes your saved settings,
