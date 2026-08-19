@@ -5,6 +5,15 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+// On target the QMK build force-includes the keyboard's config.h into every
+// translation unit. Do the same here (it is on the include path as -I KB_DIR),
+// or keyboard-level settings such as EECONFIG_KB_DATA_SIZE would be invisible
+// to the harness and any firmware code guarded on them would silently vanish
+// from the build instead of being tested.
+#include "config.h"
+// EEPROM datablock API, observed by the harness (see stubs/eeconfig.h).
+#include "eeconfig.h"
+
 typedef struct { uint8_t col; uint8_t row; } keypos_t;
 typedef struct {
     keypos_t key;
@@ -47,6 +56,7 @@ static inline uint32_t timer_elapsed32(uint32_t t) { (void)t; return 0; }
 static inline uint16_t timer_read(void) { return 0; }
 static inline uint16_t timer_elapsed(uint16_t t) { (void)t; return 0; }
 static inline void     keyboard_pre_init_user(void) {}
+static inline void     keyboard_post_init_user(void) {}
 static inline void     matrix_scan_user(void) {}
 static inline void     action_exec(keyevent_t event) { (void)event; }
 // GP16 touch pin. Off target there is no pad, so it reads its idle level: the

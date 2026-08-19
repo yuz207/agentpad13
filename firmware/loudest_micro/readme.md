@@ -70,9 +70,17 @@ unchanged, only the physical GPIOs moved):
 
 * `ENCODER_MAP` - per-layer encoder actions (volume by default).
 * `JOYSTICK` - GP26/GP27 analog axes as a HID gamepad; the `JS_MODE` keycode adds
-  custom arrow (8-way) and scroll modes. Calibration is a bring-up placeholder.
-* `RAW_ENABLE` - status protocol v0 (`SET_KEY`/`SET_LAYER`/`CLEAR`/`PING`),
-  wire contract in `daemon/loudestd/protocol.py`. In the vial build the
+  custom arrow (8-way) and scroll modes. **The board calibrates itself**: hold
+  SW14 (the button in the back, inert while firmware runs) for about a second
+  and the key LEDs guide a ~15 s routine that writes rest/min/max to EEPROM,
+  where it survives unplugging and reflashing. No host software, no second
+  firmware, no rebuild — see `firmware/BRING-UP.md`. The shipped
+  `low 0 / rest 512 / high 1023` values are only the uncalibrated fallback.
+* `RAW_ENABLE` - status protocol **v1** (`SET_KEY`/`SET_LAYER`/`CLEAR`/`PING`,
+  plus `GET_JOYSTICK`/`SET_CALIBRATION`/`RESET_CALIBRATION` — the same
+  calibration store the SW14 routine writes, exposed for host tooling), wire
+  contract in `docs/PROTOCOL-V1-CONTRACT.md` with
+  `daemon/loudestd/protocol.py` as the reference implementation. In the vial build the
   protocol coexists with VIA/Vial through a `via_command_kb()` dispatcher
   (see `firmware/BUILD.md` for the documented edge-case collisions).
 * Touch key gated by the `TP_TOG` keycode.

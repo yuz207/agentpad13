@@ -16,28 +16,45 @@ TTP223 touch-polarity defect — the board straps `AHLB → GND` (active-**high*
 while the firmware had assumed active-low, so matrix `[3,2]` read permanently
 pressed and the pad booted into layer 1 — and **rebuilt again 2026-08-15** for
 the isotropic RGB layout (finding 7) and the duplicate `housekeeping_task_user()`
-call. Details in `firmware/loudest_micro/config.h` and `v5/V5-NOTES.md`.
-**Neither rebuild touched the joystick, so everything below still applies
-unchanged.** Shipped bytes:
+call, then **rebuilt and renamed a third time later on 2026-08-15** for protocol
+v1 and the encoder direction flip. Details in
+`firmware/loudest_micro/config.h` and `v5/V5-NOTES.md`.
+**None of those rebuilds changed which WAY an axis reads, so everything below
+still applies unchanged** — the v1 work added *where the ends are*, not *which
+end is which*. Shipped bytes:
 
-| file | md5 | bytes | replaces |
-|---|---|---|---|
-| `loudest_micro_default.uf2` | `1c0ff911d545d0943c11a5971279d3ae` | 88576 | `cf5bd628…`, 88576 |
-| `loudest_micro_vial.uf2` | `286fb09d0ce1d96c74f2a0baf8348378` | 104448 | `b31673a7…`, 104448 |
-| `loudest_micro_calibrate.uf2` | `aabf7954f1e2b46880f298fd620d63ff` | 96768 | `a81ce4a1…`, 96768 |
+| file | built from | md5 | bytes | replaces |
+|---|---|---|---|---|
+| `agentpad13.uf2` | `-km vial` | `a7b8da85a7d3f0de96b983be8c782ba2` | 109568 | `agentpad13.uf2` `cce79a07…`, 107008 |
+| `agentpad13_reference.uf2` | `-km default` | `4caac0bca0cafb1d3ebf7d46dd9e7adb` | 93696 | `agentpad13_reference.uf2` `34fa434b…`, 90624 |
 
-*(Superseded 2026-08-15, kept for provenance: the 2026-08-13 touch-fix pair was
-`loudest_micro_default.uf2` `cf5bd62853ea591b39a1ce7246848229` / 88576 and
-`loudest_micro_vial.uf2` `b31673a7ba6a6219a0d5a3b9aee52e42` / 104448, which in
-turn replaced the Rev-A binaries `4af788ae…` / 88064 and `e5008942…` / 104448.
-The `calibrate` bring-up UF2 was added 2026-08-13 as `a81ce4a1…`. All sizes are
-unchanged across the 2026-08-15 rebuild — the changes were a coordinate table
-and one removed call.)*
+**REBUILT AGAIN 2026-08-15 — on-board (SW14) joystick calibration.** The row
+above supersedes the first v1 pair (`cce79a07…` / `34fa434b…`, 107008 / 90624 B).
+Calibration no longer needs a host at all: SW14 runs the whole routine on the
+board and stores the result itself (`firmware/BRING-UP.md`,
+`docs/PROTOCOL-V1-CONTRACT.md`). **This changed nothing about axis DIRECTION
+either** — the routine measures where the ends are, exactly as 0x51 does, and
+shares its code path byte-for-byte.
 
-The **default** and **calibrate** builds reproduce byte-for-byte from these
-sources (proved again on 2026-08-15: two clean-`.build` rebuilds each, identical
-bytes); the **vial** build is non-deterministic run-to-run (LTO/link ordering),
-so its md5 records the shipped bytes and is **not** a reproducibility target.
+**Both artifacts were renamed and rebuilt on 2026-08-15** for protocol v1
+(joystick calibration over raw HID, `docs/PROTOCOL-V1-CONTRACT.md`) and for
+`ENCODER_DIRECTION_FLIP` (the EC11 A/B landing measured on the assembled board).
+The sizes grew by 2560 B (vial) and 2048 B (default) — that is the v1 handlers,
+the EEPROM store and the calibration derivation.
+
+*(Superseded, kept for provenance: `loudest_micro_default.uf2` / `loudest_micro_vial.uf2`
+were `1c0ff911…` / `286fb09d…` (2026-08-15 isotropic-RGB rebuild), before that
+`cf5bd628…` / `b31673a7…` (2026-08-13 touch fix), before that the Rev-A binaries
+`4af788ae…` / 88064 and `e5008942…` / 104448. A third artifact,
+`loudest_micro_calibrate.uf2` (`a81ce4a1…` then `aabf7954…`, 96768), existed
+between 2026-08-13 and 2026-08-15; the separate bring-up firmware it came from
+is **deleted** — protocol v1 replaced it with a host-invoked routine that needs
+no reflash. See `firmware/BRING-UP.md`.)*
+
+The **reference** build reproduces byte-for-byte from these sources (proved
+again on 2026-08-15: two rebuilds from a wiped `.build/`, identical bytes); the
+**vial** build is non-deterministic run-to-run (LTO/link ordering), so its md5
+records the shipped bytes and is **not** a reproducibility target.
 
 The v5 board changes (RE1 move, J1 flip, JS1→YA13) still required **zero**
 joystick firmware changes: the pin map is untouched — `JOY_X_ADC = GP26/ADC0`,
@@ -90,17 +107,34 @@ with the standard QMK/Vial flow in `firmware/BUILD.md`.
 ## Related watch-item (separate from polarity)
 
 `keyboard.json` still carries the **placeholder calibration** (`low 0 / rest
-512 / high 1023`) inherited from the slider era. The real `low / rest / high`
-must come from a **bring-up ADC sweep on the actual YA13** at assembly; the
-placeholder is a nominal 10-bit span, not metered values. Do the sweep and the
-polarity fix together in one firmware pass — both are config-only, one rebuild.
+512 / high 1023`) inherited from the slider era, and it now stays that way on
+purpose: since 2026-08-15 it is the *uncalibrated fallback*, not a value waiting
+to be edited.
 
-**The sweep now has a mechanism** (added 2026-08-13): flash
-`firmware/prebuilt/loudest_micro_calibrate.uf2`, open a text editor, and the
-board types its own rest/min/max, per-axis `inverted=YES/NO`, a re-derived
-`JS_CENTER`/`JS_THRESHOLD`, and finished copy-pasteable config lines **with the
-`low`/`high` swap above already applied** to any inverted axis. Step-by-step
-instructions: `firmware/BRING-UP.md` *(moved there 2026-08-15 from
-`firmware/BUILD.md` §4a, which now forwards to it, so that the procedure ships
-in the release bundle alongside this note)*. Source and reasoning:
-`firmware/loudest_micro/keymaps/calibrate/`.
+**The sweep no longer needs a firmware pass at all.** As of 2026-08-15 the board
+keeps its own calibration: a 14-byte EEPROM block holds per-axis rest/min/max,
+the trigger threshold is derived from it as `floor(60% of the smaller
+half-swing)`, and the values are applied to the arrow and scroll modes *and* to
+the native HID gamepad. Nothing is rebuilt and nothing is reflashed, and the
+calibration **survives a power cycle** — proved, not assumed, by
+`firmware/sim/joystick.cjs`, which stores a calibration, restarts the emulated
+MCU carrying only the flash image, and reads the values back.
+
+Protocol v1 also exposes that store on the wire for host tooling and diagnostics
+(`0x50` read live ADC + stored calibration, `0x51` store, `0x52` wipe —
+`docs/PROTOCOL-V1-CONTRACT.md`).
+
+> **The owner-facing procedure is `firmware/BRING-UP.md`** — flash, hold SW14 for
+> a second, follow the LEDs. It was rewritten for the on-board routine on
+> 2026-08-15; this note's earlier warning that it was stale no longer applies.
+
+*(Superseded 2026-08-13→2026-08-15: the sweep used to mean flashing a separate
+`loudest_micro_calibrate.uf2`, opening a text editor and letting the board TYPE
+its own rest/min/max plus copy-pasteable config lines, then pasting those back
+into two source files and rebuilding. That keymap, its UF2 and its referee
+`firmware/sim/calibrate.cjs` are all deleted.)*
+
+**The polarity fix below is still compile-time and still a separate question
+from calibration** — `loudest calibrate` records where the stick's ends are, not
+which way round they are. If an axis reads reversed, swap its `low`/`high` in
+`keyboard.json` and rebuild, exactly as described above.

@@ -21,9 +21,12 @@ enum loudest_keycodes {
 };
 
 // ---------------------------------------------------------------------------
-// Raw-HID status protocol v0 - LOCKED. Wire counterpart and single source of
-// truth: daemon/loudestd/protocol.py. Do NOT change framing/opcodes/CAPS layout
-// on one side without updating the other.
+// Raw-HID status protocol v1 - LOCKED. Wire counterpart and single source of
+// truth: daemon/loudestd/protocol.py, with docs/PROTOCOL-V1-CONTRACT.md as the
+// contract both sides are written against. Do NOT change framing/opcodes/CAPS
+// layout on one side without updating the other.
+// v1 (2026-08-15) added 0x50/0x51/0x52 (joystick calibration) and bumped the
+// CAPS protocol_version byte; every v0 frame is unchanged byte-for-byte.
 //
 // LED addressing is by RAW CHAIN POSITION. Because keyboard.json authors
 // rgb_matrix.layout in chain order, the chain index equals the rgb_matrix LED
@@ -43,7 +46,7 @@ enum loudest_keycodes {
 // visible benefit.)
 #define LOUDEST_LED_COUNT     24   // addressable chain length (CAPS led_count)
 #define LOUDEST_LED_INDICATOR 13   // layer-indicator chain position
-#define LOUDEST_PROTO_VERSION 0    // CAPS protocol_version (v0)
+#define LOUDEST_PROTO_VERSION 1    // CAPS protocol_version (v1, was 0 before 2026-08-15)
 #define LOUDEST_CAPS_MAGIC0   0x4C // 'L'
 #define LOUDEST_CAPS_MAGIC1   0x44 // 'D'
 // CAPS features bitfield: PER_KEY|UNDERGLOW|LAYER_INDICATOR|JOYSTICK|ENCODER.

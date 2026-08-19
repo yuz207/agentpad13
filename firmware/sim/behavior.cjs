@@ -32,7 +32,7 @@
 // axis IDENTITY are NOT validated here; the emulator is not cycle-faithful and
 // rp2040js has a confirmed ADC channel-select masking bug (README §"Untrusted").
 //
-// Usage:  node behavior.cjs [../prebuilt/loudest_micro_default.uf2]
+// Usage:  node behavior.cjs [../prebuilt/agentpad13_reference.uf2]
 'use strict';
 
 const fs = require('fs');
@@ -56,7 +56,7 @@ const {
 } = R;
 
 const args = process.argv.slice(2);
-const UF2_PATH = path.resolve(__dirname, args.find((a) => !a.startsWith('--')) ?? '../prebuilt/loudest_micro_default.uf2');
+const UF2_PATH = path.resolve(__dirname, args.find((a) => !a.startsWith('--')) ?? '../prebuilt/agentpad13_reference.uf2');
 const PIO0_TXF0 = 0x50200010;
 const LED_COUNT = 24;
 
@@ -86,6 +86,36 @@ if (!['board', 'firmware'].includes(TOUCH_MODEL)) {
 const TOUCH_IDLE_LEVEL = TOUCH_MODEL === 'board' ? false : true; // false = LOW
 const touchDown = () => mcu.gpio[16].setInputValue(!TOUCH_IDLE_LEVEL);
 const touchUp = () => mcu.gpio[16].setInputValue(TOUCH_IDLE_LEVEL);
+
+// --- ENCODER DIRECTION MODEL ----------------------------------------------
+// Second A/B, identical in shape and purpose to --touch above, added
+// 2026-08-15. A quadrature walk on GP13/GP14 has no intrinsic handedness: which
+// walk is a PHYSICALLY CLOCKWISE detent depends on which EC11 terminal landed on
+// ENC_A and which on ENC_B — a board fact, exactly like the AHLB strap. This
+// harness used to hard-code one answer (the seq[] order below == clockwise),
+// which is an ASSUMPTION about v5_6, not a measurement of it.
+//
+//   'board'    (DEFAULT — what the assembled v5_6 actually does)
+//              Measured on the owner's populated board, 2026-08-15: turning the
+//              knob clockwise on the PRE-FLIP firmware produced volume-DOWN. So
+//              on this board a physically-clockwise detent is the REVERSED walk,
+//              and the firmware now carries ENCODER_DIRECTION_FLIP
+//              (config.h) so that CW is volume UP again.
+//
+//   'firmware' (the pre-flip assumption, and what this file asserted before
+//              2026-08-15) — a physically-clockwise detent is the forward walk.
+//              It describes no board that exists; it is the counterfactual arm.
+//
+// Both models assert the SAME behavior — CW must give KC_VOLU, CCW must give
+// KC_VOLD. Only the GPIO walk that stands for "clockwise" changes, which is the
+// one thing the board decides. Nothing about the keymap is relaxed.
+const ENCODER_MODEL = (args.find((a) => a.startsWith('--encoder=')) ?? '--encoder=board').split('=')[1];
+if (!['board', 'firmware'].includes(ENCODER_MODEL)) {
+  console.error(`unknown --encoder=${ENCODER_MODEL} (expected 'board' or 'firmware')`);
+  process.exit(2);
+}
+// true = the seq[] order in rotate() is a clockwise detent on this board.
+const ENCODER_CW_IS_FORWARD_WALK = ENCODER_MODEL === 'firmware';
 
 // ---------------------------------------------------------------- verdicts
 let failures = 0;
@@ -120,6 +150,9 @@ console.log(`loaded ${loadUF2(UF2_PATH, mcu)} UF2 blocks`);
 console.log(TOUCH_MODEL === 'board'
   ? 'touch model: BOARD TRUTH — TTP223 AHLB->GND (R10) = active-high, GP16 idles LOW'
   : 'touch model: FIRMWARE ASSUMPTION — config.h:21 "idle high, touched low", GP16 idles HIGH');
+console.log(ENCODER_MODEL === 'board'
+  ? 'encoder model: BOARD TRUTH — v5_6 A/B landing measured 2026-08-15, CW = the reversed GP13/GP14 walk'
+  : 'encoder model: PRE-FLIP ASSUMPTION — CW = the forward GP13/GP14 walk (no ENCODER_DIRECTION_FLIP)');
 console.log('');
 
 // --- rp2040js fidelity workarounds. Identical in intent to the four documented
@@ -293,6 +326,7 @@ const KBD_EP = ifaceKbd().inEp;
 // index 13 is showing the layer indicator: hsv(h = layer*32, s = 255, v).
 // Layer 0 -> hue 0 -> pure red. Any other layer is NOT pure red.
 // This is where a stuck [3,2] (the layer-cycle key) shows itself immediately.
+const failBeforeTouch = failures; // sections 0b-0d are the touch-polarity-bearing ones
 console.log('\n0b. boot layer — the layer indicator must say layer 0 (BASE)');
 {
   const ind = readLeds()[13];
@@ -356,6 +390,7 @@ console.log('\n0d. touch polarity — the layer must advance ON TOUCH, not on re
     console.log('  !!   and lifting off presses it. Every touch action is off by one edge.');
   }
 }
+const failAfterTouch = failures;
 // Normalise to layer 0 so the remaining sections test what they say they test.
 // SET_LAYER(0) is claimed by the keyboard in both the default and vial builds.
 sendRaw(cmd(0x02, 0x00));
@@ -453,11 +488,15 @@ for (const s of CONSUMER) {
 }
 
 // ================================================================ 4. encoder
+const failBeforeEncoder = failures;
 console.log('\n4. EC11 encoder — quadrature on GP13/GP14, layer 0 maps to volume');
 function rotate(cw, detents) {
-  // (A,B) walk. CW: 11 -> 01 -> 00 -> 10 -> 11 ; CCW is the reverse.
+  // (A,B) walk: 11 -> 01 -> 00 -> 10 -> 11, and its reverse. WHICH of the two is
+  // a physically-clockwise detent is a property of the A/B landing on the board,
+  // so it comes from the --encoder model rather than being assumed here.
   const seq = [[0, 1], [0, 0], [1, 0], [1, 1]];
-  const order = cw ? seq : seq.slice().reverse();
+  const forwardWalk = cw === ENCODER_CW_IS_FORWARD_WALK;
+  const order = forwardWalk ? seq : seq.slice().reverse();
   for (let d = 0; d < detents; d++) {
     for (const [a, b] of order) {
       mcu.gpio[13].setInputValue(!!a);
@@ -476,6 +515,8 @@ for (const [dir, cw, usage, key] of [['CW', true, 0x00e9, 'KC_VOLU'], ['CCW', fa
   verdict(`rotate ${dir} -> ${key} (consumer 0x${usage.toString(16)})`, seen,
     rep.map((e) => `EP${e.ep}:${e.hex}`).join(' ') || 'no report');
 }
+
+const failAfterEncoder = failures;
 
 // ================================================================ 5. joystick
 console.log('\n5. analog joystick — ADC injection -> HID gamepad report (report id 0x07)');
@@ -513,12 +554,18 @@ if (jA.axes && jB.axes) {
 
 // ================================================================ done
 console.log('');
-console.log(`touch model: ${TOUCH_MODEL}   checks: ${checks}   failures: ${failures}`);
-if (failures && TOUCH_MODEL === 'board') {
+console.log(`touch model: ${TOUCH_MODEL}   encoder model: ${ENCODER_MODEL}   checks: ${checks}   failures: ${failures}`);
+if (failAfterTouch > failBeforeTouch && TOUCH_MODEL === 'board') {
   console.log('NOTE: --touch=board models the PCB as fabricated (R10: TOUCH_AHLB->GND).');
   console.log('      Re-run with --touch=firmware to see the same binary pass under the');
   console.log('      polarity config.h:21 assumes — that isolates the fault to the strap,');
   console.log('      not to the keymap or the LED/USB paths.');
+}
+if (failAfterEncoder > failBeforeEncoder && ENCODER_MODEL === 'board') {
+  console.log('NOTE: --encoder=board models the EC11 A/B landing measured on the assembled');
+  console.log('      v5_6 on 2026-08-15. Re-run with --encoder=firmware to see the same');
+  console.log('      binary under the pre-flip assumption — that isolates the fault to the');
+  console.log('      A/B landing (config.h ENCODER_DIRECTION_FLIP), not to the keymap.');
 }
 console.log(failures === 0 ? 'BEHAVIOR SIM: PASS' : 'BEHAVIOR SIM: FAIL');
 process.exit(failures === 0 ? 0 : 1); // explicit: the USB controller keeps the loop alive

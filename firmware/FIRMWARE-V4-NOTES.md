@@ -278,6 +278,12 @@ EMULATOR SMOKE: PASS        (loudest_micro_default.uf2)
 EMULATOR SMOKE: PASS        (loudest_micro_vial.uf2)
 ```
 
+*(Artifact names as of 2026-08-15: `agentpad13_reference.uf2` and
+`agentpad13.uf2` respectively — see §5. The expected CAPS literal in
+`firmware/tests/emulator/package.json` also moved with protocol v1: byte 4 is
+now `01`, so the string is `04424c440118081f00…`, not `…0018081f…` as quoted
+just above.)*
+
 The vial-build PASS on check 5 is the artifact-level proof that the §3
 `via_command_kb` backport is live in the shipped `.uf2`: an unpatched VIA
 would consume the 0x04 frame itself and echo a keycode reply, not the
@@ -306,18 +312,29 @@ here; that is what first-power-on hardware bring-up is for.
 
 ## 5. Rebuilt artifacts (firmware/prebuilt/)
 
-| File | SHA-256 |
-|---|---|
-| `loudest_micro_default.uf2` (88576 bytes) | `d37efc5f375af822a72273ad86c76950fa005edc28bcc2c675f0bcefb5ef3926` |
-| `loudest_micro_vial.uf2` (104448 bytes) | `d5dcb85f0185bf02b66ab657829222bc0354a845e8b76efde03c79497a4e3284` |
-| `loudest_micro_calibrate.uf2` (96768 bytes) | `f9c5de9ba5834e0c810688520fa53d58ac72229c628be270b4987ceb57ff1541` |
+| File | built from | SHA-256 |
+|---|---|---|
+| `agentpad13.uf2` (109568 bytes) | `-km vial` | `fa5b5df04274a389902984a57f8fdad8e5cc66c9f6e142056eedeaa8a2cb68f2` |
+| `agentpad13_reference.uf2` (93696 bytes) | `-km default` | `1c8b9d5a716f24373477fd2368df1e41a122242d406c2adb332f4e12cd24a212` |
 
-md5, for the drag-and-drop check: default `1c0ff911d545d0943c11a5971279d3ae`,
-vial `286fb09d0ce1d96c74f2a0baf8348378`, calibrate
-`aabf7954f1e2b46880f298fd620d63ff`.
+md5, for the drag-and-drop check: `agentpad13.uf2`
+`a7b8da85a7d3f0de96b983be8c782ba2`, `agentpad13_reference.uf2`
+`4caac0bca0cafb1d3ebf7d46dd9e7adb`.
+
+**Rebuilt 2026-08-15 for on-board (SW14) joystick calibration**, superseding the
+first v1 pair (`agentpad13.uf2` md5 `cce79a07…` / 107008 B,
+`agentpad13_reference.uf2` md5 `34fa434b…` / 90624 B). Growth is +2560 B (vial)
+and +3072 B (default): the SW14 reader, the calibration state machine and its
+LED display. The reproducibility split below was re-confirmed on this pair —
+`agentpad13_reference.uf2` rebuilt to `4caac0bc…` identically across repeated
+builds including a comment-only source edit, while two consecutive `-km vial`
+builds with **no source change at all** produced `8eb56943…` then `a7b8da85…`.
 
 Built from the exact tree in this commit + vial-qmk `00fc4627` + the §3
 patch, Arm GNU Toolchain 15.2.Rel1, zero warnings (`-Werror`).
+`agentpad13_reference.uf2` reproduced byte-for-byte across **three** clean
+builds (`.build/` wiped between each); `agentpad13.uf2` records shipped bytes
+only — the vial link is non-deterministic run-to-run.
 
 > **Superseded 2026-08-13 — TTP223 touch-polarity fix.** The table above is the
 > current shipped pair. It replaces the Rev-A binaries
@@ -353,6 +370,28 @@ patch, Arm GNU Toolchain 15.2.Rel1, zero warnings (`-Werror`).
 > failing 15; 30/30, 56/56, 80/80 unchanged. `default` **and** `calibrate`
 > reproduce byte-for-byte (two clean-`.build` rebuilds each); `vial` remains
 > non-deterministic.
+
+> **Superseded later on 2026-08-15 — protocol v1, encoder direction flip, and a
+> RENAME.** The table above is the current shipped set and there are now **two**
+> artifacts, not three. It replaces `loudest_micro_default.uf2` (88576 B, md5
+> `1c0ff911…`), `loudest_micro_vial.uf2` (104448 B, md5 `286fb09d…`) and
+> `loudest_micro_calibrate.uf2` (96768 B, md5 `aabf7954…`). Three changes:
+> (1) **protocol v1** — raw-HID commands `0x50`/`0x51`/`0x52` plus a 14-byte
+> keyboard EEPROM datablock holding per-axis joystick rest/min/max, with the
+> trigger threshold derived as `floor(60% of the smaller half-swing)` and applied
+> to the arrow/scroll modes *and* the native HID gamepad; the CAPS reply's byte 4
+> is now `01`. (2) **`ENCODER_DIRECTION_FLIP`** — measured on the owner's
+> assembled board, a clockwise turn had been producing volume-DOWN. (3) the
+> `calibrate` keymap, its UF2 and its referee `firmware/sim/calibrate.cjs` are
+> **deleted** — the calibration lives in EEPROM now instead of being typed into a
+> text editor and pasted back into source. Sizes grew by 2048 B (reference) and
+> 2560 B (vial) for the v1 handlers and the calibration store. Gates:
+> `behavior.cjs --touch=board --encoder=board` **33/33 PASS** on both builds,
+> with `--touch=firmware` still failing exactly 4 and the new `--encoder=firmware`
+> failing exactly 2 (the A/Bs still discriminate, and they compose to 6);
+> `joystick.cjs` **48/48 PASS** on both builds with `--no-eeprom` failing 5 and
+> `--no-adc-fix` failing 2; `run_conformance.py` **410/410** (was 80/80);
+> 30/30 and 56/56 unchanged.
 
 ## 6. Remaining gaps (honest, none hidden)
 

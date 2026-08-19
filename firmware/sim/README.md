@@ -32,8 +32,13 @@ the boards land:
 > logical `[3,2]`. **The current `firmware/prebuilt/*.uf2` pass 33/33 under
 > `--touch=board`** — see [After the fix](#after-the-fix).
 >
-> Nothing in `behavior.cjs` was changed to make that happen; the harness is
-> byte-identical to the version that failed.
+> Nothing in `behavior.cjs` was changed to make that happen; the harness that
+> passed the fixed binaries was byte-identical to the one that failed the broken
+> ones. *(`behavior.cjs` was edited once since, on 2026-08-15, and only to ADD
+> the `--encoder=` A/B described below — an extension, not a relaxation: the
+> check count is still 33 and the four touch failures under `--touch=firmware`
+> are still byte-identical to the ones quoted here. No check was ever adjusted to
+> make a failing thing pass.)*
 
 ---
 
@@ -52,15 +57,30 @@ Then:
 
 ```bash
 cd firmware/sim
-node behavior.cjs                                     # default keymap, board polarity
-node behavior.cjs ../prebuilt/loudest_micro_vial.uf2   # vial build
-node behavior.cjs --touch=firmware                     # the polarity config.h assumes
+node behavior.cjs                                # reference build, board truth on both A/Bs
+node behavior.cjs ../prebuilt/agentpad13.uf2     # the vial build
+node behavior.cjs --touch=firmware               # the polarity config.h used to assume
+node behavior.cjs --encoder=firmware             # the A/B landing config.h used to assume
+
+node joystick.cjs                                # protocol-v1 referee (0x50/0x51/0x52 + EEPROM
+                                                 #   + the SW14 on-board routine, section 10)
+node joystick.cjs --no-eeprom                    # its counterfactual arm; must FAIL
 ```
 
-or `npm run sim:default` / `sim:vial` / `sim:default:fwpolarity` from this
-directory. Each run takes **~35 s** on an M-series Mac and exits non-zero on any
-failure, so it drops straight into CI. No network, no account, no cloud upload,
-no browser.
+or `npm run sim:default` / `sim:vial` / `sim:default:fwpolarity` /
+`sim:default:fwencoder` / `joystick:default` / `joystick:vial` from this
+directory. `behavior.cjs` takes **~35 s** on an M-series Mac and `joystick.cjs`
+**~6 min** (it grew from ~45 s on 2026-08-15: section 10 drives the real
+on-board calibration routine, which is ~15 s of *emulated* time per run and is
+run three times — there is no way to shorten it without shortening the routine
+the owner actually performs). Both exit non-zero on any failure, so they drop
+straight into CI. No network, no account, no cloud upload, no browser.
+
+> **Artifact names changed 2026-08-15.** `firmware/prebuilt/` now ships
+> `agentpad13.uf2` (the vial build — the one users want) and
+> `agentpad13_reference.uf2` (the plain-QMK, byte-reproducible reference). They
+> replace `loudest_micro_vial.uf2` and `loudest_micro_default.uf2`, which is why
+> older transcripts in this file name the old files.
 
 ### `--touch=` — the most important flag
 
@@ -97,6 +117,42 @@ still proving it can tell the two polarities apart. (The DIAGNOSIS prose printed
 in that arm was written for the pre-fix direction and now reads backwards; it is
 left verbatim because `behavior.cjs` is the referee and was deliberately not
 edited as part of the fix.)
+
+### `--encoder=` — the same idea, for the EC11
+
+Added **2026-08-15**, and for the same reason the touch A/B exists: this harness
+had a hard-coded belief about the board that turned out to be false.
+
+A quadrature walk on `GP13`/`GP14` has **no intrinsic handedness**. Which of the
+two walks is a physically *clockwise* detent depends on which EC11 terminal
+landed on `ENC_A` and which on `ENC_B` — a board fact, exactly like the AHLB
+strap. `behavior.cjs` used to assert one answer outright: *the forward walk is
+clockwise, therefore it must produce `KC_VOLU`.* Nobody had measured that.
+
+**The owner measured it on the assembled board on 2026-08-15: turning the knob
+clockwise produced volume-DOWN.** The firmware was corrected
+(`config.h`: `#define ENCODER_DIRECTION_FLIP`, which swaps which walk vial-qmk's
+`drivers/encoder/encoder_quadrature.c` calls clockwise), and the harness's
+falsified assumption was turned into a switch rather than left standing:
+
+| Mode | "Clockwise" is | Meaning |
+|---|---|---|
+| `board` *(default)* | the **reversed** GP13/GP14 walk | The as-built `v5_6` A/B landing, measured on hardware. **This is the mode that must pass.** |
+| `firmware` | the **forward** walk | What this file asserted before 2026-08-15, i.e. the pre-flip assumption. It describes no board that exists; since the flip it is the arm that fails. |
+
+Both modes assert the **same behavior** — CW must give `KC_VOLU`, CCW must give
+`KC_VOLD`. Only the walk that stands for "clockwise" moves, which is the one
+thing the board decides. No check was relaxed and the count is still 33.
+
+The two switches are independent and compose, which is itself the proof that
+each isolates its own fault. Measured on both current builds:
+
+| `--touch=` | `--encoder=` | checks | failures | which |
+|---|---|---|---|---|
+| `board` | `board` | 33 | **0 — PASS** | the gate |
+| `board` | `firmware` | 33 | 2 | both encoder checks, and only those |
+| `firmware` | `board` | 33 | 4 | the four touch checks, byte-identical to the 2026-08-13 table above |
+| `firmware` | `firmware` | 33 | 6 | 4 + 2, no interaction |
 
 ---
 
@@ -199,9 +255,16 @@ Both comments that asserted the wrong polarity — `config.h:21` and
 
 ## After the fix
 
-`--touch=board` — the real hardware polarity — **33/33 on both builds**, on the
-`.uf2`s now in `firmware/prebuilt/`. This is the acceptance run; the harness
-itself was not modified.
+`--touch=board` — the real hardware polarity — **33/33 on both builds**. This is
+the acceptance run; the harness was not modified to produce it.
+
+> **This transcript is the 2026-08-13 acceptance run, kept verbatim as the record
+> of the touch fix.** It names `loudest_micro_default.uf2`, which no longer
+> exists, and it predates the `--encoder=` A/B, so its summary line has no
+> encoder model on it. The current gate is
+> `node behavior.cjs --touch=board --encoder=board` against
+> `agentpad13_reference.uf2` / `agentpad13.uf2`, and it still reads
+> **33 checks, 0 failures** on both.
 
 ```
 agentpad13 behavioral sim — loudest_micro_default.uf2
@@ -328,15 +391,29 @@ Read this before treating a PASS as permission to skip bring-up.
 * **Whether the touch pad works as a sensor.** We model GP16's *logic level*
   from the strap. Pad sensitivity through the case, C25 tuning, and false
   triggering are unanswerable without the board.
-* **Encoder detent direction.** We prove a CW quadrature walk produces
-  `KC_VOLU`. Whether turning the physical knob clockwise produces the CW walk
-  depends on which way A and B are soldered.
-* **Joystick calibration and axis direction.** `low/rest/high` ship as
-  placeholder `0/512/1023`; real values need the bring-up ADC sweep. Which way
-  the gimbal drives each wiper is mechanical.
-* **EEPROM / Vial persistence.** rp2040js's SSI peripheral is a stub and flash
-  writes do not work ([#157](https://github.com/wokwi/rp2040js/issues/157)), so
-  QMK's emulated EEPROM cannot be exercised.
+* **Encoder detent direction — *was* unanswerable here, and it bit us.** This
+  bullet used to read *"we prove a CW quadrature walk produces `KC_VOLU`;
+  whether turning the physical knob clockwise produces the CW walk depends on
+  which way A and B are soldered"* — correctly identifying the gap, while the
+  harness went on asserting one side of it anyway. The owner measured the real
+  board on **2026-08-15** (clockwise gave volume-DOWN), the firmware got
+  `ENCODER_DIRECTION_FLIP`, and the assumption became the `--encoder=` A/B
+  above. The emulator still cannot tell you which walk your knob makes; it can
+  now tell you which walk this *board* makes, because a human measured it once.
+* **Joystick axis direction.** Which way the gimbal drives each wiper is
+  mechanical and is still not answerable here — see `firmware/POLARITY-NOTE.md`.
+  (Calibration itself is no longer in this list: see the next bullet.)
+* **EEPROM / Vial persistence — no longer out of reach.** rp2040js's SSI
+  peripheral is a stub and flash writes do not work in stock rp2040js
+  ([#157](https://github.com/wokwi/rp2040js/issues/157)), and its `IO_QSPI` is
+  an `UnimplementedPeripheral` whose `0xffffffff` reads make QMK's wear-levelling
+  driver believe every flash access was aborted — so an EEPROM write used to be
+  a silent no-op. `joystick.cjs` attaches a small serial-NOR model to the SSI
+  (workaround **(g)** below) and therefore **does** exercise QMK's emulated
+  EEPROM: it stores a calibration, restarts the emulated MCU carrying only the
+  flash image, and reads the values back. Its `--no-eeprom` arm removes the model
+  and must fail on exactly those checks. What is still out of reach is Vial's own
+  dynamic-keymap persistence, which nothing here drives.
 * **Anything electrical:** USB timing margins, inrush, the 500 mA budget,
   brownout, ESD, thermals.
 
@@ -364,8 +441,10 @@ Read this before treating a PASS as permission to skip bring-up.
 
 ### Emulator workarounds in force
 
-Five rp2040js fidelity issues are worked around **in the harness, never in the
-firmware** (each commented at its site in `behavior.cjs`; the first four match
+Seven rp2040js fidelity issues are worked around **in the harness, never in the
+firmware**, each commented at its site.
+
+**(a)–(e), in both harnesses** (the first four match
 `firmware/tests/emulator/runner.cjs`): the ADC `FIFO_REG` interrupt latch,
 unimplemented DMA `CHAN_ABORT` reads, DREQ latches that only update on FIFO
 transitions, `chan.start()` ignoring an already-asserted DREQ, and the PIO's
@@ -373,6 +452,33 @@ transitions, `chan.start()` ignoring an already-asserted DREQ, and the PIO's
 ([#154](https://github.com/wokwi/rp2040js/issues/154)), so idle-high lines are
 driven high explicitly — **and GP16 is driven from the polarity model rather
 than assumed, which is precisely what let this harness catch the strap bug.**
+
+**(f) and (g), in `joystick.cjs` only, and both switchable** — a workaround that
+cannot be switched off cannot be audited:
+
+* **(f) `ADC.CS.START_ONCE` is self-clearing on silicon and not in rp2040js.**
+  ChibiOS's RP ADC LLD sets the channel with a read-modify-write of `CS`, so the
+  stale bit is written back and kicks off a second conversion; every
+  `adcConvert()` then returns the previous conversion's value. Switch it off
+  with `--no-adc-fix` and the board reports `live X=200 Y=800` for an injected
+  `800/200` — the swap signature of a strict one-sample lag. **Measured, 2 of 48
+  checks fail, and only the live-ADC ones.**
+* **(g) flash writes do not work in stock rp2040js.** The SSI peripheral is a
+  stub that discards `DR0` writes and always reports `RXFLR = 0`, and `IO_QSPI`
+  is an `UnimplementedPeripheral` returning `0xffffffff` — which QMK's
+  wear-levelling driver reads as *"flash access aborted"*, so its write loops
+  bail out and the EEPROM silently never changes. `joystick.cjs` attaches a
+  byte-level serial-NOR model (WREN / page-program / sector- and block-erase /
+  read-status) to the SSI and a real register file to `IO_QSPI`, so writes land
+  in the same `flash` array the XIP read path already serves. Two things had to
+  be measured rather than guessed to make it work: the FIFO must answer even
+  while CS is **high** (the bootrom's `flash_exit_xip()` clocks dummy bursts
+  through the same loop, and the loop's only other exit was the now-honest abort
+  flag — boot hangs in ROM at `0x1784` otherwise), and the FIFO must be cleared
+  at **both** CS edges (boot2, re-run from RAM after every program, leaves bytes
+  behind; without the clear exactly five EEPROM writes succeed and the sixth
+  hangs). Switch it off with `--no-eeprom`: **5 of 48 checks fail, and only the
+  persistence ones.**
 
 ---
 
@@ -419,6 +525,12 @@ not still outstanding.**
 
 | File | What it is |
 |---|---|
-| `behavior.cjs` | The harness. Reuses `../tests/emulator/node_modules` + `bootrom.cjs`. |
-| `calibrate.cjs` | Added 2026-08-13. Separate referee for `../prebuilt/loudest_micro_calibrate.uf2` (the bring-up keymap, `BUILD.md` §4a): injects ADC values and asserts the report the board types, character for character, against expectations computed independently in JS. A/B arm `--no-adc-fix` must FAIL. **It is a new file — `behavior.cjs` was not touched to accommodate it.** |
+| `behavior.cjs` | The behavioral harness. Reuses `../tests/emulator/node_modules` + `bootrom.cjs`. Two A/B switches, `--touch=` and `--encoder=`, both defaulting to board truth. |
+| `joystick.cjs` | Added 2026-08-15. Referee for the **protocol-v1 calibration commands** on the same shipped `.uf2`s: `0x50` framing and live ADC, `0x51` acceptance with `floor(60%)` threshold derivation and the SRAM gamepad rescale, every `0x51` rejection class (out-of-range, `min ≥ rest`, `rest ≥ max`, the 99-vs-100 half-swing boundary, a truncated frame) each proven to write **nothing**, `0x52`, CAPS reporting version 1, and **EEPROM persistence across a simulated power cycle**. A/B arms `--no-eeprom` and `--no-adc-fix` must FAIL. **Section 10, added later on 2026-08-15, drives the whole SW14 ON-BOARD routine** with no host at all — the button is presented on `qspi[1]`, the stick is swept through the ADC, and the board arms, centres, tracks its envelope, validates, derives and stores entirely by itself; it then asserts the resulting EEPROM image is **byte-identical** to pushing the same six numbers over `0x51`, and that a failed run (half-swing under the contract's minimum) writes **nothing at all**. It also times the interrupts-disabled window inside `sw14_pressed()`. **62 checks.** |
 | `package.json` | Convenience scripts only — no dependencies of its own. |
+
+*(`calibrate.cjs` lived here from 2026-08-13 to 2026-08-15. It refereed the
+separate bring-up firmware `loudest_micro_calibrate.uf2` by decoding the text
+that firmware **typed** over HID. That keymap, its UF2 and this referee are all
+deleted; `joystick.cjs` is not its successor in kind — it tests the EEPROM
+store and the wire protocol, which is where the calibration actually lives now.)*

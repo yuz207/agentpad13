@@ -112,10 +112,11 @@ retired 2.4 mm-wall geometry whose corners a fab review flagged as too thin.
 ## Card 5 — assembly order (when everything arrives)
 
 1. Heat-set the four inserts into the tray posts (~245 °C).
-2. Flash firmware over USB (`firmware/prebuilt/*.uf2` — hold BOOTSEL, drag the file on).
-   - **First power-on: do the calibration in `firmware/BRING-UP.md`** — flash `loudest_micro_calibrate.uf2` once, press one key four times, and the board types its own joystick numbers (and confirms touch + encoder); then flash the real build back.
-3. First-boot config: see `firmware/POLARITY-NOTE.md` — joystick axis inversion + calibration is a
-   one-time config edit after you feel the stick.
+2. Flash firmware over USB (`firmware/prebuilt/agentpad13.uf2` — hold BOOTSEL, drag the file on).
+   - **First power-on: calibrate the joystick — see `firmware/BRING-UP.md`.** Hold **SW14** (the same button in the back) for about a second and follow the 13 key LEDs: white armed, blue bar while it finds the resting position, amber-to-green bar while you roll the stick around its outside edge, green flash when stored. About 15 seconds, and the board remembers it through unplugging and reflashing. **No host software, no daemon, no CLI, no second firmware** — a USB cable is the only tool.
+3. First-boot config: see `firmware/POLARITY-NOTE.md` — if an axis reads *backwards* (which way round
+   it is, not how far it travels) that is still a one-time config edit after you feel the stick. The
+   travel range itself is what step 2's on-board calibration measures and stores.
 4. Hand-solder the afterlist (encoder last: seat it flush).
 5. Place the conductive foam pillar on the PCB's touch pad; gasket (if using) on the tray ledge.
 6. Stack: tray → PCB (seats on posts, no screws) → band → plate; drive the four M3 screws.

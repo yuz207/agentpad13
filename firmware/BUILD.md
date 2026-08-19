@@ -101,7 +101,13 @@ qmk compile -kb loudest_micro -km vial          # -> loudest_micro_vial.uf2
 ```
 
 Both drop a `.uf2` in the vial-qmk root. Prebuilt copies live in
-`firmware/prebuilt/` (SHA-256 hashes in `firmware/FIRMWARE-V4-NOTES.md`).
+`firmware/prebuilt/` (SHA-256 hashes in `firmware/FIRMWARE-V4-NOTES.md`) —
+**note the shipped names differ from the build output** *(renamed 2026-08-15)*:
+
+| build | emits | ships as |
+|---|---|---|
+| `-km vial` | `loudest_micro_vial.uf2` | **`firmware/prebuilt/agentpad13.uf2`** — the one users want |
+| `-km default` | `loudest_micro_default.uf2` | **`firmware/prebuilt/agentpad13_reference.uf2`** — the byte-reproducible reference |
 
 ### 3.1 Validate
 
@@ -112,8 +118,9 @@ Both drop a `.uf2` in the vial-qmk root. Prebuilt copies live in
 qmk info -kb loudest_micro -f json > /tmp/info.json
 python3 firmware/check_pins_v4.py --qmk-info /tmp/info.json --qmk-home /path/to/vial-qmk
 
-# 2. Protocol-v0 conformance: compiles the real firmware handler on the host
-#    and drives it with frames built by the daemon's wire-format oracle.
+# 2. Protocol conformance (v0 + v1 since 2026-08-15): compiles the real
+#    firmware handler on the host and drives it with frames built by the
+#    daemon's wire-format oracle. Contract: docs/PROTOCOL-V1-CONTRACT.md.
 python3 firmware/tests/conformance/run_conformance.py
 
 # 3. QMK lint
@@ -147,7 +154,8 @@ RESET) so the `RPI-RP2` mass-storage drive appears, then:
 
 ```bash
 qmk flash -kb loudest_micro -km default
-# or just copy firmware/prebuilt/loudest_micro_default.uf2 onto RPI-RP2
+# or just copy firmware/prebuilt/agentpad13.uf2 (vial) or
+# firmware/prebuilt/agentpad13_reference.uf2 (plain QMK) onto RPI-RP2
 ```
 
 **Never wipes user data:** Vial dynamic keymaps/macros live in emulated EEPROM,
@@ -157,32 +165,63 @@ matrix or layer count is the only thing that forces a `Reset EEPROM`
 
 ---
 
-## 4a. Bring-up: first-power-on calibration (`calibrate` keymap)
+## 4a. Bring-up: first power-on
 
-**The procedure now lives in [`firmware/BRING-UP.md`](BRING-UP.md) — that file is
-the single source of truth for it and is not duplicated here.** It was moved out
-of this section on 2026-08-15 so that it can ship in `v5-release-compiled/`
+**The procedure lives in [`firmware/BRING-UP.md`](BRING-UP.md) — that file is the
+single source of truth for it and is not duplicated here.** It was split out of
+this section on 2026-08-15 so it can ship in `v5-release-compiled/`
 byte-identical (the same arrangement `firmware/POLARITY-NOTE.md` already has):
 the audience for bring-up is the owner assembling and powering the first boards,
-who needs the Step 0 layer-LED check, the BOOTSEL flash, the four guided `SW1`
-presses, the touch/encoder verification lines and what to do with the typed
-config block — **not** the 400-line toolchain guide around it. Nothing was
-rewritten in the move; only the maintainer-side block below stayed, because its
-commands need a QMK build tree and repo paths that a bundle reader does not have.
+not a reader of a 400-line toolchain guide. Only the maintainer-side block below
+stayed, because its commands need a QMK build tree and repo paths that a bundle
+reader does not have.
+
+> **⚠ THE `calibrate` KEYMAP IS DELETED (2026-08-15), AND `BRING-UP.md` HAS NOT
+> CAUGHT UP YET.** The separate bring-up firmware — `keymaps/calibrate/`,
+> `firmware/prebuilt/loudest_micro_calibrate.uf2`, and its referee
+> `firmware/sim/calibrate.cjs` — is gone: the owner flashed it, drove it with
+> four `SW1` presses, and it **typed** its measurements into a text editor, and
+> the calibration then had to be pasted back into two source files and rebuilt.
+> Calibration values now live in the board's own EEPROM (a 14-byte keyboard
+> datablock; `config.h`, `docs/PROTOCOL-V1-CONTRACT.md`), survive a power cycle,
+> and are applied to all three joystick modes and to the native HID gamepad
+> without a rebuild or a reflash.
+>
+> **RESOLVED later on 2026-08-15 — `BRING-UP.md` has caught up.** That page was
+> rewritten around the on-board flow and is followable again end to end: flash
+> `agentpad13.uf2`, check the layer LED is pure red, **hold SW14 for a second and
+> follow the lights**, then check the touch pad and the encoder. No host, no
+> daemon, no CLI, no separate firmware, no reflash — calibration is triggered by
+> **SW14 on the board itself** and the board stores its own result.
+> (The paragraph this replaces warned that Steps 1–3 could not be followed as
+> written, which was true while it stood.) The retired typed-output flow is
+> preserved in the ledger (`v5/V5-NOTES.md`, 2026-08-13 entry *"BRING-UP
+> CALIBRATION FACILITY"*), not here. The 0x50/0x51/0x52 commands remain in place
+> and working for diagnostics and host tooling; they are simply no longer the
+> only path to a calibrated board.
 
 ### For maintainers
 
 ```bash
-qmk compile -kb loudest_micro -km calibrate     # clean under -Werror
-node firmware/sim/calibrate.cjs                 # referee -> CALIBRATE SIM: PASS
-node firmware/sim/calibrate.cjs --no-adc-fix    # A/B arm -> must FAIL
+qmk compile -kb loudest_micro -km default       # clean under -Werror
+qmk compile -kb loudest_micro -km vial          # clean under -Werror (LTO note only)
+
+# Referees for the two shipped artifacts. All four A/B arms are gates:
+node firmware/sim/behavior.cjs --touch=board --encoder=board      # 33/33 PASS
+node firmware/sim/behavior.cjs --touch=firmware                   # must FAIL (4)
+node firmware/sim/behavior.cjs --encoder=firmware                 # must FAIL (2)
+node firmware/sim/joystick.cjs                                    # 48/48 PASS
+node firmware/sim/joystick.cjs --no-eeprom                        # must FAIL
+
+# Host/device agreement on the wire, no hardware needed:
+python3 firmware/tests/conformance/run_conformance.py             # 410/410
 ```
 
-The build is byte-for-byte reproducible like `default`
-(md5 `aabf7954f1e2b46880f298fd620d63ff`, 96768 bytes — *rebuilt 2026-08-15 for
-the isotropic RGB layout and the `housekeeping_task_user()` de-duplication;
-supersedes `a81ce4a137e667d73e3cd9da5c82a98a`, same 96768 bytes*). Source and
-rationale: `firmware/loudest_micro/keymaps/calibrate/`.
+`joystick.cjs` is the protocol-v1 referee: it boots the real UF2, exercises
+0x50/0x51/0x52 and every rejection class, and **proves the calibration survives a
+simulated power cycle** rather than assuming it. Its `--no-eeprom` arm removes
+the harness's serial-flash model and must fail on exactly the persistence
+checks.
 
 ---
 
@@ -293,14 +332,19 @@ echoed unhandled — by design, matching Vial's restricted-command window.
 
 ## 8. Known follow-ups (no build stubs — these are refinements)
 
-* **Joystick calibration.** Axes ship with placeholder `0/512/1023`. RP2040
-  `analogReadPin` is 10-bit (0–1023) so center ≈512 is structurally right, but
-  the real deadzone/curve/rest values come from a bring-up ADC sweep on the
-  real module (`config.h`, `keyboard.json`, and `JS_CENTER/JS_THRESHOLD` in
-  `loudest_micro.c` are marked `CALIBRATION-PENDING`). **The sweep now has a
-  mechanism — see [`firmware/BRING-UP.md`](BRING-UP.md)**: flash the `calibrate`
-  keymap and the board types its own measurements plus the finished config
-  lines. `JS_THRESHOLD` is re-derived there too, not just the endpoints.
+* **Joystick calibration — storage side CLOSED 2026-08-15.** Axes still ship
+  with placeholder `0/512/1023` and the 512/300 fallback, but those are now the
+  *uncalibrated* case rather than a pending source edit: the board keeps
+  per-axis rest/min/max in a 14-byte EEPROM datablock, derives the threshold as
+  `floor(60% of the smaller half-swing)`, applies it to the arrow/scroll modes
+  and the native gamepad alike, and it survives a power cycle. No source edit,
+  no rebuild and no reflash is involved any more. Protocol v1
+  (`0x50`/`0x51`/`0x52`, `docs/PROTOCOL-V1-CONTRACT.md`) exposes that store on
+  the wire for host tooling and diagnostics. **Still open:** the owner-facing
+  way to *start* a calibration, and the `BRING-UP.md` rewrite that goes with it.
+  *(This bullet used to say the sweep needed the `calibrate` keymap, which is
+  deleted.)* *(This bullet used to say the sweep needed the
+  `calibrate` keymap, which is deleted.)*
 * **Joystick mode exclusivity.** In arrows/scroll mode the native HID gamepad
   axes keep reporting (QMK's `JOYSTICK_AXIS_IN` task reads every housekeeping
   cycle); the arrow/scroll events are layered on top. To make the modes

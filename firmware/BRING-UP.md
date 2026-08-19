@@ -1,137 +1,116 @@
-# BRING-UP — first-power-on calibration (`calibrate` keymap)
+# BRING-UP — first power-on
 
-**Do this once, on the first assembled board, before you trust the joystick.**
-You need a USB cable and a text editor. No meter, no scope, no soldering, no
-electronics knowledge. The board measures itself and **types the answers**.
+**Do this once, on each newly assembled board.** It takes about five minutes.
+You need a USB cable and nothing else — no meter, no scope, no soldering, no
+software to install, and no electronics knowledge. The board calibrates itself
+and stores the result in its own memory.
 
-Why it is needed: the joystick ships with **placeholder** calibration (`low 0 /
-rest 512 / high 1023`) and an unmetered `JS_THRESHOLD 300`. The arrow and scroll
-joystick modes only fire below **212** or above **812** on the 0–1023 scale. If
-the real stick does not reach that far, the gamepad mode still works and those
-two modes are **silently dead**. This step finds out, and hands you the exact
-lines to fix it.
-
-> **Where this file lives, and what it needs.** Byte-identical copies ship in
-> the working tree (`firmware/BRING-UP.md`) and in the release bundle
-> (`v5-release-compiled/firmware/BRING-UP.md`) — the same arrangement as
-> `firmware/POLARITY-NOTE.md`. This file is the **single source of truth** for
-> the procedure; `firmware/BUILD.md` §4a points here rather than repeating it.
-> Steps 0 through 2 and Step 4 need nothing but this page, a USB cable, a text
-> editor and the `.uf2` files in `firmware/prebuilt/` — no build toolchain and no
-> source checkout. Only the *second* of the two routes in Step 3 needs the source
-> repo, and it says so where it matters.
-
-## Step 0 — the ten-second firmware check (do this first)
-
-Plug the board in with the **normal** firmware and look at the layer-indicator
-LED (the one below the top-left key).
-
-* **Pure red** → the board is running firmware from 2026-08-13 or later. Good.
-* **Orange** → that unit predates the TTP223 touch fix and boots into the wrong
-  layer. Reflash `firmware/prebuilt/loudest_micro_default.uf2` before going on.
-
-## Step 1 — flash the calibration firmware
-
-1. Unplug the board.
-2. Hold the **BOOTSEL** button (SW14) and plug the USB cable back in. A USB
-   drive called **`RPI-RP2`** appears on your computer.
-3. Drag **`firmware/prebuilt/loudest_micro_calibrate.uf2`** onto that drive.
-   md5 `aabf7954f1e2b46880f298fd620d63ff`. The drive disappears by itself — that
-   means it worked.
-4. Open a text editor (TextEdit, Notepad, VS Code, anything) and **click into an
-   empty document**, so what the board types lands somewhere you can read it.
-
-> **Do not hold SW1 while plugging in.** That is QMK's `Reset EEPROM` gesture.
-> And set your OS keyboard layout to **US English** for this step — the board
-> types plain US ASCII, and a different layout will garble the punctuation in
-> the JSON lines (the numbers themselves are fine either way).
-
-The board types **nothing** at plug-in. That is deliberate: at plug-in you may
-not have an editor focused yet. Nothing happens until you press SW1.
-
-## Step 2 — the four presses
-
-`SW1` is the **top-left** key. Between presses, hold the stick where the board
-asks and *keep holding it while you press*.
-
-| you do | the board types |
-|---|---|
-| centre the stick, press **SW1** | `agentpad13 cal v1 \| rest X=… Y=… noise X=+/-… Y=+/-…` then `step 2/4: HOLD stick UP …` |
-| hold the stick **UP** (away from you, toward the encoder edge), press **SW1** | `Y up sample: …` then `step 3/4: HOLD stick RIGHT …` |
-| hold the stick **RIGHT**, press **SW1** | `X right sample: …` then `step 4/4: slowly roll the stick …` |
-| slowly roll the stick around its **full outer edge, twice**, press **SW1** | the full report (below) |
-
-After the first press the board keeps watching the stick continuously — that is
-what the roll in step 4 is for: it finds the true end-stops in every direction.
-Each press takes a moment before anything appears (the first one measures for
-half a second), then the text arrives as if someone were typing it.
-
-**Other keys, usable at any time:**
-
-| key | what it does |
-|---|---|
-| **SW2** (2nd from left, top row) | start over — types `restarted: center the stick, press SW1` |
-| **SW3** (3rd from left, top row) | types one live line, `live X=… Y=…`, as often as you like |
-| **touch pad** | types `TOUCH:DOWN` when you touch and `TOUCH:UP` when you lift — **that order is the pass**. Reversed order, or nothing at all, means the touch fix is not on this unit |
-| **encoder knob** | types `ENC:CW` / `ENC:CCW` per detent; note which physical direction gives `CW` |
-| **encoder push** | types `ENC:PRESS` |
-| every other key | does nothing, on purpose |
-
-## Step 3 — what to do with the block it types
-
-The last press prints something like:
-
-```
-agentpad13 cal v1 | REPORT
-X: min=180 rest=507 max=850  inverted=NO
-Y: min=180 rest=514 max=850  inverted=NO
-shipped JS_THRESHOLD 300 verdict (fires only below 212 or above 812): X- fires X+ fires Y- fires Y+ fires
---- apply to firmware/loudest_micro/keyboard.json (joystick.axes): ---
-"x": {"input_pin": "GP26", "low": 180, "rest": 507, "high": 850},
-"y": {"input_pin": "GP27", "low": 180, "rest": 514, "high": 850}
---- apply to firmware/loudest_micro/loudest_micro.c: ---
-#define JS_CENTER 511
-#define JS_THRESHOLD 196
-note: if an axis shows inverted=YES the arrow/scroll comparisons in
-loudest_micro.c must be mirrored for that axis too - POLARITY-NOTE.md
-```
-
-Save that text. Then either:
-
-* **Easiest — hand it over.** Paste the whole block to the project agent and ask
-  it to apply the calibration. Everything needed is in those lines.
-* **Or do it yourself.** This route needs the **source repo** and a working build
-  toolchain — the two files named below are firmware *sources*; they are not part
-  of the release bundle. Two edits, both copy-paste:
-  1. In `firmware/loudest_micro/keyboard.json`, replace the two lines inside
-     `"joystick": { "axes": { … } }` with the two `"x": …` / `"y": …` lines the
-     board typed. **They are already final** — if an axis says `inverted=YES`,
-     its `low` and `high` are already swapped for you (that swap *is* the fix
-     described in `firmware/POLARITY-NOTE.md`).
-  2. In `firmware/loudest_micro/loudest_micro.c`, replace the `#define
-     JS_CENTER` and `#define JS_THRESHOLD` lines with the two the board typed.
-  3. Rebuild and reflash with the normal flow in `firmware/BUILD.md` — §3
-     (Build) and §4 (Flash) — in the source repo.
-
-Any line starting with `WARNING:` is the board telling you something it measured
-does not look right — a stick that barely moves, a threshold buried in the noise
-floor, or the two axes resting far apart. Report those rather than working
-around them.
-
-**If any direction says `NEVER FIRES`,** the shipped `JS_THRESHOLD 300` is too
-big for this stick and the arrow/scroll modes would be dead. The typed
-`#define JS_THRESHOLD` is the re-derived value that fixes it — this is exactly
-the case the whole step exists to catch.
-
-## Step 4 — put the real firmware back
-
-BOOTSEL again, drag `firmware/prebuilt/loudest_micro_default.uf2` (or
-`…_vial.uf2`) onto `RPI-RP2`. The calibration keymap has no normal keys, so
-**do not leave it on the board.**
+> **Where this file lives.** `firmware/BRING-UP.md` in the working tree is the
+> **single source of truth** for this procedure; `firmware/BUILD.md` §4a points
+> here rather than repeating it. A copy ships in the release bundle
+> (`v5-release-compiled/firmware/BRING-UP.md`), refreshed from this one when the
+> bundle is rebuilt. Everything below needs only this page, a USB cable, and the
+> `.uf2` files in `firmware/prebuilt/` — no build toolchain and no source
+> checkout.
 
 ---
 
-Axis-direction background (why an axis can read reversed at all, and what the
-`low`/`high` swap does): `firmware/POLARITY-NOTE.md`. Build/flash flow, the pin
-map and the maintainer-side gates for this keymap: `firmware/BUILD.md` (§3, §4
-and the §4a maintainers block).
+## Step 1 — flash the firmware
+
+1. Unplug the board.
+2. **Hold the BOOTSEL button (SW14, in the back) and plug the USB cable back
+   in.** A USB drive called **`RPI-RP2`** appears on your computer.
+3. Drag **`firmware/prebuilt/agentpad13.uf2`** onto that drive.
+   md5 `a7b8da85a7d3f0de96b983be8c782ba2`.
+4. The drive disappears by itself. That means it worked.
+
+> **Do not hold SW1 while plugging in.** SW1 is the top-left key, and holding it
+> at plug-in is QMK's **Reset EEPROM** gesture — it wipes your saved settings,
+> including the joystick calibration you are about to make.
+
+> **The first time you flash this version, your key layout resets — once.**
+> This firmware stores the joystick calibration in a small block of the board's
+> memory, which shifts where the layout editor keeps its own data by 14 bytes.
+> The board notices and starts that area fresh. If you had customised your
+> layout in Vial, redo it after this one upgrade. It will not happen again on
+> later updates.
+
+## Step 2 — the ten-second check
+
+Look at the **layer-indicator LED** — the small one just below the top-left key.
+
+* **Pure red** → good. Go on to Step 3.
+* **Orange** → this unit is running firmware older than 2026-08-13 and boots
+  into the wrong layer. Repeat Step 1; the drag did not take.
+
+## Step 3 — calibrate the joystick
+
+The joystick ships with **placeholder** settings, and until you do this the
+arrow and scroll modes may be dead or twitchy. The board fixes this itself.
+
+**Press and hold SW14 — the same button in the back you used to flash — for
+about one second, then let go and follow the lights.** The 13 key LEDs are the
+whole display. The keyboard keeps working normally the entire time; you can
+keep typing if you want to.
+
+| the lights do this | you do this |
+|---|---|
+| **all 13 keys turn white** | let go of SW14 |
+| **a blue bar fills across the keys** (about 2 seconds) | **take your hand off the stick.** It is measuring where the stick rests |
+| **a bar fills across the keys again** (about 10 seconds), starting **amber** | **slowly roll the stick around its outside edge**, a few full circles, pushing it as far as it will go |
+| **that bar turns green** | you have moved it far enough — keep rolling until the bar finishes |
+| **all 13 keys flash green** | **done.** Calibration is stored. It survives unplugging, and you never need to do this again |
+| **all 13 keys flash red** | it did not work. Nothing was changed. See below |
+| **a brief dim white flash** | cancelled — nothing was changed |
+
+**If you get red,** nothing was stored and your previous settings are untouched.
+Just do it again. The two usual causes:
+
+* **You did not move the stick far enough.** Push it all the way to the edge and
+  roll it right around the rim, twice, slowly.
+* **Your hand was on the stick during the blue bar.** That step measures the
+  resting position, so the stick has to be sitting still by itself.
+
+**To cancel at any time,** press SW14 again. The lights flash dim white and
+nothing is changed.
+
+> **If your LEDs are switched off,** this step has no display — the lights are
+> the only thing the board uses to talk to you here. Turn the RGB back on before
+> calibrating, then switch it off again afterwards if you prefer it dark.
+
+## Step 4 — check the touch pad and the encoder
+
+Open a text editor and click into an empty document.
+
+* **Touch pad** — rest a finger on it. It should act while your finger is
+  **down**, and stop when you lift. If it behaves backwards — acting when you
+  *lift* — this unit predates the touch fix; reflash it (Step 1).
+* **Encoder knob** — turn it. **Clockwise should turn the volume up.** If it is
+  backwards, note which way is which and report it.
+* **Encoder push** — press the knob in. It should mute.
+
+That is the whole bring-up. The board is ready to use.
+
+---
+
+### Notes
+
+**Why SW14 does two things.** Held while you plug the board in, it is the
+bootloader button that gives you the `RPI-RP2` drive. Pressed while the board is
+already running, it starts calibration. The two can never be confused, because
+at plug-in time the calibration firmware is not running yet.
+
+**Nothing here needs a daemon or any host software.** The calibration lives in
+the board's own memory and is applied by the board itself, to all three joystick
+modes and to the plain USB gamepad.
+
+**A brush cannot start calibration.** The button has to be held for a full
+second before the white lights appear.
+
+**If an axis reads reversed** — the stick moves right and the pointer goes left
+— that is a separate one-line fix, described in `firmware/POLARITY-NOTE.md`.
+Calibration does not correct direction, only range.
+
+Build and flash flow, the pin map, and the maintainer-side gates:
+`firmware/BUILD.md` (§3, §4 and the §4a maintainers block). The wire protocol
+and the exact calibration maths: `docs/PROTOCOL-V1-CONTRACT.md`.

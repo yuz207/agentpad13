@@ -46,14 +46,63 @@
 // and the rgb_matrix layout are unchanged. TP_TOG (custom keycode) still gates
 // this key on/off.
 
-// --- Raw HID status protocol v0 (device side of loudestd) ---
-// LOCKED wire format - counterpart: daemon/loudestd/protocol.py. Handled in
+// --- Raw HID status protocol v1 (device side of loudestd) ---
+// LOCKED wire format - counterpart: daemon/loudestd/protocol.py, contract:
+// docs/PROTOCOL-V1-CONTRACT.md. Handled in
 // loudest_micro.c: 0x01 SET_KEY {chain_idx,r,g,b,effect} | 0x02 SET_LAYER {n} |
 // 0x03 CLEAR | 0x04 PING {token} -> CAPS {token,'L','D',ver,led_count,layers,feat}.
+// v1 (2026-08-15) ADDS, without touching any v0 frame: 0x50 GET_JOYSTICK |
+// 0x51 SET_CALIBRATION | 0x52 RESET_CALIBRATION.
 // Pin the QMK Raw HID descriptor to the values the daemon opens (already the QMK
 // defaults; declared here so the contract is explicit and cannot silently drift).
 #define RAW_USAGE_PAGE 0xFF60
 #define RAW_USAGE_ID 0x61
 
+// --- SW14: two roles, and why they can never collide ---
+// SW14 is the button in the back that connects net BOOTSEL to GND, with R6 (1k)
+// tying BOOTSEL to QSPI_CS (v5/hardware/pcb/v5_6.kicad_pcb) - the stock Pico
+// topology. It does two entirely different jobs:
+//   * HELD AT POWER-UP -> the RP2040 MASK ROM samples this line before one
+//     instruction of our firmware has run, and enters the UF2 bootloader. This
+//     is how the board is flashed (firmware/BUILD.md S4).
+//   * PRESSED WHILE RUNNING -> starts the on-board joystick calibration routine
+//     (loudest_micro.c, the SW14 + on-board calibration section; user-facing
+//     procedure in firmware/BRING-UP.md).
+// The two are separated IN TIME, not by any logic: at power-up our code does not
+// exist yet, and once our code is running the mask ROM is long gone. A corollary
+// the firmware relies on: a board executing this firmware necessarily booted
+// with SW14 released.
+// SW15 connects RUN to GND. That is a hardware reset - not readable by firmware
+// and not touched by any of this.
+//
+// Keyboard-level EEPROM datablock holding the joystick calibration - exactly
+// sizeof(loudest_js_cal_t) in loudest_micro.c, which asserts the two agree at
+// compile time.
+// WRITE POLICY (AMENDED 2026-08-15; adjudicated in docs/PROTOCOL-V1-CONTRACT.md,
+// which is the source of truth): written ONLY on an accepted 0x51, on 0x52, and
+// on a SUCCESSFUL SW14-triggered on-board calibration. The third path exists on
+// the owner's directive - "You turn on calibration, it fucking calibrates, then
+// it stores. End of story, calibrated usage does not depend on a daemon."
+// The clause's intent is unchanged and still binding: every write is
+// USER-INITIATED and RARE, and there is still no background, periodic,
+// opportunistic or automatic calibration anywhere in the firmware.
+// NOTE: VIA/Vial's EEPROM region starts at EECONFIG_SIZE (vial-qmk
+// quantum/nvm/eeprom/nvm_eeprom_via_internal.h:12), which this block shifts by
+// 14 bytes, so the first flash of a v1 build re-initialises Vial's dynamic
+// keymap once. Documented consequence, not a defect.
+#define EECONFIG_KB_DATA_SIZE 14
+
 // Keep the ADC quiet enough that the placeholder center is stable on a breadboard.
 #define JOYSTICK_AXIS_RESOLUTION 10
+
+// --- Encoder direction (EC11 on GP13 = ENC_A / GP14 = ENC_B) ---
+// This reflects the AS-BUILT A/B channel landing on v5_6, discovered at bring-up
+// 2026-08-15: measured on the owner's assembled board, the pre-flip firmware
+// produced volume-DOWN on a CLOCKWISE rotation. ENCODER_DIRECTION_FLIP swaps
+// which quadrature walk the driver calls clockwise (vial-qmk
+// drivers/encoder/encoder_quadrature.c:65-71), so CW is now volume UP.
+// The pin map is NOT touched: pin_a/pin_b stay GP13/GP14 in keyboard.json,
+// matching the board netlist and firmware/check_pins_v4.py's assertions -
+// swapping the pins there would have flipped direction too but would have made
+// the pin-map gate assert a net the board does not have.
+#define ENCODER_DIRECTION_FLIP

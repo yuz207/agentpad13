@@ -44,13 +44,24 @@ Six-view turntable: <a href="renders/turntable.png"><code>renders/turntable.png<
 - **Firmware: VALIDATED, and rebuilt since Rev A — reflash before you judge a
   board.** Emulator-boot tested, Raw HID protocol-conformant, and the pin map
   matches the v5 board (unchanged from Rev A v4 — v5 needed zero *pin*
-  changes). The shipped UF2s have moved twice since Rev A: a **capacitive-touch
-  polarity fix** (the board straps the TTP223 active-high, but the Rev-A
-  binaries read that pin active-low, so the pad booted with the touch key stuck
-  pressed — it jumped straight to the second layer and the touch key then
-  triggered on finger-lift), and an **isotropic RGB layout fix** (the four
-  geometry-based animations were drawn into a 4:1-distorted coordinate space).
-  Both are fixed in `firmware/prebuilt/` as shipped here.
+  changes). The shipped UF2s have moved three times since Rev A: a
+  **capacitive-touch polarity fix** (the board straps the TTP223 active-high,
+  but the Rev-A binaries read that pin active-low, so the pad booted with the
+  touch key stuck pressed — it jumped straight to the second layer and the touch
+  key then triggered on finger-lift), an **isotropic RGB layout fix** (the four
+  geometry-based animations were drawn into a 4:1-distorted coordinate space),
+  and **on-board joystick calibration** — the board now calibrates its own stick
+  from a button press and remembers it, so the joystick no longer ships stuck on
+  placeholder values you cannot change. The encoder direction was also corrected
+  against a real assembled board (clockwise was turning the volume *down*), and
+  Vial now exposes the encoder for remapping. All fixed in `firmware/prebuilt/`
+  as shipped here.
+- **The prebuilt UF2s were renamed.** Flash **`agentpad13.uf2`** — that is the
+  Vial build and the one you want. `agentpad13_reference.uf2` is the same
+  firmware without live remapping, kept because it rebuilds byte-for-byte from
+  this tree, so anyone can verify what is shipped. The old
+  `loudest_micro_*.uf2` names, including the separate `calibrate` build, are
+  **gone**.
 
 ### PCB (complete)
 
@@ -73,16 +84,27 @@ Six-view turntable: <a href="renders/turntable.png"><code>renders/turntable.png<
 > ADC and all 24 LEDs. Build recipe and validation assets live in `firmware/`
 > (`BUILD.md`, `FIRMWARE-V4-NOTES.md`, `tests/`, `sim/`).
 
-> **First power-on:** flash `firmware/prebuilt/loudest_micro_calibrate.uf2`,
-> open a text editor and press one key four times — the board types out its own
-> joystick calibration numbers and confirms the touch key and encoder. The whole
-> procedure is [`firmware/BRING-UP.md`](firmware/BRING-UP.md); flash the real
-> build back when you are done.
+> **First power-on — you need a USB cable and nothing else.** Flash
+> `firmware/prebuilt/agentpad13.uf2` (hold BOOTSEL, drag the file on), then
+> **hold SW14 — the same button in the back — for about a second and follow the
+> lights.** The 13 key LEDs are the whole interface: white means armed, a blue
+> bar fills while the board finds where your stick rests, an amber-to-green bar
+> fills while you roll the stick around its outside edge, and all 13 flash green
+> when it has stored the result. About 15 seconds. The calibration lives in the
+> board's own memory and survives unplugging *and* reflashing, so you do this
+> once, ever. The keyboard keeps working the whole time, and pressing SW14 again
+> cancels without changing anything.
 >
-> **Joystick polarity/calibration:** the fab-placed YA13 is mounted 180° from
-> its datasheet datum, so both axes' direction sense read inverted out of the
-> box, and the shipped config carries placeholder calibration values. Both are
-> one-time, config-only fixes described in
+> **No host software is involved at any point** — no daemon, no CLI, no driver,
+> no second firmware to flash and un-flash, no editing source and rebuilding.
+> The full procedure, including what to do if it flashes red, is
+> [`firmware/BRING-UP.md`](firmware/BRING-UP.md).
+>
+> **Joystick polarity** is a separate, rarer thing: the fab-placed YA13 is
+> mounted 180° from its datasheet datum, so an axis can read *reversed*.
+> Calibration records where the stick's ends **are**; polarity is which end is
+> **which**. If a direction feels backwards, that is still a one-line config
+> edit and a rebuild — see
 > [`firmware/POLARITY-NOTE.md`](firmware/POLARITY-NOTE.md).
 
 ## Contents
@@ -103,14 +125,19 @@ hardware/
 firmware/
   loudest_micro/  vial-qmk keyboard tree (RP2040, direct-pin, ENCODER_MAP,
                   analog joystick modes, Raw HID status protocol).
-  prebuilt/       Flashable UF2s (default + vial, plus the calibrate bring-up
-                  build), built per BUILD.md.
+  prebuilt/       Flashable UF2s: agentpad13.uf2 (Vial — flash this one) and
+                  agentpad13_reference.uf2 (byte-reproducible), per BUILD.md.
   sim/            Behavioral simulation of the shipped UF2 on rp2040js — the
-                  referee that caught the touch-polarity defect.
-  BRING-UP.md     First-power-on procedure: the board types its own joystick
-                  calibration and confirms touch + encoder.
-  POLARITY-NOTE.md  Joystick axis-sense + calibration config note (v5).
+                  referee that caught the touch-polarity defect, and that proves
+                  the calibration survives a power cycle.
+  BRING-UP.md     First-power-on procedure: flash, hold SW14, follow the LEDs.
+                  No host software of any kind.
+  POLARITY-NOTE.md  Joystick axis-sense note (v5) — direction, not range.
   BUILD.md        Reproducible toolchain + build recipe.
+docs/
+  PROTOCOL-V1-CONTRACT.md  The Raw HID wire protocol, including the joystick
+                  calibration commands — the spec both the firmware and the
+                  conformance suite are written against.
 ```
 
 ## Licensing
