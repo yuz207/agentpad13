@@ -32,12 +32,17 @@ and stores the result in its own memory.
 > error. Copy from a terminal instead and it works every time:
 >
 > ```
-> cp firmware/prebuilt/agentpad13.uf2 /Volumes/RPI-RP2/
+> cp -X firmware/prebuilt/agentpad13.uf2 /Volumes/RPI-RP2/
 > ```
 >
+> **The `-X` matters.** Without it macOS still tries to attach extended
+> attributes and resource forks to the copy, the drive rejects that second
+> write, and you get `cp: ... Invalid argument` instead. `-X` copies the file
+> and nothing else.
+>
 > On Linux the same applies if your file manager misbehaves —
-> `cp firmware/prebuilt/agentpad13.uf2 /media/$USER/RPI-RP2/`. On Windows,
-> dragging in Explorer is normally fine.
+> `cp firmware/prebuilt/agentpad13.uf2 /media/$USER/RPI-RP2/` (no `-X` needed).
+> On Windows, dragging in Explorer is normally fine.
 
 > **Do not hold SW1 while plugging in.** SW1 is the top-left key, and holding it
 > at plug-in is QMK's **Reset EEPROM** gesture — it wipes your saved settings,
