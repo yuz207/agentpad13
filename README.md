@@ -32,7 +32,11 @@ Six-view turntable: <a href="renders/turntable.png"><code>renders/turntable.png<
   centers under the case plate's encoder opening, the **USB-C receptacle's
   orientation is corrected** (mouth to the case wall aperture), and the
   **joystick is now a fab-placed YA13 tilt gimbal** with datasheet-verified
-  wiring.
+  wiring. The board shipped here is **v5_7**, which additionally **turns the two
+  bottom-edge underglow LEDs around** (they were aimed off the board instead of
+  under it) — two footprint rotations, no part or net changes. The LEDs beside the
+  USB connector still face outward on purpose. See
+  [`hardware/pcb/README.md`](hardware/pcb/README.md) §Board revision.
 - **Case: v2.7 — COMPLETE.** FR4 plate-as-deck + printed tray, matched to the
   v5 board. Three plate variants (exposed ENIG **gold-disc** touch marker /
   tented disc with silk ring / blank no-copper), the band in **three gated

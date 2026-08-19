@@ -18,6 +18,28 @@ Finished, fabrication-ready 2-layer RP2040 macropad PCB. Designed in **KiCad 9**
   wiring — see `renders/js1_detail.png` and `../../firmware/POLARITY-NOTE.md`
   for the one-time axis/calibration config note.
 
+## Board revision — v5_7 (current)
+
+The published board is **v5_7**. It differs from **v5_6**, the revision the first
+units were built from, by **two footprint rotations and nothing else**: the
+bottom-edge underglow LEDs **LED20** and **LED21** were rotated 180° so they fire
+*into* the board instead of off the edge. Same positions, same layer, same nets, no
+part changes — both BOMs and the opaque SKU's pick-and-place file are byte-identical
+to v5_6, and the translucent CPL differs in exactly those two rows (`Rot 0 → 180`).
+
+Why they were wrong: the board generator applies each underglow LED's rotation and
+*then* flips the part to the back copper, and that flip negates orientation. The two
+pairs aimed along Y reversed; the left and right rails, aimed along X, survived. The
+result was six of the ten side LEDs firing inward and four firing outward.
+
+**`LED15`/`LED16`, beside the USB connector, still fire outward — that is
+deliberate.** They wash the surface behind the pad and are kept that way by choice.
+The shipping board is 8 inward / 2 outward.
+
+If you have a board built from v5_6, nothing is broken and nothing needs reworking:
+four of the ten underglow LEDs simply throw their light off the edge rather than
+under the case.
+
 ## Files
 
 ```
@@ -37,7 +59,9 @@ assembly/                   loose per-SKU assembly files
   bom_opaque.csv            assembly BOM, opaque SKU
   bom_translucent.csv       assembly BOM, translucent SKU
   hand_solder_afterlist.csv the parts you hand-solder after the boards arrive
-renders/                    top.png, bottom.png, js1_detail.png (joystick close-up)
+renders/                    top.png, bottom.png (v5_7), js1_detail.png (joystick
+                            close-up; still the v5_6 plot — the revision changed
+                            nothing at that end of the board)
 ```
 
 ## Two SKUs, one bare board
