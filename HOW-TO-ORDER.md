@@ -61,6 +61,30 @@ the ≤100 mm promo tier — if the fab's form quotes you a larger size, re-chec
 mask color = the face color of your build. Remarks: *"Mechanical switch plate — minimal copper by
 design; please proceed despite low copper density."*
 
+**⚠️ Tell the fab where the product number goes — or it lands on the face you look at.**
+PCBWay prints a small product number on every board. Their published rule is component-driven:
+*"The position where the Product No. is added is not fixed, we will try to put it under the IC so
+that the number will be hidden when soldering."* This plate is a bare decorative panel with **no
+components at all**, so that heuristic has nothing to aim at — and on our own v5 order the number
+came back printed on the **top face, the visible deck**. Two things to do on the order form:
+
+- Under **Customized Services**, set **`Remove product No.` = `Specify a location`**. That option
+  is **free**. (`Yes (extra +$1.50)` deletes the number entirely — considered and deliberately
+  **not** used: the number is harmless on a face nobody ever sees.)
+- In the **"Other special request"** remarks box, say it in plain words:
+  > This is a bare decorative panel with **no components**. Its **top face (+Z, the F.Silkscreen
+  > side) is the visible deck of the finished product**. Please place the Product No. on the
+  > **bottom face — the B.Silkscreen side, which faces the tray and is hidden once the case is
+  > assembled**. Please do not place it on the top / F.Silkscreen face.
+
+**The remarks sentence is the load-bearing part.** PCBWay also accept a `WayWayWay` marker placed
+in the silkscreen layer to pin the exact spot, and note *"It is important to select the option,
+otherwise, we may not notice that you need to specify the location."* But their instruction says
+*"the silkscreen layer"* — singular, with no top/bottom language anywhere — so **a `WayWayWay`
+token on B.Silkscreen reliably yielding bottom placement is a reasonable inference, not a
+documented guarantee.** Treat the token as belt-and-braces; the plain-English remark is what you
+actually rely on.
+
 **Home path:** print `hardware/case/step/agentpad13_v2_plate.step` (modern slicers open STEP
 directly) in PETG or resin, 100% infill. Trade-offs: no copper (the touch key then senses
 through-panel — finger on plastic, conductive foam pillar underneath; tune with the sensitivity-cap

@@ -79,6 +79,27 @@ pieces, 1 design · soldermask color = the face color of your build. Remarks
 field: *"Mechanical switch plate — minimal copper by design; please proceed
 despite low copper density."*
 
+**⚠️ Say where the product number goes.** PCBWay prints a small product number
+on every board, and their placement rule is component-driven — *"we will try to
+put it under the IC so that the number will be hidden when soldering."* This
+plate has **no components**, so that rule has nothing to aim at: on our own v5
+order the number came back on the **top face, the visible deck**. On the order
+form, set **`Remove product No.` = `Specify a location`** (the **free** option —
+the `+$1.50` removal is deliberately not used), and put this in the **"Other
+special request"** box:
+
+> This is a bare decorative panel with **no components**. Its **top face (+Z,
+> the F.Silkscreen side) is the visible deck of the finished product**. Please
+> place the Product No. on the **bottom face — the B.Silkscreen side, which
+> faces the tray and is hidden once the case is assembled**. Please do not place
+> it on the top / F.Silkscreen face.
+
+The written remark is the load-bearing part. PCBWay also accept a `WayWayWay`
+marker in the silkscreen layer to pin the exact spot, but their wording says
+*"the silkscreen layer"* — singular, with no top/bottom language — so **a token
+on B.Silkscreen yielding bottom placement is a reasonable inference, not a
+documented guarantee.** Belt-and-braces; say it in words too.
+
 **Home path:** print `step/agentpad13_v2_plate.step` (modern slicers open STEP
 directly) in PETG or resin, 100% infill. Trade-offs: no copper — the touch key
 then senses through-panel (finger on plastic, conductive foam pillar
