@@ -77,6 +77,26 @@ equally valid, equally gated builds.
 The USB port keeps a 2.10 mm plug-shell bridge at every wall — a relief pocket
 at the port deepens with the wall so the connector never gets buried.
 
+**All three bands were re-cut for plate fit — and the fit is deliberately
+tight.** The pocket the plate drops into had been sized around a 100.2 mm
+plate that was never actually made: the plate was trimmed to 100.0 mm early on,
+but only in the plate's own fab generator, so the band kept cutting a pocket for
+the older size. The plate could slide **0.8 mm** along its long axis and showed
+the whole gap at one end. The pocket is now **84.6 × 100.2 mm** around the
+84.4 × 100.0 mm plate — an even **0.1 mm** reveal on the flats and at the
+corners, float 0.2 mm on both axes.
+
+There is one band; there is no separate "loose" file. 0.1 mm/side is tight for a
+printed part, and at a worst-case stack (plate routing tolerance plus resin or
+FDM shrink) **the plate may need a light sand to drop in**. That is the
+intended trade — a pocket slightly too tight is a minute with sandpaper, while
+one that is too loose cannot be fixed at all. If yours binds, sand the pocket
+walls lightly — a few passes with fine paper on the four inner faces of the
+recess is all it takes. (This mirror ships the finished STL/STEP, not the
+parametric case source, so sanding is the fix here rather than re-exporting at a
+looser fit.) **A band you printed before this change is the old loose pocket:
+still usable, just with the bigger gap.**
+
 `step/agentpad13_v2_plate.step` is the plate's 3D model — reference geometry
 for the FR4 order, and the file you print if you take the plate's home path.
 

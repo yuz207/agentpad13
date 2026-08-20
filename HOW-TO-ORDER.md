@@ -113,6 +113,20 @@ retired 2.4 mm-wall geometry whose corners a fab review flagged as too thin.
 | **`…_w5.4.stl` (default)** | **5.4 mm** | **95.6 × 111.4 mm** | **4.40 mm** |
 | `…_w7.4.stl` | 7.4 mm | 99.6 × 115.4 mm | 6.40 mm |
 
+**Plate fit — the pocket was re-cut, and it is deliberately tight.** All three bands changed. The
+pocket the plate drops into had been sized around a 100.2 mm plate that was never made (the plate
+was trimmed to 100.0 mm early on, but only in its own fab generator), so the plate floated
+**0.8 mm** along its long axis and showed the whole gap at one end. The pocket is now
+**84.6 × 100.2 mm** around the 84.4 × 100.0 mm plate — an even **0.1 mm** reveal all the way round.
+
+There is one band; there is no separate "loose" file. 0.1 mm/side is tight, and at a worst-case
+stack (plate routing tolerance plus resin or FDM shrink) **the plate may need a light sand to drop
+in.** That is the intended trade: slightly too tight is a minute with sandpaper, too loose cannot be
+fixed at all. If yours binds, sand the pocket walls lightly — a few passes with fine paper on the
+four inner faces of the recess. (This repo ships the finished STL/STEP, not the parametric case
+source, so sanding is the fix here rather than re-exporting at a looser fit.) **A band printed or
+ordered before this change is the old loose pocket — still usable, just with the bigger gap.**
+
 **Home path:** same STL — home resin (frosted look) or FDM in a translucent filament
 (layered glow; print upright per `hardware/case/README.md` guidance).
 
