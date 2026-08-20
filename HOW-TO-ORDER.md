@@ -79,7 +79,8 @@ came back printed on the **top face, the visible deck**. Two things to do on the
 
 **The remarks sentence is the load-bearing part.** PCBWay also accept a `WayWayWay` marker placed
 in the silkscreen layer to pin the exact spot, and note *"It is important to select the option,
-otherwise, we may not notice that you need to specify the location."* But their instruction says
+otherwise, we may not notice that you need to specify the location."* **The plate gerbers here
+already carry that token on B.Silkscreen** — you do not need to add it. But their instruction says
 *"the silkscreen layer"* — singular, with no top/bottom language anywhere — so **a `WayWayWay`
 token on B.Silkscreen reliably yielding bottom placement is a reasonable inference, not a
 documented guarantee.** Treat the token as belt-and-braces; the plain-English remark is what you

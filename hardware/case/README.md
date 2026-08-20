@@ -7,7 +7,8 @@ Case for the **v5 board** (84.2 × 100 mm octagon). Architecture:
 inserts and feet. A printed **band** forms the visible side wall; the plate
 drops into a ledge inside the band and sits flush with its rim. Four M3
 screws clamp plate + band + tray as one stack. Outer size **95.6 × 111.4 mm**
-with the default 5.4 mm sidewall, ~12.5 mm tall plus feet.
+with the default 5.4 mm sidewall, **~14.5 mm tall** plus feet (the tray stands
+2.0 mm proud below the band — see the plinth note below).
 
 What changed versus the earlier v2 file set: the plate is **1.6 mm** and
 carries the **v5 joystick opening** (the YA13 tilt stick's asymmetric
@@ -15,6 +16,29 @@ rounded-rect instead of the old circle), the band seats that 1.6 mm plate
 (`band_1.6mm`), the tray matches the v5 board's chamfered corner and joystick
 underside (`tray_v5`), and the kit adds **printable toppers** (encoder knobs +
 stick caps) and an **optional gasket**.
+
+**The encoder aperture is 14.0 × 13.0 mm, not square, and not centred on the
+shaft.** Generic EC11 encoders vary: the ones this build was validated against
+measure about **13.7 mm** across the pin axis and fouled the old 13.0 × 13.0
+opening on one side. The opening was widened by **1.0 mm on one side only** —
+it now spans **14.0 mm** across the pin axis and stays **13.0 mm** the other
+way, so the shaft sits 0.5 mm off the aperture centre by design. If you print
+or order the plate from these files you get the fixed version; the board and
+the band are unaffected.
+
+**The tray in this file set has changed substantially — reprint it.** The
+previously published `tray_v5` was several revisions old and carried a real
+defect: it was **mirror-imaged**, so a printed copy was the wrong hand and its
+locating posts did not line up with the board. It also had a continuous lip
+around the PCB edge that sat directly in front of the ten side-firing underglow
+LEDs, and a stray square hole through the floor near the encoder corner. The
+current tray fixes all three — the lip is replaced by fourteen short support
+columns that leave the light path open — and adds two features: four **Ø6 base
+pockets** in the underside on a 25 mm square for optional printed bases, and a
+**2.0 mm plinth**, meaning the tray now stands slightly proud below the band
+instead of finishing flush with it. That is deliberate: the band appears to
+float on a recessed base. Nothing above the floor moved, so the PCB, plate,
+band and screw stack all fit exactly as before.
 
 **v2.7 — the band sidewall is now 5.4 mm** (was 2.4). A fab 3D-print review
 flagged the old 2.4 mm wall's corners as too thin to print reliably, so the
@@ -117,6 +141,15 @@ Renders of every style are in `toppers/renders/`.
 - **Encoder knobs** (`knob_*`): 3 styles — `dome_cup`, `knurled_cup`,
   `ribbed_skirt` — each in a 3-bore fit ladder for the EC11 D-shaft:
   **Ø5.9 / 6.0 / 6.1**. Print the 6.0 first; size up if tight, down if loose.
+  Note on coverage: since the encoder aperture was widened (above), the Ø18
+  `knurled_cup` no longer quite covers it — about **0.3 mm** of the opening
+  peeks out at two corners on the widened side. That is cosmetic and was
+  accepted so the encoder actually fits. If it bothers you, print the Ø19
+  `dome_cup`, which covers the opening completely.
+  ⚠️ `ribbed_skirt` is the one style with an internal relief cavity, and that
+  cavity (Ø17.4) was sized for an 11.7 mm encoder body — it has **not** been
+  verified against the larger ~13.7 mm bodies. If yours is a big one, use
+  `knurled_cup` or `dome_cup`.
 - **Stick caps** (`stick_cap_*`): 4 profiles — **`taper` (default)**, `dome`,
   `dish`, `knurl` — each in a 3-rung socket-fit ladder: **nom / p05 (+0.05) /
   p10 (+0.10)**. Start with nom. The taper profile is the one that clears the
