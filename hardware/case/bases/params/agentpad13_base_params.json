@@ -1,0 +1,670 @@
+{
+  "part": "agentpad13 tray base",
+  "rev": "v2.9",
+  "license": "CERN-OHL-W v2",
+  "contract": {
+    "datum": {
+      "where": "centre of the case outline in plan",
+      "board_coords": [
+        42.1,
+        50.0
+      ],
+      "how_to_find_it": "the band outer (95.6 x 111.4) and the tray outline (84.3 x 100.1) are both centred on it \u2014 measure the finished case, no source read needed"
+    },
+    "mating_plane": {
+      "z": -9.5,
+      "what": "tray bottom = band bottom, coplanar and flat",
+      "rule": "all base material at or below this plane"
+    },
+    "orientation": {
+      "far_edge": "y = 0, the USB / control-band edge, away from the user",
+      "near_edge": "y = 100, the 2U key edge",
+      "landmark": "the USB port is on the FAR edge",
+      "symmetry": "the peg pattern is 4-fold symmetric \u2014 a base mounts in any of four 90 deg orientations"
+    },
+    "features": {
+      "count": 4,
+      "type": "blind flat-bottomed cylindrical pocket",
+      "diameter_mm": 6.0,
+      "depth_mm": 1.6,
+      "positions_from_datum": [
+        [
+          -12.5,
+          -12.5
+        ],
+        [
+          12.5,
+          -12.5
+        ],
+        [
+          -12.5,
+          12.5
+        ],
+        [
+          12.5,
+          12.5
+        ]
+      ],
+      "pitch_mm": 25.0,
+      "bolt_circle_mm": 35.355,
+      "mouth_chamfer_mm": 0.2,
+      "mouth_chamfer_note": "MEASURED, not nominal. EFC_CHAMFER is 0.4 but OCCT refuses 0.4 and 0.3 on the tray's bottom face and _safe_chamfer settles at 0.2. Design the peg against 0.2.",
+      "floor_above_pocket_mm": 2.8
+    },
+    "peg": {
+      "ladder_mm": [
+        5.6,
+        5.7,
+        5.8,
+        5.9
+      ],
+      "default_rigid": 5.8,
+      "default_tpu": 5.9,
+      "length_mm": 1.4,
+      "tip_chamfer_mm": 0.4,
+      "seat_gap_mm": 0.2,
+      "rule": "the tray side is CAD-nominal and carries NO allowance; all fit lives on the peg",
+      "gauge": "print base_fit_gauge.stl, push each peg into any pocket, keep the rung that holds. Marks are raised dots: n dots = rung n, smallest first."
+    },
+    "load_rating": {
+      "path": "vertical load goes through the FLAT MATING PLANE, never through the pegs. The pegs locate and resist shear.",
+      "peg_bearing_area_mm2": 8.4,
+      "note": "at even 30 MPa bearing that is ~250 N per peg against single-digit-newton service loads, so engagement depth is not the limiting factor \u2014 location is the job."
+    },
+    "keep_outs": {
+      "service_slots": {
+        "what": "BOOT / RESET tact access, pierced through the tray floor",
+        "tray_slot_bbox": [
+          59.0,
+          76.0,
+          83.3,
+          93.3
+        ],
+        "rule": "any base covering this area MUST carry a through window; a base that stays inside \u00d878.4 about the datum never reaches it",
+        "max_windowless_circular_base_mm": 78.36
+      },
+      "usb": {
+        "rule": "the USB face is on the FAR edge above the mating plane; a wedge that raises the far edge reduces plug clearance to the desk"
+      }
+    }
+  },
+  "stability": {
+    "method": "see agentpad13_base.py section 4 \u2014 CoP walk for vertical press, tip-vs-slide for horizontal push",
+    "pad_mass_g": 176.0,
+    "pad_cg_plan": [
+      41.516,
+      49.2
+    ],
+    "pad_cg_offset_from_datum": [
+      -0.584,
+      -0.8
+    ],
+    "governing_case": "firm press on the encoder knob edge, 56.1 mm from the datum",
+    "margins_required": {
+      "design": 1.5,
+      "abuse": 1.0
+    },
+    "min_base_mass_by_diameter_g": {
+      "50": {
+        "sm1.5_at_3N": 401.2,
+        "sm1.0_at_5N": 464.5
+      },
+      "60": {
+        "sm1.5_at_3N": 228.5,
+        "sm1.0_at_5N": 272.8
+      },
+      "65": {
+        "sm1.5_at_3N": 162.1,
+        "sm1.0_at_5N": 199.1
+      },
+      "70": {
+        "sm1.5_at_3N": 105.2,
+        "sm1.0_at_5N": 135.9
+      },
+      "74": {
+        "sm1.5_at_3N": 65.2,
+        "sm1.0_at_5N": 91.5
+      },
+      "80": {
+        "sm1.5_at_3N": 12.7,
+        "sm1.0_at_5N": 33.2
+      }
+    },
+    "ruling": "any free-standing base smaller than the footprint needs ADDED MASS. A \u00d870 pedestal needs 136 g total, which printed plastic alone cannot reach \u2014 hence the ballast cavity.",
+    "mass_model": [
+      {
+        "part": "band",
+        "volume_cm3": 26.723,
+        "mass_g": 22.06,
+        "centroid_xy": [
+          42.1,
+          50.75
+        ],
+        "provenance": "PETG. 5.4 mm walls: 3 perims solid + 20% gyroid core -> 0.65 (EST)"
+      },
+      {
+        "part": "tray",
+        "volume_cm3": 38.007,
+        "mass_g": 43.442,
+        "centroid_xy": [
+          41.693,
+          49.397
+        ],
+        "provenance": "PETG. 4.4 mm floor (v2.11 plinth) prints effectively solid (EST)"
+      },
+      {
+        "part": "pcb_rail",
+        "volume_cm3": 0.521,
+        "mass_g": 0.628,
+        "centroid_xy": [
+          41.62,
+          48.109
+        ],
+        "provenance": "prints as one body with the tray"
+      },
+      {
+        "part": "pcb_retention",
+        "volume_cm3": 0.147,
+        "mass_g": 0.177,
+        "centroid_xy": [
+          42.1,
+          77.75
+        ],
+        "provenance": "prints as one body with the tray"
+      },
+      {
+        "part": "fr4_plate",
+        "volume_cm3": 8.233,
+        "mass_g": 16.507,
+        "centroid_xy": [
+          41.409,
+          50.708
+        ],
+        "provenance": "FR4 + copper, effective 2.005 g/cm3"
+      },
+      {
+        "part": "pcb_board",
+        "volume_cm3": 12.083,
+        "mass_g": 26.461,
+        "centroid_xy": [
+          42.015,
+          49.856
+        ],
+        "provenance": "FR4 + 2x35um Cu at the measured 98%/98% pour -> 2.19 g/cm3"
+      },
+      {
+        "part": "pcb_components",
+        "volume_cm3": 0.677,
+        "mass_g": 2.9,
+        "centroid_xy": [
+          59.966,
+          68.3
+        ],
+        "provenance": "SMD population 1.4 + MX 2U stabiliser 1.5 (EST)"
+      },
+      {
+        "part": "sockets",
+        "volume_cm3": 2.054,
+        "mass_g": 5.5,
+        "centroid_xy": [
+          42.1,
+          53.681
+        ],
+        "provenance": "26x Kailh CPG151101S11 (2 per switch) @ ~0.21 g (EST, unpublished)"
+      },
+      {
+        "part": "leds",
+        "volume_cm3": 0.795,
+        "mass_g": 0.6,
+        "centroid_xy": [
+          41.331,
+          56.192
+        ],
+        "provenance": "14x SK6812MINI-E + 10 side (EST)"
+      },
+      {
+        "part": "ec11_body",
+        "volume_cm3": 1.027,
+        "mass_g": 5.0,
+        "centroid_xy": [
+          13.525,
+          12.5
+        ],
+        "provenance": "Bourns PEC11R-4215F-S0024 datasheet MAX (PUBLISHED)"
+      },
+      {
+        "part": "js_body",
+        "volume_cm3": 2.855,
+        "mass_g": 2.5,
+        "centroid_xy": [
+          68.739,
+          12.399
+        ],
+        "provenance": "YA13-FL7.4-B5Ka THT tilt stick (EST; NOT a PSP-class module)"
+      },
+      {
+        "part": "js_pins",
+        "volume_cm3": 0.061,
+        "mass_g": 0.0,
+        "centroid_xy": [
+          67.447,
+          11.107
+        ],
+        "provenance": "included in js_body"
+      },
+      {
+        "part": "screws",
+        "volume_cm3": 0.41,
+        "mass_g": 3.2,
+        "centroid_xy": [
+          42.1,
+          50.0
+        ],
+        "provenance": "4x M3x8 DIN912 @ 0.8 g (PUBLISHED, boltport)"
+      },
+      {
+        "part": "switch_bodies",
+        "volume_cm3": 24.199,
+        "mass_g": 24.7,
+        "centroid_xy": [
+          42.1,
+          53.681
+        ],
+        "provenance": "13x Kailh BOX Jade @ 1.9 g (EST; no published mass exists)"
+      },
+      {
+        "part": "keycaps",
+        "volume_cm3": 18.223,
+        "mass_g": 14.3,
+        "centroid_xy": [
+          42.1,
+          56.335
+        ],
+        "provenance": "12x cap_dish_1u_17p5 1.03 + 1x cap_dish_2u_stab 1.93, from this repo's own STL volumes"
+      },
+      {
+        "part": "knob",
+        "volume_cm3": 2.417,
+        "mass_g": 2.4,
+        "centroid_xy": [
+          13.525,
+          12.5
+        ],
+        "provenance": "this project's printed knob_knurled_cup (an ALU knob would be ~8.6 g)"
+      },
+      {
+        "part": "stick_cap",
+        "volume_cm3": 0.281,
+        "mass_g": 0.81,
+        "centroid_xy": [
+          69.71,
+          13.37
+        ],
+        "provenance": "printed stick_cap_dish"
+      },
+      {
+        "part": "M3 heat-set inserts x4",
+        "volume_cm3": 0.0,
+        "mass_g": 1.3,
+        "centroid_xy": [
+          42.1,
+          50.0
+        ],
+        "provenance": "4x 0.32 g brass (EST)"
+      },
+      {
+        "part": "PORON gasket",
+        "volume_cm3": 0.0,
+        "mass_g": 2.5,
+        "centroid_xy": [
+          42.1,
+          50.0
+        ],
+        "provenance": "EST"
+      },
+      {
+        "part": "solder + fillets",
+        "volume_cm3": 0.0,
+        "mass_g": 1.0,
+        "centroid_xy": [
+          42.1,
+          50.0
+        ],
+        "provenance": "EST"
+      }
+    ],
+    "assumptions": [
+      "Kailh BOX Jade 1.9 g \u2014 NO published mass exists; +/-25% is +/-3 g across 13 switches",
+      "EC11 push force 2-4 N class -> 3.0 N design / 5.0 N abuse. This is the GOVERNING input and it is an ESTIMATE",
+      "keyswitch press 1.5 N design / 3.0 N abuse",
+      "mu = 0.4 bare printed plastic on desk, 1.2 TPU on desk (v2.15: feet deleted, so no rubber contact is assumed)",
+      "ballast packing 70% for loose washers",
+      "printed-part fill fractions are stated per row in mass_model"
+    ],
+    "resolved_2026_08_20": "The long-standing 3M SJ61A1 dimension conflict (\u00d87.92 x 5.08 per DigiKey/3M vs \u00d87.9 x 2.2 as modelled) is MOOT for bases: v2.15 deletes every foot recess, so no base geometry, stance figure or desk plane in this module depends on a bumpon dimension any more. Feet are unofficial."
+  },
+  "print": {
+    "orientation": "desk face on the bed, every variant",
+    "support": "none",
+    "pedestal_infill": "solid / >=80% \u2014 the mass is the point",
+    "ballast_min_g": 68.7,
+    "ballast": "steel washers, bar stock or a turned disc, epoxied into the pedestal's downward-opening cavity"
+  },
+  "variants": {
+    "pedestal": {
+      "kind": "circle",
+      "tilt_deg": 0.0,
+      "feet": "pedestal",
+      "model_volume_cm3": 54.15,
+      "base_mass_g": 201.7,
+      "support": [
+        "circle",
+        35.0
+      ],
+      "base_height_mm": 20.0,
+      "foot_protrusion_mm": 0.0,
+      "assumed_mu": 0.4,
+      "worst_margin": 1.215,
+      "load_cases": [
+        {
+          "margin": null,
+          "case": "press SW6 centre key [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW6 centre key [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": 22.696,
+          "case": "press SW13 2U key centre [design 1.5 N]",
+          "note": "tips at 34.04 N"
+        },
+        {
+          "margin": 11.348,
+          "case": "press SW13 2U key centre [abuse 3.0 N]",
+          "note": "tips at 34.04 N"
+        },
+        {
+          "margin": 6.8,
+          "case": "press SW13 2U cap near edge [design 1.5 N]",
+          "note": "tips at 10.20 N"
+        },
+        {
+          "margin": 3.4,
+          "case": "press SW13 2U cap near edge [abuse 3.0 N]",
+          "note": "tips at 10.20 N"
+        },
+        {
+          "margin": null,
+          "case": "press SW9 far-left key [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW9 far-left key [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": 3.512,
+          "case": "press encoder knob centre [design 3.0 N]",
+          "note": "tips at 10.54 N"
+        },
+        {
+          "margin": 2.107,
+          "case": "press encoder knob centre [abuse 5.0 N]",
+          "note": "tips at 10.54 N"
+        },
+        {
+          "margin": 2.024,
+          "case": "press encoder knob far edge [design 3.0 N]",
+          "note": "tips at 6.07 N"
+        },
+        {
+          "margin": 1.215,
+          "case": "press encoder knob far edge [abuse 5.0 N]",
+          "note": "tips at 6.07 N"
+        },
+        {
+          "margin": 7.923,
+          "case": "press joystick cap [design 1.5 N]",
+          "note": "tips at 11.88 N"
+        },
+        {
+          "margin": 3.962,
+          "case": "press joystick cap [abuse 3.0 N]",
+          "note": "tips at 11.88 N"
+        },
+        {
+          "margin": null,
+          "case": "push joystick shove [1.5 N at h=49 mm]",
+          "note": "cannot tip: SLIDES at 1.48 N before it could tip at 2.61 N"
+        },
+        {
+          "margin": null,
+          "case": "push knob side load [1.5 N at h=47 mm]",
+          "note": "cannot tip: SLIDES at 1.48 N before it could tip at 2.72 N"
+        }
+      ],
+      "stl": {
+        "5p6": "base_pedestal_peg_5p6.stl",
+        "5p7": "base_pedestal_peg_5p7.stl",
+        "5p8": "base_pedestal_peg_5p8.stl",
+        "5p9": "base_pedestal_peg_5p9.stl"
+      }
+    },
+    "mat": {
+      "kind": "full",
+      "tilt_deg": 0.0,
+      "feet": "none",
+      "model_volume_cm3": 22.722,
+      "base_mass_g": 26.1,
+      "support": [
+        "rect",
+        -3.6999999999999957,
+        87.9,
+        -3.6999999999999957,
+        103.69999999999999
+      ],
+      "base_height_mm": 2.4,
+      "foot_protrusion_mm": 0.0,
+      "assumed_mu": 1.2,
+      "worst_margin": null,
+      "load_cases": [
+        {
+          "margin": null,
+          "case": "press SW6 centre key [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW6 centre key [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW13 2U key centre [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW13 2U key centre [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW13 2U cap near edge [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW13 2U cap near edge [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW9 far-left key [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW9 far-left key [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press encoder knob centre [design 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press encoder knob centre [abuse 5.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press encoder knob far edge [design 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press encoder knob far edge [abuse 5.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press joystick cap [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press joystick cap [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "push joystick shove [1.5 N at h=32 mm]",
+          "note": "cannot tip: SLIDES at 2.38 N before it could tip at 2.85 N"
+        },
+        {
+          "margin": null,
+          "case": "push knob side load [1.5 N at h=29 mm]",
+          "note": "cannot tip: SLIDES at 2.38 N before it could tip at 3.05 N"
+        }
+      ],
+      "stl": {
+        "5p6": "base_mat_peg_5p6.stl",
+        "5p7": "base_mat_peg_5p7.stl",
+        "5p8": "base_mat_peg_5p8.stl",
+        "5p9": "base_mat_peg_5p9.stl"
+      }
+    },
+    "wedge": {
+      "kind": "full",
+      "tilt_deg": 6.5,
+      "feet": "corners",
+      "model_volume_cm3": 82.001,
+      "base_mass_g": 42.7,
+      "support": [
+        "rect",
+        -3.6999999999999957,
+        87.9,
+        -3.6999999999999957,
+        103.69999999999999
+      ],
+      "base_height_mm": 14.64,
+      "foot_protrusion_mm": 0.0,
+      "assumed_mu": 0.4,
+      "worst_margin": null,
+      "load_cases": [
+        {
+          "margin": null,
+          "case": "press SW6 centre key [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW6 centre key [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW13 2U key centre [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW13 2U key centre [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW13 2U cap near edge [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW13 2U cap near edge [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW9 far-left key [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW9 far-left key [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press encoder knob centre [design 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press encoder knob centre [abuse 5.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press encoder knob far edge [design 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press encoder knob far edge [abuse 5.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press joystick cap [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press joystick cap [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "push joystick shove [1.5 N at h=44 mm]",
+          "note": "cannot tip: SLIDES at 0.86 N before it could tip at 2.22 N"
+        },
+        {
+          "margin": null,
+          "case": "push knob side load [1.5 N at h=42 mm]",
+          "note": "cannot tip: SLIDES at 0.86 N before it could tip at 2.34 N"
+        }
+      ],
+      "stl": {
+        "5p6": "base_wedge_peg_5p6.stl",
+        "5p7": "base_wedge_peg_5p7.stl",
+        "5p8": "base_wedge_peg_5p8.stl",
+        "5p9": "base_wedge_peg_5p9.stl"
+      }
+    }
+  }
+}

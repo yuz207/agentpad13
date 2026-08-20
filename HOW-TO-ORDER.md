@@ -130,6 +130,25 @@ ordered before this change is the old loose pocket — still usable, just with t
 **Home path:** same STL — home resin (frosted look) or FDM in a translucent filament
 (layered glow; print upright per `hardware/case/README.md` guidance).
 
+## Card 3b — the tray bases (optional, printed at home)
+
+**Tray only, or tray + an insertable base — both are complete products.** The three bases in
+`hardware/case/bases/stl/` clip into four Ø6 pockets in the tray's underside: `mat` (full-footprint
+TPU sheet, grip), `wedge` (same outline, 6.5° back-raised typing angle) and `pedestal` (Ø70 × 20 mm
+circular plinth).
+
+**Print the fit gauge first** — `base_fit_gauge.stl` has all four peg diameters side by side, marked
+by a count of raised dots. Keep the rung that holds in a tray pocket, then print the matching
+`..._peg_5pN.stl`. Ø5.8 suits most rigid filament; TPU wants Ø5.9.
+
+**The pedestal must be ballasted**: shell ~67 g, physics wants ≥136 g, so load ≥69 g of steel into
+its underside cavity — or fill it (~202 g). The other two need nothing.
+
+**Feet are your business**: every underside is flat, and all stated heights exclude feet.
+
+All three print desk-face-down, no support. `bases/INTERFACE.md` is the spec if you would rather
+design your own.
+
 ## Card 4 — printed at home, always
 
 - **Tray**: `hardware/case/stl/agentpad13_v2_tray_v5.stl` — PETG, upright, 0.16–0.20 mm layers.
