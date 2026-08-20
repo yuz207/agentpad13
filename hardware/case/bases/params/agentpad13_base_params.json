@@ -125,12 +125,16 @@
         "sm1.5_at_3N": 65.2,
         "sm1.0_at_5N": 91.5
       },
+      "78.0": {
+        "sm1.5_at_3N": 29.3,
+        "sm1.0_at_5N": 51.6
+      },
       "80": {
         "sm1.5_at_3N": 12.7,
         "sm1.0_at_5N": 33.2
       }
     },
-    "ruling": "any free-standing base smaller than the footprint needs ADDED MASS. A \u00d870 pedestal needs 136 g total, which printed plastic alone cannot reach \u2014 hence the ballast cavity.",
+    "ruling": "A free-standing base smaller than the footprint must carry the mass itself. A \u00d878 pedestal needs 52 g, which a SOLID print in PLA/PETG does reach \u2014 so v2.16 deletes the ballast and publishes an infill requirement instead. At 62% effective solidity (3 walls / 20% gyroid) it clears the 3 N design case but NOT the 5 N abuse case.",
     "mass_model": [
       {
         "part": "band",
@@ -338,7 +342,6 @@
       "EC11 push force 2-4 N class -> 3.0 N design / 5.0 N abuse. This is the GOVERNING input and it is an ESTIMATE",
       "keyswitch press 1.5 N design / 3.0 N abuse",
       "mu = 0.4 bare printed plastic on desk, 1.2 TPU on desk (v2.15: feet deleted, so no rubber contact is assumed)",
-      "ballast packing 70% for loose washers",
       "printed-part fill fractions are stated per row in mass_model"
     ],
     "resolved_2026_08_20": "The long-standing 3M SJ61A1 dimension conflict (\u00d87.92 x 5.08 per DigiKey/3M vs \u00d87.9 x 2.2 as modelled) is MOOT for bases: v2.15 deletes every foot recess, so no base geometry, stance figure or desk plane in this module depends on a bumpon dimension any more. Feet are unofficial."
@@ -346,120 +349,18 @@
   "print": {
     "orientation": "desk face on the bed, every variant",
     "support": "none",
-    "pedestal_infill": "solid / >=80% \u2014 the mass is the point",
-    "ballast_min_g": 68.7,
-    "ballast": "steel washers, bar stock or a turned disc, epoxied into the pedestal's downward-opening cavity"
+    "pedestal_infill": "PRINT SOLID. The pedestal carries no ballast in v2.16 \u2014 its own printed mass is what keeps the device upright, so infill is a STRUCTURAL setting here, not a speed/cost one. A solid print clears the 5 N abuse case; a normal 3-wall / 20 % gyroid print (62% effective solidity) clears the 3 N design case but NOT abuse.",
+    "riser_material": "TPU for a grip base, PETG/PLA for a rigid stand \u2014 same file either way",
+    "ballast": "none \u2014 deleted in v2.16 (owner: \"No need for the ballast if the diameter is reasonable enough\")"
   },
   "variants": {
-    "pedestal": {
-      "kind": "circle",
-      "tilt_deg": 0.0,
-      "feet": "pedestal",
-      "model_volume_cm3": 54.15,
-      "base_mass_g": 201.7,
-      "support": [
-        "circle",
-        35.0
-      ],
-      "base_height_mm": 20.0,
-      "foot_protrusion_mm": 0.0,
-      "assumed_mu": 0.4,
-      "worst_margin": 1.215,
-      "load_cases": [
-        {
-          "margin": null,
-          "case": "press SW6 centre key [design 1.5 N]",
-          "note": "cannot tip: press point is INSIDE the support polygon"
-        },
-        {
-          "margin": null,
-          "case": "press SW6 centre key [abuse 3.0 N]",
-          "note": "cannot tip: press point is INSIDE the support polygon"
-        },
-        {
-          "margin": 22.696,
-          "case": "press SW13 2U key centre [design 1.5 N]",
-          "note": "tips at 34.04 N"
-        },
-        {
-          "margin": 11.348,
-          "case": "press SW13 2U key centre [abuse 3.0 N]",
-          "note": "tips at 34.04 N"
-        },
-        {
-          "margin": 6.8,
-          "case": "press SW13 2U cap near edge [design 1.5 N]",
-          "note": "tips at 10.20 N"
-        },
-        {
-          "margin": 3.4,
-          "case": "press SW13 2U cap near edge [abuse 3.0 N]",
-          "note": "tips at 10.20 N"
-        },
-        {
-          "margin": null,
-          "case": "press SW9 far-left key [design 1.5 N]",
-          "note": "cannot tip: press point is INSIDE the support polygon"
-        },
-        {
-          "margin": null,
-          "case": "press SW9 far-left key [abuse 3.0 N]",
-          "note": "cannot tip: press point is INSIDE the support polygon"
-        },
-        {
-          "margin": 3.512,
-          "case": "press encoder knob centre [design 3.0 N]",
-          "note": "tips at 10.54 N"
-        },
-        {
-          "margin": 2.107,
-          "case": "press encoder knob centre [abuse 5.0 N]",
-          "note": "tips at 10.54 N"
-        },
-        {
-          "margin": 2.024,
-          "case": "press encoder knob far edge [design 3.0 N]",
-          "note": "tips at 6.07 N"
-        },
-        {
-          "margin": 1.215,
-          "case": "press encoder knob far edge [abuse 5.0 N]",
-          "note": "tips at 6.07 N"
-        },
-        {
-          "margin": 7.923,
-          "case": "press joystick cap [design 1.5 N]",
-          "note": "tips at 11.88 N"
-        },
-        {
-          "margin": 3.962,
-          "case": "press joystick cap [abuse 3.0 N]",
-          "note": "tips at 11.88 N"
-        },
-        {
-          "margin": null,
-          "case": "push joystick shove [1.5 N at h=49 mm]",
-          "note": "cannot tip: SLIDES at 1.48 N before it could tip at 2.61 N"
-        },
-        {
-          "margin": null,
-          "case": "push knob side load [1.5 N at h=47 mm]",
-          "note": "cannot tip: SLIDES at 1.48 N before it could tip at 2.72 N"
-        }
-      ],
-      "stl": {
-        "5p6": "base_pedestal_peg_5p6.stl",
-        "5p7": "base_pedestal_peg_5p7.stl",
-        "5p8": "base_pedestal_peg_5p8.stl",
-        "5p9": "base_pedestal_peg_5p9.stl"
-      }
-    },
-    "mat": {
+    "riser": {
       "kind": "full",
       "tilt_deg": 0.0,
-      "feet": "none",
-      "model_volume_cm3": 22.722,
-      "base_mass_g": 26.1,
+      "body_mm": 3.0,
+      "feet": "none \u2014 flat underside (v2.15)",
+      "model_volume_cm3": 28.367,
+      "base_mass_g": 32.6,
       "support": [
         "rect",
         -3.6999999999999957,
@@ -467,9 +368,9 @@
         -3.6999999999999957,
         103.69999999999999
       ],
-      "base_height_mm": 2.4,
+      "base_height_mm": 3.0,
       "foot_protrusion_mm": 0.0,
-      "assumed_mu": 1.2,
+      "assumed_mu": 0.4,
       "worst_margin": null,
       "load_cases": [
         {
@@ -545,27 +446,28 @@
         {
           "margin": null,
           "case": "push joystick shove [1.5 N at h=32 mm]",
-          "note": "cannot tip: SLIDES at 2.38 N before it could tip at 2.85 N"
+          "note": "cannot tip: SLIDES at 0.82 N before it could tip at 2.89 N"
         },
         {
           "margin": null,
-          "case": "push knob side load [1.5 N at h=29 mm]",
-          "note": "cannot tip: SLIDES at 2.38 N before it could tip at 3.05 N"
+          "case": "push knob side load [1.5 N at h=30 mm]",
+          "note": "cannot tip: SLIDES at 0.82 N before it could tip at 3.09 N"
         }
       ],
       "stl": {
-        "5p6": "base_mat_peg_5p6.stl",
-        "5p7": "base_mat_peg_5p7.stl",
-        "5p8": "base_mat_peg_5p8.stl",
-        "5p9": "base_mat_peg_5p9.stl"
+        "5p6": "base_riser_peg_5p6.stl",
+        "5p7": "base_riser_peg_5p7.stl",
+        "5p8": "base_riser_peg_5p8.stl",
+        "5p9": "base_riser_peg_5p9.stl"
       }
     },
     "wedge": {
       "kind": "full",
-      "tilt_deg": 6.5,
-      "feet": "corners",
-      "model_volume_cm3": 82.001,
-      "base_mass_g": 42.7,
+      "tilt_deg": 8.0,
+      "body_mm": 2.4,
+      "feet": "none \u2014 flat underside (v2.15)",
+      "model_volume_cm3": 95.849,
+      "base_mass_g": 49.9,
       "support": [
         "rect",
         -3.6999999999999957,
@@ -573,7 +475,7 @@
         -3.6999999999999957,
         103.69999999999999
       ],
-      "base_height_mm": 14.64,
+      "base_height_mm": 17.49,
       "foot_protrusion_mm": 0.0,
       "assumed_mu": 0.4,
       "worst_margin": null,
@@ -650,13 +552,13 @@
         },
         {
           "margin": null,
-          "case": "push joystick shove [1.5 N at h=44 mm]",
-          "note": "cannot tip: SLIDES at 0.86 N before it could tip at 2.22 N"
+          "case": "push joystick shove [1.5 N at h=47 mm]",
+          "note": "cannot tip: SLIDES at 0.89 N before it could tip at 2.16 N"
         },
         {
           "margin": null,
-          "case": "push knob side load [1.5 N at h=42 mm]",
-          "note": "cannot tip: SLIDES at 0.86 N before it could tip at 2.34 N"
+          "case": "push knob side load [1.5 N at h=44 mm]",
+          "note": "cannot tip: SLIDES at 0.89 N before it could tip at 2.26 N"
         }
       ],
       "stl": {
@@ -664,6 +566,110 @@
         "5p7": "base_wedge_peg_5p7.stl",
         "5p8": "base_wedge_peg_5p8.stl",
         "5p9": "base_wedge_peg_5p9.stl"
+      }
+    },
+    "pedestal": {
+      "kind": "circle",
+      "tilt_deg": 8.0,
+      "body_mm": 2.4,
+      "feet": "none \u2014 flat underside (v2.15)",
+      "model_volume_cm3": 47.663,
+      "base_mass_g": 59.1,
+      "support": [
+        "circle",
+        39.0
+      ],
+      "base_height_mm": 17.49,
+      "foot_protrusion_mm": 0.0,
+      "assumed_mu": 0.4,
+      "worst_margin": 1.033,
+      "load_cases": [
+        {
+          "margin": null,
+          "case": "press SW6 centre key [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW6 centre key [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW13 2U key centre [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW13 2U key centre [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": 6.879,
+          "case": "press SW13 2U cap near edge [design 1.5 N]",
+          "note": "tips at 10.32 N"
+        },
+        {
+          "margin": 3.44,
+          "case": "press SW13 2U cap near edge [abuse 3.0 N]",
+          "note": "tips at 10.32 N"
+        },
+        {
+          "margin": null,
+          "case": "press SW9 far-left key [design 1.5 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": null,
+          "case": "press SW9 far-left key [abuse 3.0 N]",
+          "note": "cannot tip: press point is INSIDE the support polygon"
+        },
+        {
+          "margin": 3.61,
+          "case": "press encoder knob centre [design 3.0 N]",
+          "note": "tips at 10.83 N"
+        },
+        {
+          "margin": 2.166,
+          "case": "press encoder knob centre [abuse 5.0 N]",
+          "note": "tips at 10.83 N"
+        },
+        {
+          "margin": 1.722,
+          "case": "press encoder knob far edge [design 3.0 N]",
+          "note": "tips at 5.17 N"
+        },
+        {
+          "margin": 1.033,
+          "case": "press encoder knob far edge [abuse 5.0 N]",
+          "note": "tips at 5.17 N"
+        },
+        {
+          "margin": 8.68,
+          "case": "press joystick cap [design 1.5 N]",
+          "note": "tips at 13.02 N"
+        },
+        {
+          "margin": 4.34,
+          "case": "press joystick cap [abuse 3.0 N]",
+          "note": "tips at 13.02 N"
+        },
+        {
+          "margin": null,
+          "case": "push joystick shove [1.5 N at h=47 mm]",
+          "note": "cannot tip: SLIDES at 0.92 N before it could tip at 1.89 N"
+        },
+        {
+          "margin": null,
+          "case": "push knob side load [1.5 N at h=44 mm]",
+          "note": "cannot tip: SLIDES at 0.92 N before it could tip at 1.98 N"
+        }
+      ],
+      "stl": {
+        "5p6": "base_pedestal_peg_5p6.stl",
+        "5p7": "base_pedestal_peg_5p7.stl",
+        "5p8": "base_pedestal_peg_5p8.stl",
+        "5p9": "base_pedestal_peg_5p9.stl"
       }
     }
   }

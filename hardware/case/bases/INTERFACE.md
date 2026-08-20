@@ -85,13 +85,15 @@ and not tip at all at 5 N:
 | Ø65 | 162 g | 199 g |
 | Ø70 | 105 g | 136 g |
 | Ø74 | 65 g | 92 g |
+| Ø78.0 | 29 g | 52 g |
 | Ø80 | 13 g | 33 g |
 
-**Printed plastic alone does not reach these numbers.** A solid Ø70 PLA
-puck is about 67 g. A small free-standing base needs **ballast** — the reference
-pedestal carries a Ø48 x 15 mm downward-opening cavity
-for steel washers. A full-footprint base needs none: every control already sits
-inside its support polygon.
+**This is why the pedestal must be printed SOLID.** At Ø78 its own
+printed mass is the only thing resisting the tip, so infill is a structural
+setting here, not a speed one. A solid print clears the 5 N abuse case; a normal
+3-wall / 20 % gyroid print clears the 3 N design case but not abuse. The
+full-footprint `riser` and `wedge` need nothing at all — every control already
+sits inside their support polygon.
 
 Full method and the per-part mass model are in
 `params/agentpad13_base_params.json` under `stability`. Several inputs are
@@ -102,8 +104,8 @@ what sizes everything here.
 
 | variant | outline | mass | ballast |
 |---|---|---|---|
-| `pedestal` | Ø70 x 20 circular | 202 g filled (67 g shell + ballast) | **required**, >=69 g; fill the cavity if you can |
-| `mat` | 91.6 x 107.4 full footprint | 26 g | none |
-| `wedge` | 91.6 x 107.4 full footprint, 6.5 deg back-raised | 43 g | none |
+| `riser` | 91.6 x 107.4 full footprint x 3 mm flat | 33 g | none |
+| `wedge` | 91.6 x 107.4 full footprint, 8 deg back-raised | 50 g | none |
+| `pedestal` | Ø78 tilted drum, 8 deg | 59 g | **print SOLID** — its own mass is the ballast |
 
 All three print **desk face on the bed, no support**.

@@ -181,36 +181,41 @@ Renders of every style are in `toppers/renders/`.
 ### Bases (`bases/`) — optional, snap into the tray
 
 **The case is complete without one.** The offering is *tray only*, or *tray plus
-an insertable base* — bases are an option, not a missing piece. All three clip
-into the same four Ø6 mm pockets in the tray's underside, on a 25 mm square
-about the centre of the case, so nothing about the tray changes when you add or
-remove one.
+one insertable base*. All three clip into the same four Ø6 mm pockets in the
+tray's underside, on a 25 mm square about the centre of the case, so nothing
+about the tray changes when you add or remove one.
 
-| variant | what it is | print in | ballast |
+| variant | what it is | print it in | notes |
 |---|---|---|---|
-| `mat` | 91.6 × 107.4 mm full-footprint sheet | TPU, for grip | none |
-| `wedge` | same outline, 6.5° back-raised typing angle | PLA/PETG | none |
-| `pedestal` | Ø70 × 20 mm circular plinth | PLA/PETG | **required** |
+| `riser` | 91.6 × 107.4 mm flat sheet, **3.0 mm** | **TPU** for grip, **PETG/PLA** for a rigid stand — same file | a little height, no angle |
+| `wedge` | same outline, **8° back-raised** | PETG/PLA | far edge 17.5 mm; the typing angle |
+| `pedestal` | **Ø78 tilted drum** — the wedge cut to a circle | PETG/PLA, **100 % infill** | same 8°, circular look |
+
+**Why 8°.** Mainstream mechanical keyboards sit around 7°, the comfortable band
+across real boards is 4–8°, and high-profile customs land 6–8°. This deck is a
+low 13-key pad rather than a full-height board, so it takes the top of that band
+to read as a typing angle at all. The `wedge` and the `pedestal` share one angle
+constant, so they always match.
 
 **Print `stl/base_fit_gauge.stl` first.** It carries all four peg diameters
 (Ø5.6 / 5.7 / 5.8 / 5.9) side by side, each marked with a count of raised dots.
 Push each one into any tray pocket and keep the rung that holds, then print the
-matching `..._peg_5pN.stl`. Ø5.8 is the usual answer in rigid filament; TPU
-wants Ø5.9 because it compresses. All fit allowance lives on the peg — the tray
+matching `..._peg_5pN.stl`. Ø5.8 is the usual answer in rigid filament; TPU wants
+Ø5.9 because it compresses. All the fit allowance lives on the peg — the tray
 side is nominal — so your printer's error is one number you measure once.
 
-**The pedestal needs weight, and that is arithmetic, not taste.** It covers
-about a fifth of the footprint, so pressing a far control cantilevers the device
-over its rim. The printed shell is ~67 g and the physics wants at least 136 g,
-so load **at least 69 g** of ballast (steel washers, bar stock) into the cavity
-in its underside, or simply fill it — that gives ~202 g and a comfortable
-margin. Unballasted it is genuinely not stable. The `mat` and `wedge` span the
-whole footprint and need nothing.
+**⚠️ Print the `pedestal` solid.** It is the only base smaller than the
+footprint, so its own printed mass is the only thing resisting a tip when you
+press a far control — infill is a structural setting here, not a speed one.
+Solid it is about 59 g and clears both the 3 N design case and the 5 N abuse
+case. A normal 3-wall / 20 % gyroid print is only ~37 g: it still clears the
+design case but **not** the abuse case, and there is no ballast cavity to make
+up the difference. The `riser` and `wedge` span the whole footprint and need
+nothing.
 
 **Feet are your business.** Every underside is FLAT: no recesses, no bolt
-circle, no prescribed bumpon. Stick on whatever you like, wherever you like.
-Every height and stability figure here EXCLUDES feet, so anything you add is
-margin on top.
+circle, no prescribed bumpon. Every height and stability figure here EXCLUDES
+feet, so anything you add is margin on top.
 
 All three print desk-face-down with no support. `INTERFACE.md` is the full
 spec — pocket pattern, peg ladder, keep-outs and the stability model — if you

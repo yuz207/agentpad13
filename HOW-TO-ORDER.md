@@ -132,17 +132,25 @@ ordered before this change is the old loose pocket — still usable, just with t
 
 ## Card 3b — the tray bases (optional, printed at home)
 
-**Tray only, or tray + an insertable base — both are complete products.** The three bases in
-`hardware/case/bases/stl/` clip into four Ø6 pockets in the tray's underside: `mat` (full-footprint
-TPU sheet, grip), `wedge` (same outline, 6.5° back-raised typing angle) and `pedestal` (Ø70 × 20 mm
-circular plinth).
+**Tray only, or tray + one insertable base — both are complete products.** The three bases in
+`hardware/case/bases/stl/` clip into four Ø6 pockets in the tray's underside:
+
+- **`riser`** — 91.6 × 107.4 mm flat sheet, 3.0 mm. One file, two materials: TPU for a grip base,
+  PETG/PLA for a rigid stand.
+- **`wedge`** — same outline, **8°** back-raised, far edge 17.5 mm.
+- **`pedestal`** — **Ø78 tilted drum**, the wedge cut to a circle, same 8°.
+
+**Why 8°:** mainstream keyboards sit near 7°, the comfort band is 4–8°, high-profile customs 6–8°;
+this deck is a low 13-key pad, so it takes the top of the band.
 
 **Print the fit gauge first** — `base_fit_gauge.stl` has all four peg diameters side by side, marked
 by a count of raised dots. Keep the rung that holds in a tray pocket, then print the matching
 `..._peg_5pN.stl`. Ø5.8 suits most rigid filament; TPU wants Ø5.9.
 
-**The pedestal must be ballasted**: shell ~67 g, physics wants ≥136 g, so load ≥69 g of steel into
-its underside cavity — or fill it (~202 g). The other two need nothing.
+**⚠️ Print the pedestal SOLID.** It is the only base smaller than the footprint, so its own mass is
+what stops the pad tipping — infill is structural here. Solid ≈59 g clears both the 3 N design and
+5 N abuse cases; a 3-wall / 20 % gyroid print is ≈37 g and clears the design case only. There is no
+ballast cavity. The riser and wedge span the footprint and need nothing.
 
 **Feet are your business**: every underside is flat, and all stated heights exclude feet.
 
