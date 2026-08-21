@@ -316,6 +316,8 @@ body {
 .sheet-grid li > .n { color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .sheet-grid li > .price { margin-left: auto; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .sheet-grid li.note { color: var(--ink-2); }
+/* The single estimates caveat, between the grid and the firmware footer. */
+.sheet-costs { color: var(--ink-3); padding-bottom: var(--s4); }
 
 a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--hair); }
 a:hover { border-bottom-color: var(--accent); }

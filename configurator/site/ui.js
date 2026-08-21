@@ -393,7 +393,12 @@ export function renderSheet(root, sheet, releaseBase) {
     el('span', { class: 'cmd', text: f.flash }),
     ...f.links.map((l) => el('a', { href: releaseBase + l.path, target: '_blank', rel: 'noopener', text: l.text })),
   ]);
-  root.replaceChildren(grid, foot);
+  /* One caveat for the whole sheet, and only when there are prices to caveat —
+     sheet.js already returns null when costs.json has no `updated` date. */
+  const nodes = [grid];
+  if (sheet.costs_label) nodes.push(el('div', { class: 'sheet-costs', text: sheet.costs_label }));
+  nodes.push(foot);
+  root.replaceChildren(...nodes);
 }
 
 /* ------------------------------------------------------------ sheet open */

@@ -245,15 +245,20 @@ class TestCaseParts(unittest.TestCase):
 
     def test_band_outer_sizes_match_the_how_to_order_table(self):
         """HOW-TO-ORDER.md publishes the outer size of all three bands."""
-        # The default row carries bold markup around every cell, so cells are
-        # matched as "anything but a pipe" rather than by exact spacing.
+        # 2026-08-21: HOW-TO-ORDER.md was rewritten as the configurator's static
+        # form and the three-row band table became one prose sentence, so the
+        # sizes are now matched per file name rather than per table cell. The
+        # gate is unchanged: the doc must still publish all three, and all three
+        # must still agree with positions.json. `[^0-9|]*?` is non-greedy and
+        # forbids digits, so each name binds to the FIRST size that follows it
+        # (and it spans the line wrap between `_w3.0` and its number).
         table = dict(
             re.findall(
-                r"`…_(w[\d.]+)\.stl`[^|]*\|[^|]*\|[^0-9|]*([\d.]+ × [\d.]+) mm",
+                r"_(w[\d.]+)(?:\.stl)?`[^0-9|]*?([\d.]+ × [\d.]+) mm",
                 HOW_TO_ORDER,
             )
         )
-        self.assertEqual(len(table), 3, f"table not parsed: {table}")
+        self.assertEqual(len(table), 3, f"sizes not parsed: {table}")
         for wid, size in table.items():
             want = [float(v) for v in size.split(" × ")]
             got = POS["band"]["widths"][wid]["outer"]

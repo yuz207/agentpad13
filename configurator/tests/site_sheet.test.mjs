@@ -231,19 +231,25 @@ S.test('the notes land in the print section, one line each', () => {
 /* --- self-buy --------------------------------------------------------- */
 
 S.test('self-buy carries only the spec §3.2 lines', () => {
+  /* The four trailing lines are the rest of what you actually have to buy —
+     the screws and inserts that hold the stack together (CASE-V2-NOTES §4),
+     the touch pillar (§5) and the optional gasket stock (gasket/README.md).
+     Each is sourced in its rule's `_` comment in rules.json. */
   let s = withPath(base(), 'view.caps', true);
-  deep(ids(buildSheet(s, data), 'selfbuy'), ['encoder', 'switches', 'stab']);
+  deep(ids(buildSheet(s, data), 'selfbuy'),
+    ['encoder', 'switches', 'stab', 'screws', 'inserts', 'touch_foam', 'gasket_sheet']);
 });
 
 /* --- prices ----------------------------------------------------------- */
 
-S.test('costs.updated == null -> every entry renders no price', () => {
+S.test('costs.updated == null -> every entry renders no price, and NO label', () => {
   let s = withPath(base(), 'view.caps', true);
   s = withPath(s, 'base.variant', 'wedge');
   const sheet = buildSheet(s, data);
   for (const section of sheet.sections) {
     for (const e of section.entries) eq(e.price, null, `${section.id}/${e.id} must have no price`);
   }
+  eq(sheet.costs_label, null, 'nothing price-wise renders, the caveat included');
 });
 
 S.test('a dated costs file puts prices on the ids it names, and only those', () => {
@@ -252,6 +258,18 @@ S.test('a dated costs file puts prices on the ids it names, and only those', () 
   const pcb = sec(sheet, 'pcbway').entries;
   deep(pcb.find((e) => e.id === 'fabpack').price, { amount: 41.5, currency: 'USD' });
   eq(pcb.find((e) => e.id === 'plate_gerbers').price, null);
+});
+
+S.test('a dated costs file also puts ONE estimates caveat on the sheet', () => {
+  /* Owner ruling on costs, verbatim: "We should indicate they're all estimates
+     and prices may change." One label for the whole sheet — not one per line,
+     and not a per-entry field that the DOM would have to de-duplicate. */
+  const costs = { updated: '2026-09-01', currency: 'USD', lines: {} };
+  const sheet = buildSheet(base(), { ...data, costs });
+  eq(sheet.costs_label, 'Estimates — prices change');
+  for (const section of sheet.sections) {
+    for (const e of section.entries) ok(!('costs_label' in e), `${e.id} must not carry its own caveat`);
+  }
 });
 
 /* --- link integrity (spec §6) ----------------------------------------- */

@@ -4,7 +4,8 @@
  * Three sections and a fixed footer, exactly per design spec §3. Every `path`
  * is repo-root-relative and must exist in the release bundle; the DOM layer is
  * the only thing that turns it into an href. Prices come out `null` — i.e.
- * nothing renders at all — until costs.json carries a real `updated` date.
+ * nothing renders at all — until costs.json carries a real `updated` date, and
+ * `costs_label` (the one estimates caveat) appears on the same switch.
  */
 
 import { derive, applyOrder, finishOf } from './rules.js';
@@ -14,7 +15,7 @@ import { derive, applyOrder, finishOf } from './rules.js';
 const FLASH_FALLBACK = 'dd if=firmware/prebuilt/agentpad13.uf2 of=/Volumes/RPI-RP2/fw.uf2 bs=1m';
 
 /**
- * The fab finish per plate variant — release/HOW-TO-ORDER.md card 2, and the
+ * The fab finish per plate variant — release/HOW-TO-ORDER.md card 3, and the
  * one line on this sheet that is a MANUFACTURING instruction rather than a
  * taste. Round 4 owner ruling, verbatim: "call standard something else b/c that
  * matters for the manufacturing process (not leaded!)".
@@ -34,10 +35,23 @@ const PLATE_FINISH = {
   blank: 'HASL-LF',
 };
 
+/**
+ * The one line that qualifies every price on the sheet. Owner ruling, verbatim:
+ * "We should indicate they're all estimates and prices may change."
+ *
+ * It rides the same switch as the prices themselves — `costs.updated` — so a
+ * sheet with no prices carries no label either, and there is exactly one of it
+ * for the whole sheet rather than one per line.
+ */
+const COSTS_LABEL = 'Estimates — prices change';
+
 const base = (p) => (p ? p.split('/').pop() : p);
 
+/** True once costs.json carries a real `updated` date, i.e. once prices show. */
+const pricesShown = (costs) => Boolean(costs) && costs.updated != null;
+
 function priceFor(id, costs) {
-  if (!costs || costs.updated == null) return null;
+  if (!pricesShown(costs)) return null;
   const line = (costs.lines || {})[id];
   return line == null ? null : line;
 }
@@ -159,6 +173,7 @@ export function buildSheet(state, data, derived = derive(state, data)) {
      what opened the board-mask line above, so the sheet carries both. */
   return {
     sections, footer, fabpack, board_mask: boardMask,
+    costs_label: pricesShown(costs) ? COSTS_LABEL : null,
     finish_names: { band: finishName(data, state.band.finish), tray: finishName(data, state.tray.finish) },
     translucent: { band: state.band.translucent === true, tray: state.tray.translucent === true },
   };

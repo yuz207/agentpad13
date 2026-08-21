@@ -110,6 +110,30 @@
       "id": "cots_knob_line",
       "when": { "fact": "knob", "eq": "none" },
       "then": { "lines": [{ "section": "selfbuy", "id": "knob_cots", "text": "1 × Ø6 D-shaft knob", "order": 40 }] }
+    },
+    {
+      "id": "screws_line",
+      "_": "Source: release/hardware/case/v2/CASE-V2-NOTES.md §4 — 'Hardware: 4× M3×8 ISO 7380 button-head'; the model pins M3_HEAD_D 5.7 / SCREW_LEN 8.0 in agentpad13_case_v2.py. One screw path clamps plate + band + tray on every build, so the line is unconditional.",
+      "when": { "fact": "always", "eq": true },
+      "then": { "lines": [{ "section": "selfbuy", "id": "screws", "text": "4 × M3×8 ISO 7380 button-head screws", "order": 50 }] }
+    },
+    {
+      "id": "inserts_line",
+      "_": "Source: same CASE-V2-NOTES.md §4 line — '4× CNC Kitchen std M3 inserts (L5.7, Ø4.2 pilot) in the tray only'; agentpad13_case_v2.py M3_INSERT_PILOT 4.2 / M3_INSERT_DEPTH 5.7. The tray is printed on every build and the screws land in these, so unconditional.",
+      "when": { "fact": "always", "eq": true },
+      "then": { "lines": [{ "section": "selfbuy", "id": "inserts", "text": "4 × M3 heat-set inserts — Ø4.2 pilot, 5.7 mm long", "order": 60 }] }
+    },
+    {
+      "id": "touch_foam_line",
+      "_": "Source: release/hardware/case/v2/CASE-V2-NOTES.md §5 (the TP5 landing) — 'conductive foam pillar (≈Ø8–10 × 5 mm uncompressed) between the TP5 bare dot and the chip's underside landing'. Every board carries TP5, so the pillar is on every list.",
+      "when": { "fact": "always", "eq": true },
+      "then": { "lines": [{ "section": "selfbuy", "id": "touch_foam", "text": "1 × conductive foam pillar — ≈Ø8–10 × 5 mm, sits on the TP5 pad", "order": 70 }] }
+    },
+    {
+      "id": "gasket_sheet_line",
+      "_": "Source: release/hardware/case/v2/gasket/README.md — 0.5 mm adhesive-backed PORON (3M 468MP/9471LE-class backing), sized for ~40 % compression into the band's 0.3 mm ledge gap, so thicker stock will not compress at all; all 10 segments together are ~180 mm², i.e. buy the smallest sheet sold. The kit itself is OPTIONAL, hence the wording.",
+      "when": { "fact": "always", "eq": true },
+      "then": { "lines": [{ "section": "selfbuy", "id": "gasket_sheet", "text": "1 × 0.5 mm adhesive-backed PORON sheet (smallest sold) — optional gasket", "order": 80 }] }
     }
   ]
 }
