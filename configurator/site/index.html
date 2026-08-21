@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>agentpad13</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="styles.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.min.js", "three/addons/": "./vendor/three/addons/" } }
+</script>
+</head>
+<body>
+<!-- Accessible names live in attributes, never in rendered text: the page shows
+     group labels, option values and build-sheet content, and nothing else. -->
+<main id="stage"><canvas id="view" role="img" aria-label="agentpad13 preview"></canvas></main>
+<aside id="rail" aria-label="Configuration"></aside>
+<section id="sheet" data-open="false" aria-label="Build sheet">
+  <button id="sheet-handle" aria-expanded="false" aria-controls="sheet-body" aria-label="Build sheet"><span></span></button>
+  <div id="sheet-body"></div>
+</section>
+<script type="module" src="app.js"></script>
+</body>
+</html>

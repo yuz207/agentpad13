@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.2",
+  "kind": "printability",
+  "status": "assertion_failed",
+  "name": "base_pedestal",
+  "method": "FDM",
+  "bbox": {
+    "min": [
+      3.1000000000000014,
+      7.423622854600161,
+      0.0
+    ],
+    "max": [
+      81.1,
+      86.81171365887914,
+      15.277989823977883
+    ]
+  },
+  "volume_mm3": 47662.954251591305,
+  "surface_area_mm2": 12130.504653716553,
+  "center_of_mass_mm": [
+    42.10000000277252,
+    42.13559312398331,
+    5.31560519969123
+  ],
+  "is_valid": true,
+  "min_wall_mm": 0.3882172439735337,
+  "overhang": {
+    "area_mm2": 12.82658111766417,
+    "max_angle_deg": 90.0
+  },
+  "assertions": [
+    {
+      "name": "wall_min:1.2",
+      "passed": false,
+      "detail": "min wall 0.3882mm below min 1.2mm"
+    },
+    {
+      "name": "overhang_max:45.0",
+      "passed": false,
+      "detail": "overhang 90.0000\u00b0 exceeds max 45.0\u00b0"
+    }
+  ]
+}

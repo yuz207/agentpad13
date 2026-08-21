@@ -1,0 +1,41 @@
+{
+  "schema_version": "0.2",
+  "kind": "printability",
+  "status": "ok",
+  "name": "base_riser",
+  "method": "FDM",
+  "bbox": {
+    "min": [
+      -3.7000000000008626,
+      -3.6999999999999957,
+      0.0
+    ],
+    "max": [
+      87.90000000000086,
+      103.69999999999999,
+      4.3999999999999995
+    ]
+  },
+  "volume_mm3": 28367.411590458734,
+  "surface_area_mm2": 20393.011961836015,
+  "center_of_mass_mm": [
+    42.099999998499534,
+    48.38550952179633,
+    1.510932366739084
+  ],
+  "is_valid": true,
+  "min_wall_mm": 2.9999999999999996,
+  "overhang": null,
+  "assertions": [
+    {
+      "name": "wall_min:1.2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "overhang_max:45.0",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

@@ -1,0 +1,549 @@
+{
+  "schema": "agentpad13-configurator-positions-v1",
+  "units": "mm",
+  "sources": {
+    "_": "Every value below is read from the file:line named here. Line numbers are emitted by the generator from the parsed source, not typed in, so they cannot drift silently.",
+    "contract": "release/hardware/pcb/harness/contract_v4.json (schema agentpad13-contract-v4, generated 2026-07-17)",
+    "board_outline_mm": "release/hardware/pcb/harness/contract_v4.json outline.target_mm",
+    "board_octagon": "release/hardware/pcb/harness/contract_v4.json outline.chamfer_vertices",
+    "switches": "release/hardware/pcb/harness/contract_v4.json refs.SW1..SW13",
+    "switch_size_split": "release/hardware/case/v2/agentpad13_case_v2.py:353 (SW_1U = SW1..SW12 (12 x 1U grid); SW_2U = SW13) / release/hardware/case/v2/agentpad13_case_v2.py:354",
+    "encoder": "release/hardware/pcb/harness/contract_v4.json refs.RE1 = (6.025, 10.0) is the footprint ANCHOR (pin A), + release/hardware/case/v2/agentpad13_case_v2.py:367 offset (7.5, 2.5) = the SHAFT; cross-checks exactly against release/hardware/case/v2/agentpad13_case_v2.py:377. The plate opening is centred on the shaft, so this is the visible knob axis.",
+    "stick": "release/hardware/pcb/harness/contract_v4.json refs.JS1 (YTL YA13-FL7.4, v5_6 rev) / release/hardware/case/v2/agentpad13_case_v2.py:378",
+    "deck_z": "release/hardware/case/v2/agentpad13_case_v2.py:391 (MX switch shoulder -> PCB = 5.0)",
+    "plate_z": "release/hardware/case/v2/agentpad13_case_v2.py:1152 and release/hardware/case/v2/agentpad13_case_v2.py:1153 = Z_PLATE_TOP - release/hardware/case/v2/agentpad13_case_v2.py:392. NOTE the trailing comment on that line still reads '# +3.5' from when PLATE_T was 1.5; the EVALUATED value is 3.4 and the shipped step/agentpad13_v2_plate.step measures z 3.4..5.0, which is what is published here.",
+    "pcb_z": "release/hardware/case/v2/agentpad13_case_v2.py:1154 = -release/hardware/case/v2/agentpad13_case_v2.py:396",
+    "keycap_seat_z": "5.0 (deck, release/hardware/case/v2/agentpad13_case_v2.py:391) + 6.6 (stem shoulder above deck, hardware/case/keycaps/keycaps.py:289) - 0.0 (hardware/case/keycaps/keycaps.py:430) = 11.6. The cap STL's local z=0 is its bottom rim / socket mouth (keycaps params_boxfit/keycap_params.json 'datum'), and KEYCAP-NOTES.md:184 states the cap 'seats with its socket mouth flat on that shoulder'.",
+    "tray": "release/hardware/case/v2/agentpad13_case_v2.py:1158, release/hardware/case/v2/agentpad13_case_v2.py:1157, outline release/hardware/case/v2/agentpad13_case_v2.py:1272/release/hardware/case/v2/agentpad13_case_v2.py:1273/release/hardware/case/v2/agentpad13_case_v2.py:1274",
+    "band": "release/hardware/case/v2/agentpad13_case_v2.py:1159 (FROZEN, decoupled from the tray's bottom), inner release/hardware/case/v2/agentpad13_case_v2.py:1177/release/hardware/case/v2/agentpad13_case_v2.py:1178/release/hardware/case/v2/agentpad13_case_v2.py:1181, outer = inner + 2*wall (release/hardware/case/v2/agentpad13_case_v2.py:1179)",
+    "plate_outline": "release/hardware/case/v2/agentpad13_case_v2.py:1243/release/hardware/case/v2/agentpad13_case_v2.py:1244/release/hardware/case/v2/agentpad13_case_v2.py:1245",
+    "stabilizer": "release/hardware/pcb/harness/contract_v4.json refs.STAB1 (co-located with SW13) + release/hardware/case/v2/agentpad13_case_v2.py:609 / release/hardware/case/v2/agentpad13_case_v2.py:611, slot envelope release/hardware/case/v2/agentpad13_case_v2.py:610 (STAB_W, STAB_H = 6.65, 12.3)",
+    "stab": "The same slots as `stabilizer`, published as rectangles because the plate CUTS them: centres from release/hardware/case/v2/agentpad13_case_v2.py:609 / release/hardware/case/v2/agentpad13_case_v2.py:611 about contract refs.SW13, envelope from release/hardware/case/v2/agentpad13_case_v2.py:610. Independently confirmed by the fab gate's own readback in hardware/case/CASE-V2-NOTES.md line 713: '[SW13] cutout center (42.100,88.850) size 14.000x14.000 + stab L (30.162,89.47) / R (54.038,89.47) 6.65x12.3 UNCHANGED', and re-measured from the Edge.Cuts rectangles of the three shipped plate boards under release/hardware/case/v2/fab/ by the test suite.",
+    "screws": "MEASURED from the ORDERED boards: the four Ø3.2 Edge.Cuts circles present and identical in all three of release/hardware/case/v2/fab/agentpad13_v2_plate{,_tented_ring,_blank}_v5.kicad_pcb. Cross-checked against the case model's release/hardware/case/v2/agentpad13_case_v2.py:1277 (built on release/hardware/case/v2/agentpad13_case_v2.py:577) and release/hardware/case/v2/agentpad13_case_v2.py:592; the generator STOPs if the two disagree. Fastener envelope: release/hardware/case/v2/agentpad13_case_v2.py:602 / release/hardware/case/v2/agentpad13_case_v2.py:603 / release/hardware/case/v2/agentpad13_case_v2.py:601 / release/hardware/case/v2/agentpad13_case_v2.py:604, z from release/hardware/case/v2/agentpad13_case_v2.py:1291 and release/hardware/case/v2/agentpad13_case_v2.py:1292. NOTE the head is an ISO 7380 BUTTON head, not a socket-head cap: agentpad13_case_v2.py line 10 says the 'exposed M3 button heads sit PROUD on the deck'. A socket-head cap would be Ø5.5 x 3.0 and would not match the shipped counterbore-free plate. Also confirmed by the fab gate readback, CASE-V2-NOTES.md line 714: 'screw holes Ø3.2 @ (3.7,3.7) and (80.5,3.7) present'.",
+    "touch_pad": "Centre from release/hardware/pcb/harness/contract_v4.json refs.TP5, restated at release/hardware/case/v2/agentpad13_case_v2.py:379. Every DIAMETER is measured off the ordered boards under release/hardware/case/v2/fab/, not copied from the generator: F.Cu electrode Ø14, B.Cu landing Ø14, B.Mask foam opening Ø8, and the per-variant marker -- Ø12 F.Mask opening (standard, the exposed ENIG gold disc) or Ø16 F.SilkS ring at 0.2 stroke (tented_ring) or nothing (blank). DOC BUG, recorded not fixed: hardware/case/gen_plate_fab.py touch_pad_shapes() docstring (line 136) says 'Ø10 bottom landing pad', but its own code (line 140) emits radius 7.0 and all three shipped boards carry Ø14 on B.Cu -- as does CASE-V2-NOTES.md line 280 ('Ø14 B.Cu landing pad with Ø8 B.Mask opening'). The Ø14 published here is the ordered artifact's value. board_pour_mm is the BOARD-side 14x14 mm TOUCH_PAD copper pour under the plate (hardware/pcb/DESIGN-DECISIONS.md line 173, and the frozen-board readback in CASE-V2-NOTES.md line 251).",
+    "bases": "Tilt from release/hardware/case/v2/bases/agentpad13_base.py:303 ((name, kind, tilt, body_thickness)), whose wedge/pedestal angle is the single constant release/hardware/case/v2/bases/agentpad13_base.py:276; riser 0.0, wedge 8.0, pedestal 8.0. Cross-checks release/hardware/case/v2/bases/params/agentpad13_base_params.json variants[].tilt_deg. The desk face is the plane in release/hardware/case/v2/bases/agentpad13_base.py desk_z(), lines 343-344, referenced to release/hardware/case/v2/bases/agentpad13_base.py:335 and release/hardware/case/v2/bases/agentpad13_base.py:129; plan silhouettes from release/hardware/case/v2/bases/agentpad13_base.py:169 / release/hardware/case/v2/bases/agentpad13_base.py:170 / release/hardware/case/v2/bases/agentpad13_base.py:171 (full-footprint) and release/hardware/case/v2/bases/agentpad13_base.py:208 (pedestal). Verified against the shipped STLs: riser z_min -12.500, wedge -26.994, pedestal -24.928. PARAMS-FILE DISAGREEMENT, recorded not fixed: that params file lists base_height_mm 17.49 for the PEDESTAL, which is the wedge's full-footprint figure inherited unchanged; the pedestal's own solid is 15.428 tall below the mating plane, because its Ø78 plan never reaches the far edge. height_mm here is the geometry-derived value and it matches the shipped STL.",
+    "base": "release/hardware/case/v2/agentpad13_case_v2.py:1125, release/hardware/case/v2/agentpad13_case_v2.py:1135, peg release/hardware/case/v2/bases/agentpad13_base.py:157 / release/hardware/case/v2/bases/agentpad13_base.py:155 (rigid-filament default, matches bases/INTERFACE.md:41 'start with 5.8 in rigid filament'). Mating plane = the tray bottom release/hardware/case/v2/agentpad13_case_v2.py:1158"
+  },
+  "frame": {
+    "name": "board",
+    "definition": "The case model's xy board frame. Origin at the PCB's (0,0) corner; x -> physical RIGHT, y -> physical FRONT (toward the user), z -> UP with z = 0 at the PCB top face. Millimetres.",
+    "handedness": "left",
+    "handedness_source": "release/hardware/case/v2/agentpad13_case_v2.py:1077 -- 'The design frame is LEFT-handed (x right, y DOWN from raw KiCad board coords, z up) while STL/STEP are right-handed, so every solid exported through this path is the ENANTIOMORPH of the intended part.'",
+    "orientation_facts": [
+      "USB (J1) is at y = 3.05, the FAR edge away from the user -- release/hardware/case/v2/bases/INTERFACE.md:17 'The USB port is on the FAR edge, away from you.'",
+      "Encoder at x 13.525 (left of the x centreline 42.1) and stick at x 69.710 (right of it); board +x is 'the OWNER'S RIGHT' per agentpad13_case_v2.py:1597-1598.",
+      "Rendered as reality this reads: encoder BACK-LEFT, stick BACK-RIGHT, 2U key at the FRONT -- matching the TOP-DOWN panel of release/renders/v27_turntable.png."
+    ],
+    "to_gltf": {
+      "note": "Meshes in out/meshes/*.glb are ALREADY in glTF's Y-up right-handed space. To place a position from this file into that space use (X, Y, Z)_gltf = (x, z, y)_board. That swap has determinant -1, which is exactly what converts these left-handed board-frame numbers into the correctly handed real device; applying the usual det +1 Z-up->Y-up rotation (x, z, -y) instead would render the MIRROR IMAGE.",
+      "matrix_column_major": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  },
+  "mesh_placement": {
+    "note": "'baked' meshes already carry their assembly position in their vertex data -- load and add to the scene, no transform. 'instance' meshes sit at their own local origin and must be placed using the positions in this file.",
+    "baked": [
+      "tray",
+      "band_*",
+      "plate",
+      "board",
+      "base_*"
+    ],
+    "instance": {
+      "cap_*": "place at (switch.x, keycap_seat_z, switch.y) in glTF space; cap local origin = centre of the bottom rim, +x along the 2U long axis (which is the board x axis for SW13)",
+      "knob_*": "place at (encoder.x, 0, encoder.y); the knob mesh already carries its absolute z (skirt bottom .. knob top)",
+      "stick_cap_*": "place at (stick.x, 0, stick.y); the cap mesh already carries its absolute z (14.4 .. 19.6)"
+    }
+  },
+  "deck_z": 5.0,
+  "plate": {
+    "z0": 3.4,
+    "z1": 5.0,
+    "thickness": 1.6,
+    "size": [
+      84.4,
+      100.0
+    ],
+    "corner_r": 5.4,
+    "center": [
+      42.1,
+      50.0
+    ]
+  },
+  "pcb": {
+    "z0": -1.6,
+    "z1": 0.0,
+    "outline_mm": [
+      84.2,
+      100.0
+    ],
+    "octagon": [
+      [
+        13.2,
+        0.0
+      ],
+      [
+        69.6,
+        0.0
+      ],
+      [
+        84.2,
+        14.6
+      ],
+      [
+        84.2,
+        85.4
+      ],
+      [
+        69.6,
+        100.0
+      ],
+      [
+        14.6,
+        100.0
+      ],
+      [
+        0.0,
+        85.4
+      ],
+      [
+        0.0,
+        13.2
+      ]
+    ]
+  },
+  "switches": [
+    {
+      "ref": "SW1",
+      "x": 13.525,
+      "y": 31.7,
+      "size": "1u"
+    },
+    {
+      "ref": "SW2",
+      "x": 32.575,
+      "y": 31.7,
+      "size": "1u"
+    },
+    {
+      "ref": "SW3",
+      "x": 51.625,
+      "y": 31.7,
+      "size": "1u"
+    },
+    {
+      "ref": "SW4",
+      "x": 70.675,
+      "y": 31.7,
+      "size": "1u"
+    },
+    {
+      "ref": "SW5",
+      "x": 13.525,
+      "y": 50.75,
+      "size": "1u"
+    },
+    {
+      "ref": "SW6",
+      "x": 32.575,
+      "y": 50.75,
+      "size": "1u"
+    },
+    {
+      "ref": "SW7",
+      "x": 51.625,
+      "y": 50.75,
+      "size": "1u"
+    },
+    {
+      "ref": "SW8",
+      "x": 70.675,
+      "y": 50.75,
+      "size": "1u"
+    },
+    {
+      "ref": "SW9",
+      "x": 13.525,
+      "y": 69.8,
+      "size": "1u"
+    },
+    {
+      "ref": "SW10",
+      "x": 32.575,
+      "y": 69.8,
+      "size": "1u"
+    },
+    {
+      "ref": "SW11",
+      "x": 51.625,
+      "y": 69.8,
+      "size": "1u"
+    },
+    {
+      "ref": "SW12",
+      "x": 70.675,
+      "y": 69.8,
+      "size": "1u"
+    },
+    {
+      "ref": "SW13",
+      "x": 42.1,
+      "y": 88.85,
+      "size": "2u"
+    }
+  ],
+  "encoder": {
+    "x": 13.525,
+    "y": 12.5
+  },
+  "stick": {
+    "x": 69.71,
+    "y": 13.37
+  },
+  "stabilizer": {
+    "ref": "STAB1",
+    "for": "SW13",
+    "x": 42.1,
+    "y": 88.85,
+    "half_spacing": 11.938,
+    "y_shift": 0.62,
+    "slot_centers": [
+      [
+        30.162,
+        89.47
+      ],
+      [
+        54.038,
+        89.47
+      ]
+    ],
+    "slot_size": [
+      6.65,
+      12.3
+    ],
+    "slots": [
+      {
+        "side": "left",
+        "center": [
+          30.162,
+          89.47
+        ],
+        "size": [
+          6.65,
+          12.3
+        ]
+      },
+      {
+        "side": "right",
+        "center": [
+          54.038,
+          89.47
+        ],
+        "size": [
+          6.65,
+          12.3
+        ]
+      }
+    ]
+  },
+  "stab": {
+    "ref": "STAB1",
+    "for": "SW13",
+    "switch": [
+      42.1,
+      88.85
+    ],
+    "half_spacing": 11.938,
+    "y_shift": 0.62,
+    "slot_size": [
+      6.65,
+      12.3
+    ],
+    "slots": [
+      {
+        "side": "left",
+        "center": [
+          30.162,
+          89.47
+        ],
+        "size": [
+          6.65,
+          12.3
+        ]
+      },
+      {
+        "side": "right",
+        "center": [
+          54.038,
+          89.47
+        ],
+        "size": [
+          6.65,
+          12.3
+        ]
+      }
+    ],
+    "caveat": "hardware/case/keycaps/KEYCAP-NOTES.md lines 1231-1233 flag the 2U cap's stab SOCKET xy (+/-11.938, y = 0) as UNVERIFIED against a real Cherry stabiliser. The plate SLOTS published here are measured off the ordered board and are not in doubt; the caveat is about the printed cap that has to meet them."
+  },
+  "screws": {
+    "count": 4,
+    "fastener": "M3x8 ISO 7380 BUTTON head (NOT a socket-head cap)",
+    "hole_d": 3.2,
+    "head_d": 5.7,
+    "head_h": 1.8,
+    "shaft_d": 3.0,
+    "length_mm": 8.0,
+    "z": {
+      "seat": 5.0,
+      "head_top": 6.8,
+      "tip": -3.0
+    },
+    "positions": [
+      [
+        3.7,
+        3.7
+      ],
+      [
+        3.7,
+        96.3
+      ],
+      [
+        80.5,
+        3.7
+      ],
+      [
+        80.5,
+        96.3
+      ]
+    ],
+    "note": "The head seats ON the plate top and stands proud: seat 5.0 -> head_top 6.8. There is no counterbore -- the plate hole is a plain Ø3.2 clearance."
+  },
+  "touch_pad": {
+    "ref": "TP5",
+    "x": 13.525,
+    "y": 88.85,
+    "exposed_pad_d": 12.0,
+    "ring_d": 16.0,
+    "pad_d": 14.0,
+    "back_pad_d": 14.0,
+    "back_mask_open_d": 8.0,
+    "board_pour_mm": [
+      14.0,
+      14.0
+    ],
+    "variants": {
+      "standard": {
+        "marker": "exposed_pad",
+        "exposed_d": 12.0,
+        "ring_d": null,
+        "ring_stroke": null,
+        "electrode": true
+      },
+      "tented_ring": {
+        "marker": "silk_ring",
+        "exposed_d": null,
+        "ring_d": 16.0,
+        "ring_stroke": 0.2,
+        "electrode": true
+      },
+      "blank": {
+        "marker": "none",
+        "exposed_d": null,
+        "ring_d": null,
+        "ring_stroke": null,
+        "electrode": false
+      }
+    }
+  },
+  "keycap_seat_z": 11.6,
+  "tray": {
+    "z0": -9.5,
+    "floor_top_z": -5.1,
+    "size": [
+      84.3,
+      100.1
+    ],
+    "corner_r": 5.35,
+    "center": [
+      42.1,
+      50.0
+    ],
+    "mesh": "meshes/tray.glb"
+  },
+  "band": {
+    "z0": -7.5,
+    "z1": 5.0,
+    "inner": [
+      84.8,
+      100.6
+    ],
+    "inner_r": 5.6,
+    "center": [
+      42.1,
+      50.0
+    ],
+    "widths": {
+      "w3.0": {
+        "wall": 3.0,
+        "outer": [
+          90.8,
+          106.6
+        ],
+        "mesh": "meshes/band_w3.0.glb"
+      },
+      "w5.4": {
+        "wall": 5.4,
+        "outer": [
+          95.6,
+          111.4
+        ],
+        "mesh": "meshes/band_w5.4.glb"
+      },
+      "w7.4": {
+        "wall": 7.4,
+        "outer": [
+          99.6,
+          115.4
+        ],
+        "mesh": "meshes/band_w7.4.glb"
+      }
+    }
+  },
+  "base": {
+    "mating_plane_z": -9.5,
+    "peg_top_z": -8.1,
+    "pocket_depth": 1.6,
+    "pocket_pitch": 25.0,
+    "peg_nominal_d": 5.8,
+    "center": [
+      42.1,
+      50.0
+    ],
+    "tilt_deg": {
+      "riser": 0.0,
+      "wedge": 8.0,
+      "pedestal": 8.0
+    }
+  },
+  "bases": {
+    "note": "A base's flat top IS the tray bottom (mating_plane_z), so a base mesh needs no transform -- it is baked. What the viewer needs from here is the LEAN: rotate the whole device about the hinge line, which is the board-frame x axis at (y = hinge.y, z = hinge.z). The desk face is the plane z = desk_plane.ref_z - (desk_plane.ref_y - y) * slope_per_mm.",
+    "tilt_axis": "board x (the owner's LEFT-RIGHT axis). A tilt raises the FAR edge (y = 0, the USB / control-band edge away from the user) and leaves the NEAR edge (y = 100, the 2U key edge) down on the desk -- a back-raised typing wedge, agentpad13_base.py:69.",
+    "mating_plane_z": -9.5,
+    "items": {
+      "riser": {
+        "tilt_deg": 0.0,
+        "kind": "full",
+        "body_mm": 3.0,
+        "mating_plane_z": -9.5,
+        "desk_plane": {
+          "ref_y": 103.7,
+          "ref_z": -12.5,
+          "slope_per_mm": 0.0
+        },
+        "hinge": {
+          "axis": "x",
+          "y": 103.7,
+          "z": -12.5
+        },
+        "desk_z": [
+          -12.5,
+          -12.5
+        ],
+        "height_mm": 3.0,
+        "plan": {
+          "shape": "rounded_rect",
+          "size": [
+            91.6,
+            107.4
+          ],
+          "corner_r": 6.0,
+          "center": [
+            42.1,
+            50.0
+          ]
+        },
+        "mesh": "meshes/base_riser.glb"
+      },
+      "wedge": {
+        "tilt_deg": 8.0,
+        "kind": "full",
+        "body_mm": 2.4,
+        "mating_plane_z": -9.5,
+        "desk_plane": {
+          "ref_y": 103.7,
+          "ref_z": -11.9,
+          "slope_per_mm": 0.140541
+        },
+        "hinge": {
+          "axis": "x",
+          "y": 103.7,
+          "z": -11.9
+        },
+        "desk_z": [
+          -26.994086,
+          -11.9
+        ],
+        "height_mm": 17.494086,
+        "plan": {
+          "shape": "rounded_rect",
+          "size": [
+            91.6,
+            107.4
+          ],
+          "corner_r": 6.0,
+          "center": [
+            42.1,
+            50.0
+          ]
+        },
+        "mesh": "meshes/base_wedge.glb"
+      },
+      "pedestal": {
+        "tilt_deg": 8.0,
+        "kind": "circle",
+        "body_mm": 2.4,
+        "mating_plane_z": -9.5,
+        "desk_plane": {
+          "ref_y": 103.7,
+          "ref_z": -11.9,
+          "slope_per_mm": 0.140541
+        },
+        "hinge": {
+          "axis": "x",
+          "y": 103.7,
+          "z": -11.9
+        },
+        "desk_z": [
+          -24.928135,
+          -13.96595
+        ],
+        "height_mm": 15.428135,
+        "plan": {
+          "shape": "circle",
+          "d": 78.0,
+          "center": [
+            42.1,
+            50.0
+          ]
+        },
+        "mesh": "meshes/base_pedestal.glb"
+      }
+    }
+  }
+}

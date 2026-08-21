@@ -1,0 +1,366 @@
+{
+  "STUB": true,
+  "schema": "agentpad13-configurator-catalog-v1",
+  "generated_from": {
+    "manifest": "STUB \u2014 hand-authored 2026-08-20 against release/MANIFEST.md so the site runs before the build pipeline exists. Replace with configurator/build/out/catalog.json.",
+    "sha256": null
+  },
+  "board": {
+    "fabpacks": {
+      "opaque": "release/hardware/pcb/fabpack_out_v5_7/fabpack_opaque.zip",
+      "translucent": "release/hardware/pcb/fabpack_out_v5_7/fabpack_translucent.zip"
+    },
+    "gerbers": "release/hardware/pcb/fabpack_out_v5_7/gerbers_v5_7.zip",
+    "assembly": {
+      "bom_opaque": "release/hardware/pcb/fabpack_out_v5_7/assembly/bom_opaque.csv",
+      "bom_translucent": "release/hardware/pcb/fabpack_out_v5_7/assembly/bom_translucent.csv",
+      "cpl_opaque": "release/hardware/pcb/fabpack_out_v5_7/assembly/cpl_opaque.csv",
+      "cpl_translucent": "release/hardware/pcb/fabpack_out_v5_7/assembly/cpl_translucent.csv",
+      "hand_solder_afterlist": "release/hardware/pcb/fabpack_out_v5_7/assembly/hand_solder_afterlist.csv"
+    },
+    "outline_mm": [
+      84.2,
+      100.0
+    ],
+    "thickness_mm": 1.6,
+    "mesh": "meshes/board.glb",
+    "texture": null,
+    "texture_source": null
+  },
+  "plate": {
+    "_art": "STUB \u2014 the shape of the generated plate-art contract, with the IMAGE PATHS NULLED because this stub ships no textures/ directory. `marker` and the extent still drive the viewer, which then draws the marker itself from positions.touch_pad. A null decal is meaningful in the real catalog too: `blank` is markerless BY DESIGN, not missing a file.",
+    "variants": [
+      {
+        "id": "standard",
+        "gerbers": "release/hardware/case/v2/fab/plate_v5_gerbers.zip",
+        "kicad_pcb": "release/hardware/case/v2/fab/agentpad13_v2_plate_v5.kicad_pcb",
+        "marker": "exposed_pad",
+        "marker_note": "STUB \u2014 \u00d812 F.Mask opening over the \u00d814 F.Cu pad: an exposed ENIG gold disc over TP5.",
+        "decal": null
+      },
+      {
+        "id": "tented_ring",
+        "gerbers": "release/hardware/case/v2/fab/plate_v5_ring_gerbers.zip",
+        "kicad_pcb": "release/hardware/case/v2/fab/agentpad13_v2_plate_tented_ring_v5.kicad_pcb",
+        "marker": "silk_ring",
+        "marker_note": "STUB \u2014 the pad is tented; the marker is a \u00d816 front-silkscreen ring, 0.2 mm stroke.",
+        "decal": null
+      },
+      {
+        "id": "blank",
+        "gerbers": "release/hardware/case/v2/fab/plate_v5_blank_gerbers.zip",
+        "kicad_pcb": "release/hardware/case/v2/fab/agentpad13_v2_plate_blank_v5.kicad_pcb",
+        "marker": "none",
+        "marker_note": "STUB \u2014 MARKERLESS BY DESIGN: no copper at all, so there is nothing over TP5 to draw.",
+        "decal": null
+      }
+    ],
+    "mesh": "meshes/plate.glb",
+    "openings_map": {
+      "path": null,
+      "px_per_mm": 10,
+      "size_px": [
+        844,
+        1000
+      ],
+      "extent_mm": {
+        "x0": -0.1,
+        "y0": 0.0,
+        "x1": 84.3,
+        "y1": 100.0
+      },
+      "note": "STUB \u2014 no image ships here. In the generated catalog this is an RGBA map, WHITE and opaque where the plate is material and fully TRANSPARENT where the fab routes. Board frame: image row 0 is board y = 0, the FAR / USB edge; column 0 is board x = -0.1."
+    },
+    "step": "release/hardware/case/v2/step/agentpad13_v2_plate.step",
+    "dxf": "release/hardware/case/v2/fab/agentpad13_v2_plate_v5.dxf",
+    "size_mm": [
+      84.4,
+      100.0
+    ],
+    "thickness_mm": 1.6
+  },
+  "band": {
+    "default": "w5.4",
+    "widths": [
+      {
+        "id": "w3.0",
+        "wall_mm": 3.0,
+        "stl": "release/hardware/case/v2/stl/agentpad13_v2_band_1.6mm_w3.0.stl",
+        "step": "release/hardware/case/v2/step/agentpad13_v2_band_1.6mm_w3.0.step",
+        "mesh": "meshes/band_w3.0.glb"
+      },
+      {
+        "id": "w5.4",
+        "wall_mm": 5.4,
+        "stl": "release/hardware/case/v2/stl/agentpad13_v2_band_1.6mm_w5.4.stl",
+        "step": "release/hardware/case/v2/step/agentpad13_v2_band_1.6mm_w5.4.step",
+        "mesh": "meshes/band_w5.4.glb"
+      },
+      {
+        "id": "w7.4",
+        "wall_mm": 7.4,
+        "stl": "release/hardware/case/v2/stl/agentpad13_v2_band_1.6mm_w7.4.stl",
+        "step": "release/hardware/case/v2/step/agentpad13_v2_band_1.6mm_w7.4.step",
+        "mesh": "meshes/band_w7.4.glb"
+      }
+    ]
+  },
+  "tray": {
+    "stl": "release/hardware/case/v2/stl/agentpad13_v2_tray_v5.stl",
+    "step": "release/hardware/case/v2/step/agentpad13_v2_tray_v5.step",
+    "mesh": "meshes/tray.glb"
+  },
+  "bases": {
+    "gauge": "release/hardware/case/v2/bases/stl/base_fit_gauge.stl",
+    "interface": "release/hardware/case/v2/bases/INTERFACE.md",
+    "default_peg": "5p8",
+    "peg_rungs": [
+      "5p6",
+      "5p7",
+      "5p8",
+      "5p9"
+    ],
+    "items": [
+      {
+        "id": "riser",
+        "pegs": {
+          "5p6": "release/hardware/case/v2/bases/stl/base_riser_peg_5p6.stl",
+          "5p7": "release/hardware/case/v2/bases/stl/base_riser_peg_5p7.stl",
+          "5p8": "release/hardware/case/v2/bases/stl/base_riser_peg_5p8.stl",
+          "5p9": "release/hardware/case/v2/bases/stl/base_riser_peg_5p9.stl"
+        },
+        "mesh": "meshes/base_riser.glb"
+      },
+      {
+        "id": "wedge",
+        "pegs": {
+          "5p6": "release/hardware/case/v2/bases/stl/base_wedge_peg_5p6.stl",
+          "5p7": "release/hardware/case/v2/bases/stl/base_wedge_peg_5p7.stl",
+          "5p8": "release/hardware/case/v2/bases/stl/base_wedge_peg_5p8.stl",
+          "5p9": "release/hardware/case/v2/bases/stl/base_wedge_peg_5p9.stl"
+        },
+        "mesh": "meshes/base_wedge.glb"
+      },
+      {
+        "id": "pedestal",
+        "pegs": {
+          "5p6": "release/hardware/case/v2/bases/stl/base_pedestal_peg_5p6.stl",
+          "5p7": "release/hardware/case/v2/bases/stl/base_pedestal_peg_5p7.stl",
+          "5p8": "release/hardware/case/v2/bases/stl/base_pedestal_peg_5p8.stl",
+          "5p9": "release/hardware/case/v2/bases/stl/base_pedestal_peg_5p9.stl"
+        },
+        "mesh": "meshes/base_pedestal.glb"
+      }
+    ]
+  },
+  "keycaps": {
+    "profiles": [
+      "dish",
+      "plateau"
+    ],
+    "widths": [
+      "17p5",
+      "std"
+    ],
+    "counts": {
+      "1u": 12,
+      "2u": 1,
+      "2u_stab": 0,
+      "source": "STUB \u2014 release/HOW-TO-ORDER.md parts list '12x1U + 1x2U'; SW13 is the 2U key.",
+      "with_stabilizer": {
+        "1u": 12,
+        "2u": 0,
+        "2u_stab": 1,
+        "source": "STUB \u2014 the 2u_stab cap is the one to print when the 2u plate-mount stabiliser is fitted."
+      },
+      "note": "Use `with_stabilizer` when the build sheet carries the 2u stabiliser line; otherwise the plain counts."
+    },
+    "files": [
+      {
+        "profile": "dish",
+        "width": "17p5",
+        "size": "1u",
+        "width_mm": 17.5,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_dish_1u_17p5_boxfit.stl",
+        "mesh": "meshes/cap_dish_1u_17p5.glb"
+      },
+      {
+        "profile": "dish",
+        "width": "17p5",
+        "size": "2u",
+        "width_mm": 17.5,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_dish_2u_17p5_boxfit.stl",
+        "mesh": "meshes/cap_dish_2u_17p5.glb"
+      },
+      {
+        "profile": "dish",
+        "width": "17p5",
+        "size": "2u_stab",
+        "width_mm": 17.5,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_dish_2u_stab_17p5_boxfit.stl",
+        "mesh": "meshes/cap_dish_2u_stab_17p5.glb"
+      },
+      {
+        "profile": "dish",
+        "width": "std",
+        "size": "1u",
+        "width_mm": 18.0,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_dish_1u_boxfit.stl",
+        "mesh": "meshes/cap_dish_1u_std.glb"
+      },
+      {
+        "profile": "dish",
+        "width": "std",
+        "size": "2u",
+        "width_mm": 18.0,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_dish_2u_boxfit.stl",
+        "mesh": "meshes/cap_dish_2u_std.glb"
+      },
+      {
+        "profile": "dish",
+        "width": "std",
+        "size": "2u_stab",
+        "width_mm": 18.0,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_dish_2u_stab_boxfit.stl",
+        "mesh": "meshes/cap_dish_2u_stab_std.glb"
+      },
+      {
+        "profile": "plateau",
+        "width": "17p5",
+        "size": "1u",
+        "width_mm": 17.5,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_plateau_1u_17p5_boxfit.stl",
+        "mesh": "meshes/cap_plateau_1u_17p5.glb"
+      },
+      {
+        "profile": "plateau",
+        "width": "17p5",
+        "size": "2u",
+        "width_mm": 17.5,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_plateau_2u_17p5_boxfit.stl",
+        "mesh": "meshes/cap_plateau_2u_17p5.glb"
+      },
+      {
+        "profile": "plateau",
+        "width": "17p5",
+        "size": "2u_stab",
+        "width_mm": 17.5,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_plateau_2u_stab_17p5_boxfit.stl",
+        "mesh": "meshes/cap_plateau_2u_stab_17p5.glb"
+      },
+      {
+        "profile": "plateau",
+        "width": "std",
+        "size": "1u",
+        "width_mm": 18.0,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_plateau_1u_boxfit.stl",
+        "mesh": "meshes/cap_plateau_1u_std.glb"
+      },
+      {
+        "profile": "plateau",
+        "width": "std",
+        "size": "2u",
+        "width_mm": 18.0,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_plateau_2u_boxfit.stl",
+        "mesh": "meshes/cap_plateau_2u_std.glb"
+      },
+      {
+        "profile": "plateau",
+        "width": "std",
+        "size": "2u_stab",
+        "width_mm": 18.0,
+        "stl": "release/hardware/PCBWay_keycaps_boxfit_2026-07-24/cap_plateau_2u_stab_boxfit.stl",
+        "mesh": "meshes/cap_plateau_2u_stab_std.glb"
+      }
+    ]
+  },
+  "toppers": {
+    "knobs": [
+      {
+        "id": "A",
+        "default": true,
+        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_nom.stl",
+        "bores": {
+          "tight": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_tight.stl",
+          "nom": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_nom.stl",
+          "loose": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_loose.stl"
+        },
+        "mesh": "meshes/knob_A.glb"
+      },
+      {
+        "id": "B2",
+        "default": false,
+        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_nom.stl",
+        "bores": {
+          "tight": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_tight.stl",
+          "nom": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_nom.stl",
+          "loose": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_loose.stl"
+        },
+        "mesh": "meshes/knob_B2.glb"
+      },
+      {
+        "id": "C",
+        "default": false,
+        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_nom.stl",
+        "bores": {
+          "tight": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_tight.stl",
+          "nom": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_nom.stl",
+          "loose": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_loose.stl"
+        },
+        "mesh": "meshes/knob_C.glb"
+      }
+    ],
+    "stick_caps": [
+      {
+        "id": "nub_C2",
+        "default": true,
+        "stl": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_nom.stl",
+        "socks": {
+          "nom": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_nom.stl",
+          "p05": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_p05.stl",
+          "p10": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_p10.stl"
+        },
+        "mesh": "meshes/stick_cap_nub_C2.glb"
+      },
+      {
+        "id": "puck_TPU",
+        "default": false,
+        "stl": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_sock_nom.stl",
+        "socks": {
+          "m05": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_sock_m05.stl",
+          "nom": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_sock_nom.stl"
+        },
+        "mesh": "meshes/stick_cap_puck_TPU.glb"
+      }
+    ],
+    "default_knob_bore": "nom",
+    "default_stick_sock": "nom",
+    "renders": {
+      "knobs": "release/hardware/case/v2/toppers/renders/toppers_v2_knobs.png",
+      "stick_caps": "release/hardware/case/v2/toppers/renders/toppers_v2_stick.png"
+    }
+  },
+  "gasket": {
+    "files": [
+      "release/hardware/case/v2/gasket/README.md",
+      "release/hardware/case/v2/gasket/gasket_template.pdf",
+      "release/hardware/case/v2/gasket/gasket_template.svg",
+      "release/hardware/case/v2/gasket/gasket_template.png",
+      "release/hardware/case/v2/gasket/gasket_segments.dxf"
+    ],
+    "template_pdf": "release/hardware/case/v2/gasket/gasket_template.pdf",
+    "readme": "release/hardware/case/v2/gasket/README.md"
+  },
+  "firmware": {
+    "uf2": "release/firmware/prebuilt/agentpad13.uf2",
+    "flash": "dd if=firmware/prebuilt/agentpad13.uf2 of=/Volumes/RPI-RP2/fw.uf2 bs=1m",
+    "flash_source": "STUB \u2014 in the generated catalog this cites the BRING-UP.md line the command was extracted from, verbatim, so the sheet can never drift from the doc.",
+    "flash_doc": "release/firmware/BRING-UP.md",
+    "polarity_doc": "release/firmware/POLARITY-NOTE.md"
+  },
+  "docs": {
+    "how_to_order": "release/HOW-TO-ORDER.md",
+    "release_notes": "release/RELEASE.md",
+    "base_interface": "release/hardware/case/v2/bases/INTERFACE.md"
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "STUB": true,
+  "schema": "agentpad13-configurator-positions-v1",
+  "units": "mm",
+  "sources": {
+    "_": "STUB — hand-authored 2026-08-20 from the files named below so the viewer runs before the build pipeline exists. Replace with configurator/build/out/positions.json.",
+    "contract": "release/hardware/pcb/harness/contract_v4.json (refs + outline)",
+    "z_stack": "release/hardware/case/v2/agentpad13_case_v2.py",
+    "bases": "release/hardware/case/v2/bases/params/agentpad13_base_params.json"
+  },
+  "frame": {
+    "name": "board",
+    "definition": "The case model's xy board frame. Origin at the PCB's (0,0) corner; x -> physical RIGHT, y -> physical FRONT (toward the user), z -> UP with z = 0 at the PCB top face. Millimetres.",
+    "handedness": "left",
+    "handedness_source": "release/hardware/case/v2/agentpad13_case_v2.py — the design frame is LEFT-handed (x right, y DOWN from raw KiCad coords, z up) while STL/STEP are right-handed.",
+    "orientation_facts": [
+      "USB (J1) is at y = 3.05, the FAR edge away from the user.",
+      "Encoder at x 13.525, stick at x 69.710; board +x is the owner's RIGHT.",
+      "Rendered as reality: encoder BACK-LEFT, stick BACK-RIGHT, 2U key at the FRONT."
+    ],
+    "to_gltf": {
+      "note": "Meshes in meshes/*.glb are ALREADY in glTF's Y-up right-handed space. To place a position from this file into that space use (X, Y, Z)_gltf = (x, z, y)_board. That swap has determinant -1, which is what converts these left-handed board-frame numbers into the correctly handed real device; the usual det +1 Z-up->Y-up rotation (x, z, -y) would render the MIRROR IMAGE.",
+      "matrix_column_major": [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1]
+    }
+  },
+  "mesh_placement": {
+    "note": "'baked' meshes already carry their assembly position in their vertex data — load and add to the scene, no transform. 'instance' meshes sit at their own local origin and must be placed using the positions in this file.",
+    "baked": ["tray", "band_*", "plate", "board", "base_*"],
+    "instance": {
+      "cap_*": "place at (switch.x, keycap_seat_z, switch.y) in glTF space; cap local origin = centre of the bottom rim, +x along the 2U long axis",
+      "knob_*": "place at (encoder.x, 0, encoder.y); the knob mesh already carries its absolute z (skirt bottom .. knob top)",
+      "stick_cap_*": "place at (stick.x, 0, stick.y); the cap mesh already carries its absolute z (14.4 .. 19.6)",
+      "switch_mx": "site-owned stand-in; place at (switch.x, 0, switch.y), absolute z 0 .. 15.2 (stem top)",
+      "screw_m3": "site-owned stand-in; place at (screws.positions[i], 0), absolute z tip .. head_top"
+    },
+    "site_baked": {
+      "stabilizer_2u": "site-owned stand-in for the 2u plate-mount stabiliser; BAKED at the absolute stabilizer.slot_centers because its wire is not symmetric in y"
+    }
+  },
+  "deck_z": 5,
+  "plate": { "z0": 3.4, "z1": 5, "thickness": 1.6, "size": [84.4, 100], "corner_r": 5.4, "center": [42.1, 50] },
+  "pcb": {
+    "z0": -1.6,
+    "z1": 0,
+    "outline_mm": [84.2, 100],
+    "octagon": [[13.2, 0], [69.6, 0], [84.2, 14.6], [84.2, 85.4], [69.6, 100], [14.6, 100], [0, 85.4], [0, 13.2]]
+  },
+  "switches": [
+    { "ref": "SW1", "x": 13.525, "y": 31.7, "size": "1u" },
+    { "ref": "SW2", "x": 32.575, "y": 31.7, "size": "1u" },
+    { "ref": "SW3", "x": 51.625, "y": 31.7, "size": "1u" },
+    { "ref": "SW4", "x": 70.675, "y": 31.7, "size": "1u" },
+    { "ref": "SW5", "x": 13.525, "y": 50.75, "size": "1u" },
+    { "ref": "SW6", "x": 32.575, "y": 50.75, "size": "1u" },
+    { "ref": "SW7", "x": 51.625, "y": 50.75, "size": "1u" },
+    { "ref": "SW8", "x": 70.675, "y": 50.75, "size": "1u" },
+    { "ref": "SW9", "x": 13.525, "y": 69.8, "size": "1u" },
+    { "ref": "SW10", "x": 32.575, "y": 69.8, "size": "1u" },
+    { "ref": "SW11", "x": 51.625, "y": 69.8, "size": "1u" },
+    { "ref": "SW12", "x": 70.675, "y": 69.8, "size": "1u" },
+    { "ref": "SW13", "x": 42.1, "y": 88.85, "size": "2u" }
+  ],
+  "encoder": { "x": 13.525, "y": 12.5 },
+  "stick": { "x": 69.71, "y": 13.37 },
+  "stabilizer": {
+    "ref": "STAB1", "for": "SW13", "x": 42.1, "y": 88.85,
+    "half_spacing": 11.938, "y_shift": 0.62,
+    "slot_centers": [[30.162, 89.47], [54.038, 89.47]],
+    "slot_size": [6.65, 12.3],
+    "slots": [
+      { "side": "left", "center": [30.162, 89.47], "size": [6.65, 12.3] },
+      { "side": "right", "center": [54.038, 89.47], "size": [6.65, 12.3] }
+    ]
+  },
+  "stab": {
+    "_": "STUB — the same stabiliser, in the block name the generated file uses.",
+    "ref": "STAB1", "for": "SW13", "switch": [42.1, 88.85],
+    "half_spacing": 11.938, "y_shift": 0.62, "slot_size": [6.65, 12.3],
+    "slots": [
+      { "side": "left", "center": [30.162, 89.47], "size": [6.65, 12.3] },
+      { "side": "right", "center": [54.038, 89.47], "size": [6.65, 12.3] }
+    ]
+  },
+  "screws": {
+    "_": "STUB — the four M3x8 ISO 7380 button heads that hold the stack together (release/HOW-TO-ORDER.md step 6, hardware/case/agentpad13_case_v2.py §'One screw path'). Proud on the deck: seat at the plate top, head top 1.8 above it.",
+    "count": 4,
+    "fastener": "M3x8 ISO 7380 button head",
+    "hole_d": 3.2,
+    "head_d": 5.7,
+    "head_h": 1.8,
+    "shaft_d": 3.0,
+    "length_mm": 8,
+    "z": { "seat": 5.0, "head_top": 6.8, "tip": -3.0 },
+    "positions": [[3.7, 3.7], [3.7, 96.3], [80.5, 3.7], [80.5, 96.3]]
+  },
+  "touch_pad": {
+    "_": "STUB — TP5, the capacitive touch pad. The three plate variants differ ONLY in how it is finished, which is the whole visible difference between them.",
+    "ref": "TP5", "x": 13.525, "y": 88.85,
+    "exposed_pad_d": 12.0, "ring_d": 16.0,
+    "variants": {
+      "standard": { "marker": "exposed_pad", "exposed_d": 12.0 },
+      "tented_ring": { "marker": "silk_ring", "ring_d": 16.0, "ring_stroke": 0.2 },
+      "blank": { "marker": "none" }
+    }
+  },
+  "keycap_seat_z": 11.6,
+  "tray": { "z0": -9.5, "floor_top_z": -5.1, "size": [84.3, 100.1], "corner_r": 5.35, "center": [42.1, 50], "mesh": "meshes/tray.glb" },
+  "band": {
+    "z0": -7.5,
+    "z1": 5,
+    "inner": [84.8, 100.6],
+    "inner_r": 5.6,
+    "center": [42.1, 50],
+    "widths": {
+      "w3.0": { "wall": 3, "outer": [90.8, 106.6], "mesh": "meshes/band_w3.0.glb" },
+      "w5.4": { "wall": 5.4, "outer": [95.6, 111.4], "mesh": "meshes/band_w5.4.glb" },
+      "w7.4": { "wall": 7.4, "outer": [99.6, 115.4], "mesh": "meshes/band_w7.4.glb" }
+    }
+  },
+  "base": {
+    "mating_plane_z": -9.5,
+    "peg_top_z": -8.1,
+    "pocket_depth": 1.6,
+    "pocket_pitch": 25,
+    "peg_nominal_d": 5.8,
+    "center": [42.1, 50],
+    "tilt_deg": { "riser": 0, "wedge": 8, "pedestal": 8 }
+  },
+  "bases": {
+    "_": "STUB — the richer per-variant base block. The viewer only needs tilt_deg; hinge/desk_plane are here so the shape matches the generated file.",
+    "note": "A base's flat top IS the tray bottom (mating_plane_z), so a base mesh needs no transform — it is baked. What the viewer needs from here is the LEAN.",
+    "tilt_axis": "board x. A tilt raises the FAR edge (y = 0, the USB edge) and leaves the NEAR edge (y = 100, the 2U key edge) down on the desk.",
+    "mating_plane_z": -9.5,
+    "items": {
+      "riser": {
+        "tilt_deg": 0, "kind": "full", "body_mm": 3.0, "mating_plane_z": -9.5,
+        "desk_plane": { "ref_y": 103.7, "ref_z": -12.5, "slope_per_mm": 0 },
+        "hinge": { "axis": "x", "y": 103.7, "z": -12.5 },
+        "desk_z": [-12.5, -12.5], "height_mm": 3.0,
+        "plan": { "shape": "rounded_rect", "size": [91.6, 107.4], "corner_r": 6.0, "center": [42.1, 50] },
+        "mesh": "meshes/base_riser.glb"
+      },
+      "wedge": {
+        "tilt_deg": 8, "kind": "full", "body_mm": 2.4, "mating_plane_z": -9.5,
+        "desk_plane": { "ref_y": 103.7, "ref_z": -11.9, "slope_per_mm": 0.140541 },
+        "hinge": { "axis": "x", "y": 103.7, "z": -11.9 },
+        "desk_z": [-26.994086, -11.9], "height_mm": 17.494086,
+        "plan": { "shape": "rounded_rect", "size": [91.6, 107.4], "corner_r": 6.0, "center": [42.1, 50] },
+        "mesh": "meshes/base_wedge.glb"
+      },
+      "pedestal": {
+        "tilt_deg": 8, "kind": "circle", "body_mm": 2.4, "mating_plane_z": -9.5,
+        "desk_plane": { "ref_y": 103.7, "ref_z": -11.9, "slope_per_mm": 0.140541 },
+        "hinge": { "axis": "x", "y": 103.7, "z": -11.9 },
+        "desk_z": [-24.928135, -13.96595], "height_mm": 15.428135,
+        "_desk_z": "A Ø78 disc centred at y = 50 spans y 11..89 and never reaches the y = 103.7 hinge line, so its desk face is a SLICE of the wedge plane: -11.9 - (103.7 - y) * 0.140541 at both ends.",
+        "plan": { "shape": "circle", "d": 78.0, "center": [42.1, 50] },
+        "mesh": "meshes/base_pedestal.glb"
+      }
+    }
+  }
+}

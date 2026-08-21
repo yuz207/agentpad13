@@ -1,0 +1,228 @@
+{
+  "part": "stick_topper_v2",
+  "for": "YTL YA13-FL7.4-B5Ka(45-10)-R-Y06 (LCSC C37323742)",
+  "datum": "z=0 at PCB top face (agentpad13 case v2 convention)",
+  "supersedes": "stick_cap.py (dome / dish / knurl / taper)",
+  "blade": {
+    "x": 1.85,
+    "y": 1.15,
+    "tip_z": 18.4
+  },
+  "socket_depth_DESIGN_CHOICE": 4.0,
+  "socket_mouth_z": 14.4,
+  "socket_roof_z": 18.4,
+  "cap_top_z": 19.6,
+  "nub_C2": {
+    "od": 6.189,
+    "clearance_sw4_30deg": 0.25,
+    "governing_point_rh": [
+      3.095,
+      19.4
+    ],
+    "governing_z": 16.071,
+    "below_dish_cap_top": 1.529,
+    "deck_low_z": 11.851,
+    "deck_margin": 6.251,
+    "socket_wall": 2.12,
+    "roof_under_dimple": 0.85,
+    "dots": {
+      "count": 7,
+      "depth": 0.35,
+      "sphere_r": 0.75,
+      "ring_r": 1.55
+    },
+    "fit_ladder": [
+      0.0,
+      0.05,
+      0.1
+    ],
+    "print_orientation": "bottom-down"
+  },
+  "puck_TPU": {
+    "od": 9.412,
+    "top_z": 19.6,
+    "rim_roll_r": 0.6,
+    "rim_land_w": 0.55,
+    "wall_bot_z": 18.0,
+    "shoulder_bot_z": 16.4,
+    "body_od": 7.6,
+    "bore_d": 5.2,
+    "land_r": [
+      2.6,
+      3.6
+    ],
+    "clearance_sw4_22p5": 0.25,
+    "clearance_sw4_30_no_stop": -1.0258,
+    "first_contact_deg": 23.899,
+    "governing_point_rh": [
+      4.66,
+      19.23
+    ],
+    "governing_z": 16.447,
+    "deck_low_z": 10.5,
+    "deck_margin": 4.9,
+    "sleeve_wall": 1.2,
+    "socket_wall": 2.875,
+    "cup": {
+      "pad_depth": 0.35,
+      "pad_r": 1.15,
+      "floor_depth": 0.55,
+      "ramp_r": 2.0,
+      "lip_r": 0.9,
+      "lip_foot_r": 2.7268,
+      "rim_land_in_r": 3.5559,
+      "socket_roof": 0.85,
+      "socket_corner_reach": 1.0892
+    },
+    "dashes": {
+      "count": 4,
+      "azimuths_deg": [
+        45,
+        135,
+        225,
+        315
+      ],
+      "r0": 1.45,
+      "r1": 2.85,
+      "width": 0.8,
+      "top_z": 19.6,
+      "proud_inner": 0.421,
+      "proud_outer": 0.542,
+      "proud_min": 0.421,
+      "outer_extreme_r": 3.25,
+      "height_the_law_would_allow": 22.634,
+      "bridge_free_chord_mm": 2.219
+    },
+    "seat_ladder": {
+      "s10p5": {
+        "design_seat_z": 10.5,
+        "cone_z_at_bore": 11.939,
+        "cone_z_at_land": 12.354,
+        "stop_if_seat_10p5": 22.5,
+        "stop_if_seat_11p0": 15.953,
+        "stop_if_seat_11p5": 8.35,
+        "worst_stop": 22.5,
+        "clearance_at_worst": 0.25,
+        "safe": true
+      },
+      "s10p75": {
+        "design_seat_z": 10.75,
+        "cone_z_at_bore": 12.21,
+        "cone_z_at_land": 12.624,
+        "stop_if_seat_10p5": 24.92,
+        "stop_if_seat_11p0": 19.394,
+        "stop_if_seat_11p5": 12.537,
+        "worst_stop": 24.92,
+        "clearance_at_worst": -0.1791,
+        "safe": false
+      },
+      "s11p0": {
+        "design_seat_z": 11.0,
+        "cone_z_at_bore": 12.481,
+        "cone_z_at_land": 12.895,
+        "stop_if_seat_10p5": 27.181,
+        "stop_if_seat_11p0": 22.5,
+        "stop_if_seat_11p5": 16.226,
+        "worst_stop": 27.181,
+        "clearance_at_worst": -0.5653,
+        "safe": false
+      },
+      "s11p25": {
+        "design_seat_z": 11.25,
+        "cone_z_at_bore": 12.751,
+        "cone_z_at_land": 13.165,
+        "stop_if_seat_10p5": 29.298,
+        "stop_if_seat_11p0": 24.836,
+        "stop_if_seat_11p5": 19.523,
+        "worst_stop": 29.298,
+        "clearance_at_worst": -0.9134,
+        "safe": false
+      },
+      "s11p5": {
+        "design_seat_z": 11.5,
+        "cone_z_at_bore": 13.022,
+        "cone_z_at_land": 13.436,
+        "stop_if_seat_10p5": 30.0,
+        "stop_if_seat_11p0": 27.019,
+        "stop_if_seat_11p5": 22.5,
+        "worst_stop": 30.0,
+        "clearance_at_worst": -1.0258,
+        "safe": false
+      }
+    },
+    "default_rung": "s10p5",
+    "stop_sensitivity_deg_per_mm": -14.15,
+    "socket_ladder": [
+      0.0,
+      -0.05
+    ],
+    "material": "TPU 95A [TPU-EST]",
+    "print_orientation": "top-down"
+  },
+  "handedness": {
+    "design_frame": "LEFT-handed (x right, y down, z up) [CASE:1077]",
+    "export_transform": "mirror(part, about=Plane.XZ)",
+    "chirality_mm3_about_xz": {
+      "nub_C2": [
+        0,
+        0
+      ],
+      "puck_TPU": [
+        0,
+        0
+      ]
+    },
+    "note": "both parts own the XZ mirror plane, so the export mirror is a measured no-op; it is applied anyway so a future chiral feature cannot ship the wrong hand"
+  },
+  "printability": {
+    "stick_nub_v2_C2": {
+      "verdict": "ADVISORY",
+      "min_wall_mm": 0.10445305250870765,
+      "overhang_area_mm2": 6.413246485601524,
+      "orientation": "bottom-down"
+    },
+    "stick_puck_v2_TPU": {
+      "verdict": "ADVISORY",
+      "min_wall_mm": 0.4173045255778743,
+      "overhang_area_mm2": 44.76892449489374,
+      "orientation": "top-down"
+    }
+  },
+  "exports": {
+    "nub_nom": {
+      "file": "hardware/case/toppers/stl/stick_nub_v2_C2_sock_nom.stl",
+      "socket": [
+        1.85,
+        1.15
+      ]
+    },
+    "nub_p05": {
+      "file": "hardware/case/toppers/stl/stick_nub_v2_C2_sock_p05.stl",
+      "socket": [
+        1.9,
+        1.2
+      ]
+    },
+    "nub_p10": {
+      "file": "hardware/case/toppers/stl/stick_nub_v2_C2_sock_p10.stl",
+      "socket": [
+        1.95,
+        1.25
+      ]
+    },
+    "puck_nom": {
+      "file": "hardware/case/toppers/stl/stick_puck_v2_TPU_sock_nom.stl",
+      "socket": [
+        1.85,
+        1.15
+      ]
+    },
+    "puck_m05": {
+      "file": "hardware/case/toppers/stl/stick_puck_v2_TPU_sock_m05.stl",
+      "socket": [
+        1.8,
+        1.1
+      ]
+    }
+  }
+}

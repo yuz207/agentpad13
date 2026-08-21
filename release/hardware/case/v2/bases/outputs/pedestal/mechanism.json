@@ -1,0 +1,141 @@
+{
+  "schema_version": "0.2",
+  "status": "ok",
+  "error": null,
+  "hint": null,
+  "parts": {
+    "base": {
+      "bbox": {
+        "min": [
+          3.1000000000000014,
+          11.0,
+          -24.928135376911726
+        ],
+        "max": [
+          81.1,
+          89.0,
+          -8.1
+        ]
+      },
+      "volume_mm3": 47662.954251591356,
+      "surface_area_mm2": 12130.504653716553,
+      "center_of_mass_mm": [
+        42.10000000277253,
+        44.63436650175641,
+        -14.833288738797226
+      ],
+      "is_valid": true,
+      "face_count": 19,
+      "edge_count": 35,
+      "vertex_count": 22
+    },
+    "tray": {
+      "bbox": {
+        "min": [
+          -1.0499999999999998,
+          -1.0499999999999998,
+          -9.500000000001636
+        ],
+        "max": [
+          85.25,
+          101.05,
+          1.5
+        ]
+      },
+      "volume_mm3": 38007.27422625871,
+      "surface_area_mm2": 19687.360569574714,
+      "center_of_mass_mm": [
+        41.693052017826446,
+        49.39655636942823,
+        -7.073985953881521
+      ],
+      "is_valid": true,
+      "face_count": 72,
+      "edge_count": 174,
+      "vertex_count": 112
+    },
+    "band": {
+      "bbox": {
+        "min": [
+          -5.700000000000514,
+          -5.7000001000000005,
+          -7.500000000000009
+        ],
+        "max": [
+          89.90000000000052,
+          105.69999999999999,
+          5.0
+        ]
+      },
+      "volume_mm3": 26723.28225419285,
+      "surface_area_mm2": 14901.51205036579,
+      "center_of_mass_mm": [
+        42.09999999380395,
+        50.74955675230079,
+        -0.9840130282313039
+      ],
+      "is_valid": true,
+      "face_count": 71,
+      "edge_count": 191,
+      "vertex_count": 124
+    },
+    "pocket_witness": {
+      "bbox": {
+        "min": [
+          26.6,
+          34.5,
+          -9.5
+        ],
+        "max": [
+          57.6,
+          65.5,
+          -7.9
+        ]
+      },
+      "volume_mm3": 180.95573684677206,
+      "surface_area_mm2": 346.83182895631313,
+      "center_of_mass_mm": [
+        42.1,
+        50.0,
+        -8.699999999999998
+      ],
+      "is_valid": true,
+      "face_count": 12,
+      "edge_count": 12,
+      "vertex_count": 8
+    }
+  },
+  "interferences": [
+    {
+      "a": "base",
+      "b": "pocket_witness",
+      "volume_mm3": 142.39373422150857,
+      "centroid": [
+        42.099999999999994,
+        49.99999999999999,
+        -8.822074483732424
+      ]
+    }
+  ],
+  "assertions": [
+    {
+      "name": "no_interference:base/tray",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:base/band",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "interference:base/pocket_witness",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "exports": [
+    "hardware/case/v2/bases/outputs/pedestal/assembly.stl",
+    "hardware/case/v2/bases/outputs/pedestal/assembly.step"
+  ]
+}

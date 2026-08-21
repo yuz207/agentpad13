@@ -1,0 +1,24 @@
+agentpad13 fab package — build report
+generated: 2026-08-19T09:16:19
+source board: v5/hardware/pcb/v5_7.kicad_pcb
+
+BARE PCB (identical for both SKUs)
+  layers (2): F.Cu, B.Cu, F.Mask, B.Mask, F.SilkS, B.SilkS, Edge.Cuts, F.Paste, B.Paste
+  outline bbox (incl. edge stroke): 84.300 x 100.100 mm
+  outer outline segments (octagon = 8): 8
+  drill holes total: 289  (PTH 241 incl. 186 vias / NPTH 48)
+  min copper track: 0.152 mm    min via drill: 0.2 mm
+  unconnected ratsnest (informational): 0
+
+PCBWAY TIER HINT: min track 0.152 mm (>=0.152 / 6 mil) -> PCBWay STANDARD-capability trace/space OK. NOTE via drill 0.2 mm (0.30 mm is the classic standard min; 0.20 mm is at the standard/advanced edge — confirm on quote).
+
+ASSEMBLY (per SKU)
+  opaque      : CPL 90 placements | BOM 29 lines (place 90, DNP 23)
+  translucent : CPL 110 placements | BOM 29 lines (place 110, DNP 3)
+  hand-solder afterlist entries: 3
+
+FILES
+  gerbers/            15 files
+  assembly/           cpl_*.csv, bom_*.csv, hand_solder_afterlist.csv
+  gerbers_v5_7.zip   -> PCBWay PCB quote (bare board)
+  fabpack_opaque.zip / fabpack_translucent.zip -> complete per-SKU bundles

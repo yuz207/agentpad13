@@ -1,0 +1,1158 @@
+{
+  "schema_version": "0.2",
+  "status": "ok",
+  "error": null,
+  "hint": null,
+  "parts": {
+    "fr4_plate": {
+      "bbox": {
+        "min": [
+          -0.10000000000086207,
+          6.217248937900877e-15,
+          3.4
+        ],
+        "max": [
+          84.30000000000086,
+          100.0,
+          5.0
+        ]
+      },
+      "volume_mm3": 8232.961094729915,
+      "surface_area_mm2": 12428.186839599832,
+      "center_of_mass_mm": [
+        41.40917988516395,
+        50.70757518186897,
+        4.1999999999999975
+      ],
+      "is_valid": true,
+      "face_count": 91,
+      "edge_count": 267,
+      "vertex_count": 178
+    },
+    "band": {
+      "bbox": {
+        "min": [
+          -5.700000000000514,
+          -5.7000001000000005,
+          -7.500000000000009
+        ],
+        "max": [
+          89.90000000000052,
+          105.69999999999999,
+          5.0
+        ]
+      },
+      "volume_mm3": 26723.28225419285,
+      "surface_area_mm2": 14901.51205036579,
+      "center_of_mass_mm": [
+        42.09999999380395,
+        50.74955675230079,
+        -0.9840130282313039
+      ],
+      "is_valid": true,
+      "face_count": 71,
+      "edge_count": 191,
+      "vertex_count": 124
+    },
+    "tray": {
+      "bbox": {
+        "min": [
+          -1.0499999999999998,
+          -1.0499999999999998,
+          -9.500000000001636
+        ],
+        "max": [
+          85.25,
+          101.05,
+          1.5
+        ]
+      },
+      "volume_mm3": 38007.27422625871,
+      "surface_area_mm2": 19687.360569574714,
+      "center_of_mass_mm": [
+        41.693052017826446,
+        49.39655636942823,
+        -7.073985953881521
+      ],
+      "is_valid": true,
+      "face_count": 72,
+      "edge_count": 174,
+      "vertex_count": 112
+    },
+    "pcb_retention": {
+      "bbox": {
+        "min": [
+          21.2,
+          39.25,
+          -5.1
+        ],
+        "max": [
+          63.0,
+          98.0,
+          -0.30000000000000004
+        ]
+      },
+      "volume_mm3": 146.7437928491792,
+      "surface_area_mm2": 252.39555378940386,
+      "center_of_mass_mm": [
+        42.099999999999994,
+        77.74999999999997,
+        -3.1184874759152224
+      ],
+      "is_valid": true,
+      "face_count": 18,
+      "edge_count": 18,
+      "vertex_count": 12
+    },
+    "pcb_rail": {
+      "bbox": {
+        "min": [
+          0.1999999999999993,
+          0.13957287525381012,
+          -5.1
+        ],
+        "max": [
+          84.0594271247462,
+          99.85309703885629,
+          -1.5099999999999998
+        ]
+      },
+      "volume_mm3": 520.55,
+      "surface_area_mm2": 1011.5899999999999,
+      "center_of_mass_mm": [
+        41.61981379310341,
+        48.10901379310345,
+        -3.304999999999998
+      ],
+      "is_valid": true,
+      "face_count": 84,
+      "edge_count": 168,
+      "vertex_count": 112
+    },
+    "pcb_board": {
+      "bbox": {
+        "min": [
+          0.0,
+          -6.938889693096687e-16,
+          -1.51
+        ],
+        "max": [
+          84.2,
+          100.0,
+          0.0
+        ]
+      },
+      "volume_mm3": 12082.621388187881,
+      "surface_area_mm2": 16540.646511034065,
+      "center_of_mass_mm": [
+        42.01453046375547,
+        49.85576890490365,
+        -0.7549999999999998
+      ],
+      "is_valid": true,
+      "face_count": 13,
+      "edge_count": 33,
+      "vertex_count": 22
+    },
+    "pcb_components": {
+      "bbox": {
+        "min": [
+          3.4610000000000003,
+          1.5750000000000002,
+          -5.895
+        ],
+        "max": [
+          81.273,
+          96.054,
+          -1.5949999999999998
+        ]
+      },
+      "volume_mm3": 677.0791979999998,
+      "surface_area_mm2": 1080.840679999999,
+      "center_of_mass_mm": [
+        59.96647715803545,
+        68.30031523605597,
+        -3.31503144838899
+      ],
+      "is_valid": true,
+      "face_count": 432,
+      "edge_count": 864,
+      "vertex_count": 576
+    },
+    "sockets": {
+      "bbox": {
+        "min": [
+          6.275,
+          28.755,
+          -3.45
+        ],
+        "max": [
+          77.925,
+          91.795,
+          -1.6
+        ]
+      },
+      "volume_mm3": 2053.99025,
+      "surface_area_mm2": 3201.2889999999998,
+      "center_of_mass_mm": [
+        42.10000000000002,
+        53.68076923076925,
+        -2.5250000000000012
+      ],
+      "is_valid": true,
+      "face_count": 78,
+      "edge_count": 156,
+      "vertex_count": 104
+    },
+    "leds": {
+      "bbox": {
+        "min": [
+          2.5,
+          2.5,
+          -3.6
+        ],
+        "max": [
+          82.5,
+          98.8,
+          -1.595
+        ]
+      },
+      "volume_mm3": 795.1075,
+      "surface_area_mm2": 1596.9799999999966,
+      "center_of_mass_mm": [
+        41.33052479098742,
+        56.19160373392907,
+        -2.5407466679033965
+      ],
+      "is_valid": true,
+      "face_count": 144,
+      "edge_count": 288,
+      "vertex_count": 192
+    },
+    "ec11_body": {
+      "bbox": {
+        "min": [
+          7.675000000000001,
+          6.65,
+          0.0
+        ],
+        "max": [
+          19.375,
+          18.35,
+          7.5
+        ]
+      },
+      "volume_mm3": 1026.675,
+      "surface_area_mm2": 624.78,
+      "center_of_mass_mm": [
+        13.525,
+        12.5,
+        3.75
+      ],
+      "is_valid": true,
+      "face_count": 6,
+      "edge_count": 12,
+      "vertex_count": 8
+    },
+    "js_body": {
+      "bbox": {
+        "min": [
+          59.209999999999994,
+          2.869999999999999,
+          0.0
+        ],
+        "max": [
+          77.11,
+          20.770000000000003,
+          11.1
+        ]
+      },
+      "volume_mm3": 2854.9200000000005,
+      "surface_area_mm2": 1309.1600000000008,
+      "center_of_mass_mm": [
+        68.73914074650078,
+        12.399140746500779,
+        5.55
+      ],
+      "is_valid": true,
+      "face_count": 22,
+      "edge_count": 60,
+      "vertex_count": 40
+    },
+    "usb_recept": {
+      "bbox": {
+        "min": [
+          37.300000000000004,
+          -0.6000000000000001,
+          -4.86
+        ],
+        "max": [
+          46.900000000000006,
+          6.699999999999999,
+          -1.6
+        ]
+      },
+      "volume_mm3": 228.4608,
+      "surface_area_mm2": 250.34799999999996,
+      "center_of_mass_mm": [
+        42.10000000000001,
+        3.0499999999999994,
+        -3.23
+      ],
+      "is_valid": true,
+      "face_count": 6,
+      "edge_count": 12,
+      "vertex_count": 8
+    },
+    "knob_sweep": {
+      "bbox": {
+        "min": [
+          4.025,
+          3.0,
+          5.0
+        ],
+        "max": [
+          23.025,
+          22.0,
+          27.0
+        ]
+      },
+      "volume_mm3": 6237.6322137025345,
+      "surface_area_mm2": 1880.243203173491,
+      "center_of_mass_mm": [
+        13.525,
+        12.5,
+        15.999999999999998
+      ],
+      "is_valid": true,
+      "face_count": 3,
+      "edge_count": 3,
+      "vertex_count": 2
+    },
+    "js_sweep": {
+      "bbox": {
+        "min": [
+          60.28008438798904,
+          3.9400843879890535,
+          11.740760851410842
+        ],
+        "max": [
+          79.13991561201094,
+          22.79991561201094,
+          19.6
+        ]
+      },
+      "volume_mm3": 1238.7504787308992,
+      "surface_area_mm2": 846.1083747463985,
+      "center_of_mass_mm": [
+        69.71000054198582,
+        13.37000015845483,
+        15.735668067138482
+      ],
+      "is_valid": true,
+      "face_count": 555,
+      "edge_count": 888,
+      "vertex_count": 335
+    },
+    "js_sweep_puck": {
+      "bbox": {
+        "min": [
+          60.37993426199899,
+          4.039934261998996,
+          10.423463313526982
+        ],
+        "max": [
+          79.04006573800099,
+          22.700065738000998,
+          20.189344242686662
+        ]
+      },
+      "volume_mm3": 1574.4861938294566,
+      "surface_area_mm2": 785.0977146077151,
+      "center_of_mass_mm": [
+        69.71000013091249,
+        13.370000101712545,
+        15.394862072878558
+      ],
+      "is_valid": true,
+      "face_count": 3938,
+      "edge_count": 8227,
+      "vertex_count": 4291
+    },
+    "screws": {
+      "bbox": {
+        "min": [
+          0.8500000000000001,
+          0.8500000000000001,
+          -3.0
+        ],
+        "max": [
+          83.35,
+          99.14999999999999,
+          6.8
+        ]
+      },
+      "volume_mm3": 409.92129262570336,
+      "surface_area_mm2": 691.2132156428261,
+      "center_of_mass_mm": [
+        42.099999999999994,
+        50.00000000000003,
+        3.196178783280452
+      ],
+      "is_valid": true,
+      "face_count": 24,
+      "edge_count": 24,
+      "vertex_count": 16
+    },
+    "js_pins": {
+      "bbox": {
+        "min": [
+          60.559999999999995,
+          4.219999999999999,
+          -3.71
+        ],
+        "max": [
+          76.00999999999999,
+          20.619999999999997,
+          -1.5099999999999998
+        ]
+      },
+      "volume_mm3": 61.235924003772254,
+      "surface_area_mm2": 185.60529397408496,
+      "center_of_mass_mm": [
+        67.44730248306995,
+        11.107302483069978,
+        -2.6100000000000003
+      ],
+      "is_valid": true,
+      "face_count": 30,
+      "edge_count": 30,
+      "vertex_count": 20
+    },
+    "switch_bodies": {
+      "bbox": {
+        "min": [
+          5.625,
+          23.799999999999997,
+          0.0
+        ],
+        "max": [
+          78.575,
+          96.74999999999999,
+          11.6
+        ]
+      },
+      "volume_mm3": 24199.19361626936,
+      "surface_area_mm2": 25402.0090408937,
+      "center_of_mass_mm": [
+        42.09999999999998,
+        53.68076923076927,
+        4.720152975919826
+      ],
+      "is_valid": true,
+      "face_count": 273,
+      "edge_count": 507,
+      "vertex_count": 338
+    },
+    "keycaps": {
+      "bbox": {
+        "min": [
+          4.525,
+          22.7,
+          10.6
+        ],
+        "max": [
+          79.675,
+          97.85,
+          14.6
+        ]
+      },
+      "volume_mm3": 18223.2,
+      "surface_area_mm2": 13008.399999999998,
+      "center_of_mass_mm": [
+        42.09999999999999,
+        56.334788621098376,
+        12.600000000000005
+      ],
+      "is_valid": true,
+      "face_count": 78,
+      "edge_count": 156,
+      "vertex_count": 104
+    },
+    "knob": {
+      "bbox": {
+        "min": [
+          4.025,
+          3.0,
+          8.0
+        ],
+        "max": [
+          23.025,
+          22.0,
+          27.0
+        ]
+      },
+      "volume_mm3": 5387.046002743098,
+      "surface_area_mm2": 1701.172421918873,
+      "center_of_mass_mm": [
+        13.525,
+        12.5,
+        17.5
+      ],
+      "is_valid": true,
+      "face_count": 3,
+      "edge_count": 3,
+      "vertex_count": 2
+    },
+    "stick_cap": {
+      "bbox": {
+        "min": [
+          66.6155,
+          10.2755,
+          14.4
+        ],
+        "max": [
+          72.80449999999999,
+          16.4645,
+          19.6
+        ]
+      },
+      "volume_mm3": 156.43509504837905,
+      "surface_area_mm2": 161.27259230132617,
+      "center_of_mass_mm": [
+        69.71,
+        13.37,
+        17.0
+      ],
+      "is_valid": true,
+      "face_count": 3,
+      "edge_count": 3,
+      "vertex_count": 2
+    }
+  },
+  "interferences": [
+    {
+      "a": "pcb_components",
+      "b": "sockets",
+      "volume_mm3": 1.70564999999999,
+      "centroid": [
+        8.373,
+        34.3025,
+        -2.2224999999999997
+      ]
+    },
+    {
+      "a": "pcb_components",
+      "b": "leds",
+      "volume_mm3": 2.7361875000000015,
+      "centroid": [
+        42.961318737294135,
+        47.672675289522324,
+        -1.8492969231823486
+      ]
+    },
+    {
+      "a": "sockets",
+      "b": "leds",
+      "volume_mm3": 67.32590000000002,
+      "centroid": [
+        46.76766123345547,
+        55.913851758758646,
+        -2.5217232985374096
+      ]
+    },
+    {
+      "a": "ec11_body",
+      "b": "knob_sweep",
+      "volume_mm3": 342.22499999999997,
+      "centroid": [
+        13.525,
+        12.500000000000002,
+        6.250000000000001
+      ]
+    },
+    {
+      "a": "js_body",
+      "b": "js_sweep_puck",
+      "volume_mm3": 39.491787946303646,
+      "centroid": [
+        69.7100035846686,
+        13.370002665274871,
+        10.834885354704447
+      ]
+    },
+    {
+      "a": "knob_sweep",
+      "b": "knob",
+      "volume_mm3": 5387.046002743098,
+      "centroid": [
+        13.524999999999999,
+        12.499999999999998,
+        17.499999999999996
+      ]
+    },
+    {
+      "a": "js_sweep",
+      "b": "js_sweep_puck",
+      "volume_mm3": 1155.2077461418548,
+      "centroid": [
+        69.70999980347472,
+        13.3699998346671,
+        15.89140937924275
+      ]
+    },
+    {
+      "a": "js_sweep",
+      "b": "stick_cap",
+      "volume_mm3": 156.435095048379,
+      "centroid": [
+        69.70999999999998,
+        13.37,
+        17.0
+      ]
+    },
+    {
+      "a": "js_sweep_puck",
+      "b": "stick_cap",
+      "volume_mm3": 156.43509504837897,
+      "centroid": [
+        69.71,
+        13.370000000000003,
+        17.000000000000004
+      ]
+    },
+    {
+      "a": "switch_bodies",
+      "b": "keycaps",
+      "volume_mm3": 500.29863008417453,
+      "centroid": [
+        42.100000000000016,
+        53.680769230769265,
+        11.100000000000012
+      ]
+    }
+  ],
+  "assertions": [
+    {
+      "name": "no_interference:fr4_plate/band",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:fr4_plate/tray",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:fr4_plate/pcb_retention",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:fr4_plate/pcb_rail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:fr4_plate/screws",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:fr4_plate/pcb_board",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:fr4_plate/pcb_components",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:fr4_plate/sockets",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:fr4_plate/leds",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:fr4_plate/ec11_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:fr4_plate/js_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:fr4_plate/usb_recept",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:band/tray",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:band/pcb_retention",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:band/pcb_rail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:band/screws",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:band/pcb_board",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:band/pcb_components",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:band/sockets",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:band/leds",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:band/ec11_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:band/js_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:band/usb_recept",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:tray/pcb_retention",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:tray/pcb_rail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:tray/screws",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:tray/pcb_board",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:tray/pcb_components",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:tray/sockets",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:tray/leds",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:tray/ec11_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:tray/js_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:tray/usb_recept",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_retention/pcb_rail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_retention/screws",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_retention/pcb_board",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_retention/pcb_components",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_retention/sockets",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_retention/leds",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_retention/ec11_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_retention/js_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_retention/usb_recept",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_rail/screws",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_rail/pcb_board",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_rail/pcb_components",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_rail/sockets",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_rail/leds",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_rail/ec11_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_rail/js_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:pcb_rail/usb_recept",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:screws/pcb_board",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:screws/pcb_components",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:screws/sockets",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:screws/leds",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:screws/ec11_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:screws/js_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:screws/usb_recept",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:knob_sweep/fr4_plate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:knob_sweep/band",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:knob_sweep/screws",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:js_sweep/fr4_plate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:js_sweep/band",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:js_sweep/screws",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:js_sweep_puck/fr4_plate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:js_sweep_puck/band",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:js_sweep_puck/screws",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "interference:knob_sweep/ec11_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:band/pcb_board>=0.25",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:sockets/tray>=1.0",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:usb_recept/tray>=0.2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:band/usb_recept>=0.1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:tray/pcb_board>=0.3",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:screws/pcb_board>=1.0",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:screws/pcb_components>=1.0",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:fr4_plate/ec11_body>=0.25",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:fr4_plate/js_body>=0.2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:pcb_retention/ec11_body>=5.0",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:pcb_retention/js_body>=5.0",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:pcb_rail/pcb_components>=0.3",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:pcb_rail/leds>=0.3",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:pcb_rail/usb_recept>=0.3",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:switch_bodies/fr4_plate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:switch_bodies/band",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:switch_bodies/tray",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:switch_bodies/pcb_rail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:switch_bodies/screws",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:switch_bodies/knob",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:switch_bodies/stick_cap",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:switch_bodies/js_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:switch_bodies/ec11_body",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:keycaps/band",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:keycaps/screws",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:keycaps/knob_sweep",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:keycaps/fr4_plate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:knob/fr4_plate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:knob/band",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:knob/keycaps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:knob/screws",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:stick_cap/fr4_plate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:stick_cap/band",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:js_pins/tray",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_interference:js_pins/pcb_rail",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:js_pins/tray>=0.5",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clearance:js_pins/pcb_rail>=0.5",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "exports": []
+}

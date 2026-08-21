@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "_": "Hand-authored couplings per configurator design spec §4. NOT generated. rules.js is a pure interpreter for this file: facts in -> {set, show, suggest, notes, lines, order} out. Rules apply in array order; a later `set` of the same key wins.",
+  "_facts": {
+    "always": "always true",
+    "led": "yes | no",
+    "band_translucent": "true | false — the band's own translucency checkbox, state.band.translucent",
+    "tray_translucent": "true | false — the tray's own translucency checkbox, state.tray.translucent",
+    "translucent_case": "true when the band or the tray is translucent, i.e. when you can see the board",
+    "plate_make": "fr4 | printed — the procurement fork, design spec §2 'Plate'",
+    "plate_variant": "standard | tented_ring | blank (FR4 path only)",
+    "base": "none | riser | wedge | pedestal",
+    "caps_on": "true | false — state.view.caps, the one Show toggle that is also a config axis",
+    "knob": "catalog knob id, or none",
+    "stick": "catalog stick-cap id, or none"
+  },
+  "_not_facts": "state.view.* (switches / knob / stick / stabilizer / encoder / joystick) and the whole state.lighting block are RENDER ONLY. They must never become facts: the owner asked for view toggles, not more ways to change what you order. Neither may translucency on the plate, keycaps, switches or toppers: only the two CASE parts decide whether the board is on show.",
+  "_colour_is_not_a_kind": "Colour and translucency are independent axes (see finishes.json _palette). Nothing here may test a finish id or a finish 'kind' — the board-mask reveal and the LED band hint both key off the translucency CHECKBOX.",
+  "rules": [
+    {
+      "id": "led_on_fabpack",
+      "when": { "fact": "led", "eq": "yes" },
+      "then": { "set": { "fabpack": "translucent" } }
+    },
+    {
+      "id": "led_off_fabpack",
+      "when": { "fact": "led", "eq": "no" },
+      "then": { "set": { "fabpack": "opaque" } }
+    },
+    {
+      "id": "led_on_band_suggest",
+      "_": "Design spec §2: LED band on hints at a see-through band. The hint now lands on the band's translucency checkbox, and only while it is off — so the default build, which ships a translucent band, shows no hint at all.",
+      "when": { "all": [{ "fact": "led", "eq": "yes" }, { "fact": "band_translucent", "eq": false }] },
+      "then": { "suggest": { "band_translucent": true } }
+    },
+    {
+      "id": "solid_case_board_hidden",
+      "when": { "not": { "fact": "translucent_case", "eq": true } },
+      "then": { "set": { "board_visible": false, "board_mask": "black" }, "show": { "board_mask": false } }
+    },
+    {
+      "id": "translucent_case_board_visible",
+      "when": { "fact": "translucent_case", "eq": true },
+      "then": { "set": { "board_visible": true, "board_mask": { "$state": "board_mask" } }, "show": { "board_mask": true } }
+    },
+    {
+      "id": "plate_fr4",
+      "when": { "fact": "plate_make", "eq": "fr4" },
+      "then": {
+        "set": { "plate_procurement": "fr4" },
+        "show": { "plate_variant": true, "plate_mask": true, "plate_finish": false }
+      }
+    },
+    {
+      "id": "plate_printed",
+      "when": { "fact": "plate_make", "eq": "printed" },
+      "then": {
+        "set": { "plate_procurement": "printed" },
+        "show": { "plate_variant": false, "plate_mask": false, "plate_finish": true },
+        "notes": [{ "section": "print", "id": "plate_printed_touch", "text": "Printed plate has no copper — touch behaves like the blank variant." }]
+      }
+    },
+    {
+      "id": "base_gauge_flow",
+      "when": { "not": { "fact": "base", "eq": "none" } },
+      "then": {
+        "notes": [{ "section": "print", "id": "base_gauge_note", "text": "Print the gauge, keep the rung that holds." }],
+        "order": [{ "section": "print", "before": "base_gauge", "after": "base_peg_5p6" }]
+      }
+    },
+    {
+      "id": "band_pocket_tight",
+      "when": { "fact": "always", "eq": true },
+      "then": { "notes": [{ "section": "print", "id": "band_pocket", "text": "Band pocket is deliberately tight — light sand if needed." }] }
+    },
+    {
+      "id": "pedestal_solid",
+      "when": { "fact": "base", "eq": "pedestal" },
+      "then": { "notes": [{ "section": "print", "id": "pedestal_solid", "text": "Pedestal prints 100% solid." }] }
+    },
+    {
+      "id": "riser_material",
+      "when": { "fact": "base", "eq": "riser" },
+      "then": { "notes": [{ "section": "print", "id": "riser_material", "text": "Riser in TPU = grip base, rigid = stand." }] }
+    },
+    {
+      "id": "caps_on_detail",
+      "when": { "fact": "caps_on", "eq": true },
+      "then": { "show": { "caps_detail": true } }
+    },
+    {
+      "id": "keycaps_stabilizer",
+      "when": { "fact": "caps_on", "eq": true },
+      "then": {
+        "set": { "keycap_2u_size": "2u_stab" },
+        "lines": [{ "section": "selfbuy", "id": "stab", "text": "1 × 2u plate-mount stabilizer", "order": 30 }]
+      }
+    },
+    {
+      "id": "encoder_spec_line",
+      "when": { "fact": "always", "eq": true },
+      "then": { "lines": [{ "section": "selfbuy", "id": "encoder", "text": "1 × EC11 encoder — Alps 11.2 mm mounting-tab pattern, flatted D-shaft", "order": 10 }] }
+    },
+    {
+      "id": "switches_line",
+      "when": { "fact": "always", "eq": true },
+      "then": { "lines": [{ "section": "selfbuy", "id": "switches", "text": "13 × MX switches", "order": 20 }] }
+    },
+    {
+      "id": "cots_knob_line",
+      "when": { "fact": "knob", "eq": "none" },
+      "then": { "lines": [{ "section": "selfbuy", "id": "knob_cots", "text": "1 × Ø6 D-shaft knob", "order": 40 }] }
+    }
+  ]
+}

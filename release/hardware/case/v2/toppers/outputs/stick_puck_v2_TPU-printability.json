@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.2",
+  "kind": "printability",
+  "status": "assertion_failed",
+  "name": "stick_puck_v2_TPU",
+  "method": "FDM",
+  "bbox": {
+    "min": [
+      -4.705928953939671,
+      -4.705928953939671,
+      11.939480943456582
+    ],
+    "max": [
+      4.705928953939671,
+      4.705928953939671,
+      19.600000100000003
+    ]
+  },
+  "volume_mm3": 319.807956652002,
+  "surface_area_mm2": 375.8470903023358,
+  "center_of_mass_mm": [
+    -5.778790334714231e-11,
+    1.1607122604586657e-10,
+    16.520474641048004
+  ],
+  "is_valid": true,
+  "min_wall_mm": 0.4173045255778743,
+  "overhang": {
+    "area_mm2": 44.76892449489374,
+    "max_angle_deg": 90.0
+  },
+  "assertions": [
+    {
+      "name": "wall_min:1.2",
+      "passed": false,
+      "detail": "min wall 0.4173mm below min 1.2mm"
+    },
+    {
+      "name": "overhang_max:45.0",
+      "passed": false,
+      "detail": "overhang 90.0000\u00b0 exceeds max 45.0\u00b0"
+    }
+  ]
+}

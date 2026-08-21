@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.2",
+  "kind": "printability",
+  "status": "assertion_failed",
+  "name": "knob_v2_A",
+  "method": "FDM",
+  "bbox": {
+    "min": [
+      -9.5000001,
+      -9.500000100000003,
+      7.9999999
+    ],
+    "max": [
+      9.5000001,
+      9.5000001,
+      27.0
+    ]
+  },
+  "volume_mm3": 4731.801769266643,
+  "surface_area_mm2": 2181.9249790428967,
+  "center_of_mass_mm": [
+    1.0383037975774417e-14,
+    0.027178816597365704,
+    17.758905002673874
+  ],
+  "is_valid": true,
+  "min_wall_mm": 0.8192476293571149,
+  "overhang": {
+    "area_mm2": 8.801147837518482,
+    "max_angle_deg": 90.0
+  },
+  "assertions": [
+    {
+      "name": "wall_min:1.2",
+      "passed": false,
+      "detail": "min wall 0.8192mm below min 1.2mm"
+    },
+    {
+      "name": "overhang_max:45.0",
+      "passed": false,
+      "detail": "overhang 90.0000\u00b0 exceeds max 45.0\u00b0"
+    }
+  ]
+}

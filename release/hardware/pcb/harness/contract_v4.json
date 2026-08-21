@@ -1,0 +1,340 @@
+{
+ "schema": "agentpad13-contract-v4",
+ "status": "OK | RE1+SW-chamfer adjudicated 2026-07-19: owner-directed block move (shaft->plate opening 13.525,12.5 measured; chamfer leg 14.6->13.2, band grows in case pass). See NOTES-V4.md r28 ledger. | J1 adjudicated 2026-07-20 (v5_5 flip): y 5.1->3.05, rot 180->0, owner-authorized anchor per V5-NOTES.md coordinator addendum. | JS1 adjudicated 2026-07-20 (v5_6 YA13 rev): (70.675,12.5,rot0)->(69.71,13.37,rot180), F.Cu; PSP-slider SMD footprint replaced by YTL YA13-FL7.4 THT tilt joystick (LCSC C37323742) per placement-study freeze. rot180 = 180deg-from-datasheet-datum clocking (pot boxes face West+North). RE1-mirror symmetry break of 1.30mm owner-approved by the freeze.",
+ "generated": "2026-07-17",
+ "generated_by": "grade_board.py --gen-contract (pcbnew 9.0.9 read-back)",
+ "source_board": "hardware/pcb/v4/v4_placed.kicad_pcb",
+ "source_md5": "af4ce244380b1dd742b144edc43b8dad",
+ "cross_check_reference": "hardware/pcb/v4/CONTRACT-V4-PROPOSAL.md",
+ "pos_tol_mm": 0.003,
+ "rot_tol_deg": 0.1,
+ "outline": {
+  "target_mm": [
+   84.2,
+   100.0
+  ],
+  "tol_mm": 0.15,
+  "chamfer_vertices": [
+   [
+    13.2,
+    0.0
+   ],
+   [
+    69.6,
+    0.0
+   ],
+   [
+    84.2,
+    14.6
+   ],
+   [
+    84.2,
+    85.4
+   ],
+   [
+    69.6,
+    100.0
+   ],
+   [
+    14.6,
+    100.0
+   ],
+   [
+    0.0,
+    85.4
+   ],
+   [
+    0.0,
+    13.2
+   ]
+  ],
+  "chamfer_tol_mm": 0.05
+ },
+ "absent_refs": [
+  "H1",
+  "H2",
+  "H3",
+  "H4"
+ ],
+ "refs": {
+  "SW1": {
+   "x": 13.525,
+   "y": 31.7,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW2": {
+   "x": 32.575,
+   "y": 31.7,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW3": {
+   "x": 51.625,
+   "y": 31.7,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW4": {
+   "x": 70.675,
+   "y": 31.7,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW5": {
+   "x": 13.525,
+   "y": 50.75,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW6": {
+   "x": 32.575,
+   "y": 50.75,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW7": {
+   "x": 51.625,
+   "y": 50.75,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW8": {
+   "x": 70.675,
+   "y": 50.75,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW9": {
+   "x": 13.525,
+   "y": 69.8,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW10": {
+   "x": 32.575,
+   "y": 69.8,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW11": {
+   "x": 51.625,
+   "y": 69.8,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW12": {
+   "x": 70.675,
+   "y": 69.8,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "SW13": {
+   "x": 42.1,
+   "y": 88.85,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "STAB1": {
+   "x": 42.1,
+   "y": 88.85,
+   "rot": 0.0,
+   "side": "F.Cu"
+  },
+  "RE1": {
+   "x": 6.025,
+   "y": 10.0,
+   "rot": 0.0,
+   "side": "F.Cu"
+  },
+  "JS1": {
+   "x": 69.71,
+   "y": 13.37,
+   "rot": 180.0,
+   "side": "F.Cu"
+  },
+  "J1": {
+   "x": 42.1,
+   "y": 3.05,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "TP5": {
+   "x": 13.525,
+   "y": 88.85,
+   "rot": 0.0,
+   "side": "F.Cu"
+  },
+  "LED1": {
+   "x": 13.525,
+   "y": 35.7,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED2": {
+   "x": 32.575,
+   "y": 35.7,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED3": {
+   "x": 51.625,
+   "y": 35.7,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED4": {
+   "x": 70.675,
+   "y": 35.7,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED5": {
+   "x": 13.525,
+   "y": 54.75,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED6": {
+   "x": 32.575,
+   "y": 54.75,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED7": {
+   "x": 51.625,
+   "y": 54.75,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED8": {
+   "x": 70.675,
+   "y": 54.75,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED9": {
+   "x": 13.525,
+   "y": 73.8,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED10": {
+   "x": 32.575,
+   "y": 73.8,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED11": {
+   "x": 51.625,
+   "y": 73.8,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED12": {
+   "x": 70.675,
+   "y": 73.8,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED13": {
+   "x": 42.1,
+   "y": 92.85,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED14": {
+   "x": 13.525,
+   "y": 79.35,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED15": {
+   "x": 32.0,
+   "y": 5.0,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "LED16": {
+   "x": 52.0,
+   "y": 5.0,
+   "rot": 180.0,
+   "side": "B.Cu"
+  },
+  "LED17": {
+   "x": 80.0,
+   "y": 33.35,
+   "rot": -90.0,
+   "side": "B.Cu"
+  },
+  "LED18": {
+   "x": 80.0,
+   "y": 53.35,
+   "rot": -90.0,
+   "side": "B.Cu"
+  },
+  "LED19": {
+   "x": 80.0,
+   "y": 70.35,
+   "rot": -90.0,
+   "side": "B.Cu"
+  },
+  "LED20": {
+   "x": 65.694952,
+   "y": 94.374007,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED21": {
+   "x": 18.3,
+   "y": 96.3,
+   "rot": 0.0,
+   "side": "B.Cu"
+  },
+  "LED22": {
+   "x": 5.0,
+   "y": 79.35,
+   "rot": 90.0,
+   "side": "B.Cu"
+  },
+  "LED23": {
+   "x": 5.0,
+   "y": 60.35,
+   "rot": 90.0,
+   "side": "B.Cu"
+  },
+  "LED24": {
+   "x": 5.0,
+   "y": 41.35,
+   "rot": 90.0,
+   "side": "B.Cu"
+  },
+  "H5": {
+   "x": 42.1,
+   "y": 41.25,
+   "rot": 0.0,
+   "side": "F.Cu"
+  },
+  "H6": {
+   "x": 23.2,
+   "y": 96.0,
+   "rot": 0.0,
+   "side": "F.Cu"
+  },
+  "H7": {
+   "x": 61.0,
+   "y": 96.0,
+   "rot": 0.0,
+   "side": "F.Cu"
+  }
+ },
+ "cross_check": {
+  "checked": 45,
+  "missing_refs": [],
+  "discrepancies": [],
+  "adjudications": [
+   "J1 flip adjudicated 2026-07-20 (v5_5): (42.1,5.1,rot180) -> (42.1,3.05,rot0), side B.Cu unchanged. Owner-adjudicated per V5-NOTES.md coordinator addendum ('0.60 proud ACCEPTED - bake it'; 3.05 is the authorized anchor, NOT the 3.16 plan value). Shell faces y=0 edge, face 0.60mm proud, pad row y=7.095.",
+   "JS1 adjudicated 2026-07-20 (v5_6 YA13 rev): (70.675,12.5,rot0) -> (69.71,13.37,rot180), side F.Cu unchanged. Owner-directed via placement-study freeze (V5-NOTES.md JS1 REPLACEMENT record + v5_6 executor ledger). YTL YA13-FL7.4-B5Ka(45-10)-R-Y06 THT tilt joystick (LCSC C37323742) replaces the PSP-slider SMD landing. rot180 encodes the 180deg-from-datasheet-datum clocking (pot boxes West+North; wiper=center pin verified vs datasheet CIRCUIT). RE1-mirror symmetry break of 1.30mm owner-approved by the freeze. Nets map 1:1 to +3V3/JOY_X/JOY_Y/GND; 4 frame lugs -> GND."
+  ]
+ }
+}
