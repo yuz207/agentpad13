@@ -54,6 +54,34 @@ stick parts. The reasoning and the measurements are in [`release/RELEASE.md`](re
 - **Firmware — validated.** Emulator-booted and protocol-conformant. Flash `agentpad13.uf2`.
 - **Configurator — live.** Static files: no build step, no network calls, no dependencies.
 
+### AgentPad13 Direct OAI (experimental alternative)
+
+The isolated `codex_oai` keymap is an experimental alternative for direct
+Codex Desktop control. It is not Vial firmware and does not replace the normal,
+recommended `release/firmware/prebuilt/agentpad13.uf2`. Codex Desktop talks to
+this target directly—no helper, daemon, bridge, or Vial protocol—using the
+locked `Codex Micro Lab OAI LED` identity (`303A:8360`, usage `FF00:61`, Report
+ID 6, 64-byte reports).
+
+The current unflashed candidate is
+`release/firmware/prebuilt/agentpad13_codex_oai.uf2`, 93,696 bytes, SHA-256
+`fcb50b2419419be43b7cf90b00a96b16063fcaf182bc24b9642d57e2e8adf54d`.
+Start with the [keymap contract](firmware/loudest_micro/keymaps/codex_oai/README.md),
+[source hand-off](firmware/CODEX-OAI-SOURCE.md), and
+[Direct OAI build procedure](firmware/BUILD.md#agentpad13-direct-oai-experimental-alternative).
+Run the complete host suite from the repository root:
+
+```sh
+python3 -m unittest discover -s firmware/tests/codex_oai -p 'test_*.py'
+```
+
+The checked-in [emulator capture](firmware/evidence/codex-oai-emulator.json)
+and [current manifest](firmware/evidence/codex-oai-current-manifest.json) bind
+that exact UF2 to the offline USB/protocol/LED checks. Physical validation is
+still entirely PENDING; no install or flash occurred. Any future hardware
+operation requires the literal authorization and observation record in the
+[physical runbook](docs/codex-oai-physical-runbook.md).
+
 ## First power-on
 
 Flash [`agentpad13.uf2`](release/firmware/prebuilt/agentpad13.uf2) — hold BOOTSEL and drag the file on. Then hold
