@@ -222,9 +222,19 @@ The target is build-only. It does not search for, open, or write to a USB
 device. Use the disposable-worktree builder in
 [`../../../tools/build_codex_oai.py`](../../../tools/build_codex_oai.py) and
 the complete recipe in [`../../../BUILD.md`](../../../BUILD.md). The builder
-requires Vial-QMK commit `00fc4627`, the local VIA pre-hook patch, initialized
-submodules, and a newlib-capable ARM compiler. It publishes only
-`firmware/prebuilt/loudest_micro_codex_oai.uf2` after clean builds pass.
+requires Vial-QMK commit `00fc4627`, the local VIA pre-hook and Raw HID
+Report-ID patches, initialized submodules, and Arm GNU Toolchain 15.2.Rel1. It
+publishes only
+[`release/firmware/prebuilt/agentpad13_codex_oai.uf2`](../../../../release/firmware/prebuilt/agentpad13_codex_oai.uf2)
+after clean builds pass. The current candidate is 93,696 bytes with SHA-256
+`64cd5f40cd444f519222baa17437f42cea45b41617ac133ea577dd312c39ae3c`.
+
+Run the complete host gate from the repository root with
+`python3 -m unittest discover -s firmware/tests/codex_oai -p 'test_*.py'`.
+The current offline result is bound to the exact release UF2 by the
+[`emulator capture`](../../../evidence/codex-oai-emulator.json) and
+[`current manifest`](../../../evidence/codex-oai-current-manifest.json).
+Neither the builder nor these checks install or flash firmware.
 
 Before any future hardware operation, complete the explicit authorization and
 matrix in [`../../../../docs/codex-oai-physical-runbook.md`](../../../../docs/codex-oai-physical-runbook.md).

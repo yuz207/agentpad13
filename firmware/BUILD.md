@@ -6,9 +6,10 @@ keyboard tree** — it is copied into `vial-qmk/keyboards/loudest_micro/` and
 compiled there. (`loudest_micro` is the project's QMK keyboard/module name;
 the product and all user-visible strings are **agentpad13** — see
 `loudest_micro/readme.md` for why the internal name stays.) Only the keyboard
-tree, this guide, the core patch in `patches/`, the validation tools
-(`check_pins_v4.py`, `tests/conformance/`), and the prebuilt `.uf2`s live in
-the repo; the multi-gigabyte vial-qmk checkout does not.
+tree, this guide, the core patches in `patches/`, the validation tools
+(`check_pins_v4.py`, `tests/conformance/`), and the prebuilt `.uf2`s under
+`release/firmware/prebuilt/` live in the repo; the multi-gigabyte vial-qmk
+checkout does not.
 
 Status: **both keymaps compile to a clean `.uf2` with zero code warnings**
 (`-Werror` is on). No features were stubbed — the joystick, RGB status
@@ -101,13 +102,13 @@ qmk compile -kb loudest_micro -km vial          # -> loudest_micro_vial.uf2
 ```
 
 Both drop a `.uf2` in the vial-qmk root. Prebuilt copies live in
-`firmware/prebuilt/` (SHA-256 hashes in `firmware/FIRMWARE-V4-NOTES.md`) —
+`release/firmware/prebuilt/` (SHA-256 hashes in `firmware/FIRMWARE-V4-NOTES.md`) —
 **note the shipped names differ from the build output** *(renamed 2026-08-15)*:
 
 | build | emits | ships as |
 |---|---|---|
-| `-km vial` | `loudest_micro_vial.uf2` | **`firmware/prebuilt/agentpad13.uf2`** — the one users want |
-| `-km default` | `loudest_micro_default.uf2` | **`firmware/prebuilt/agentpad13_reference.uf2`** — the byte-reproducible reference |
+| `-km vial` | `loudest_micro_vial.uf2` | **`release/firmware/prebuilt/agentpad13.uf2`** — the one users want |
+| `-km default` | `loudest_micro_default.uf2` | **`release/firmware/prebuilt/agentpad13_reference.uf2`** — the byte-reproducible reference |
 
 ### 3.1 Validate
 
@@ -147,6 +148,58 @@ npm run smoke:default && npm run smoke:vial     # -> EMULATOR SMOKE: PASS
 Recorded results and the emulator-fidelity caveats are in
 `firmware/FIRMWARE-V4-NOTES.md` §4d.
 
+### AgentPad13 Direct OAI (experimental alternative)
+
+`loudest_micro:codex_oai` is isolated from the normal default/Vial firmware.
+It uses the locked product string `Codex Micro Lab OAI LED`, USB `303A:8360`,
+Raw HID usage `FF00:61`, Report ID 6, and 64-byte reports. Codex Desktop talks
+to it directly: there is no helper, daemon, bridge, Vial protocol, or Vial
+configuration route. The normal recommended firmware remains
+`release/firmware/prebuilt/agentpad13.uf2`.
+
+The repository builder requires exact Vial-QMK commit
+`00fc4627cd038ac9b7e9b8bf2b40b50e9e88aecb`, initialized recursive submodules,
+and Arm GNU Toolchain 15.2.Rel1 (gcc 15.2.1). It verifies the repository-owned
+`patches/0001-via-command-kb-backport.patch`, applies or verifies
+`patches/0002-raw-hid-report-id-chibios.patch`, checks their pinned digests, stages
+the keyboard through a temporary link, builds `default`, `vial`, and
+`codex_oai`, and publishes only the OAI UF2:
+
+```sh
+python3 firmware/tools/build_codex_oai.py \
+  --qmk-home /path/to/disposable/pinned-vial-qmk \
+  --clean
+```
+
+The current output is
+`release/firmware/prebuilt/agentpad13_codex_oai.uf2`, 93,696 bytes, SHA-256
+`64cd5f40cd444f519222baa17437f42cea45b41617ac133ea577dd312c39ae3c`.
+Run the complete host and emulator gates from the repository root:
+
+```sh
+python3 -m unittest discover -s firmware/tests/codex_oai -p 'test_*.py'
+cd firmware/tests/emulator
+npm ci
+npm run smoke:codex-oai
+cd ../../..
+
+python3 firmware/tools/verify_codex_oai_artifact.py \
+  --uf2 release/firmware/prebuilt/agentpad13_codex_oai.uf2 \
+  --elf /path/to/disposable/pinned-vial-qmk/.build/loudest_micro_codex_oai.elf \
+  --emulator-evidence firmware/evidence/codex-oai-emulator.json \
+  --output firmware/evidence/codex-oai-current-manifest.json
+```
+
+The builder and verifier operate on local files only and report zero flash
+operations; they do not search for or write a USB device or removable volume.
+The current offline evidence is in
+[`evidence/codex-oai-emulator.json`](evidence/codex-oai-emulator.json) and
+[`evidence/codex-oai-current-manifest.json`](evidence/codex-oai-current-manifest.json).
+Physical validation remains PENDING. Before any hardware operation, obtain the
+literal approval required by
+[`../docs/codex-oai-physical-runbook.md`](../docs/codex-oai-physical-runbook.md);
+this build guide does not authorize installation or flashing.
+
 ## 4. Flash
 
 Enter the RP2040 bootloader (hold BOOTSEL while plugging in USB, or double-tap
@@ -154,8 +207,8 @@ RESET) so the `RPI-RP2` mass-storage drive appears, then:
 
 ```bash
 qmk flash -kb loudest_micro -km default
-# or just copy firmware/prebuilt/agentpad13.uf2 (vial) or
-# firmware/prebuilt/agentpad13_reference.uf2 (plain QMK) onto RPI-RP2
+# or just copy release/firmware/prebuilt/agentpad13.uf2 (vial) or
+# release/firmware/prebuilt/agentpad13_reference.uf2 (plain QMK) onto RPI-RP2
 ```
 
 **Never wipes user data:** Vial dynamic keymaps/macros live in emulated EEPROM,
@@ -167,9 +220,10 @@ matrix or layer count is the only thing that forces a `Reset EEPROM`
 
 ## 4a. Bring-up: first power-on
 
-**The procedure lives in [`firmware/BRING-UP.md`](BRING-UP.md) — that file is the
-single source of truth for it and is not duplicated here.** It was split out of
-this section on 2026-08-15 so it can ship in `v5-release-compiled/`
+**The procedure lives in
+[`release/firmware/BRING-UP.md`](../release/firmware/BRING-UP.md) — that file is
+the single source of truth for it and is not duplicated here.** It was split
+out of this section on 2026-08-15 so it can ship in the release bundle
 byte-identical (the same arrangement `firmware/POLARITY-NOTE.md` already has):
 the audience for bring-up is the owner assembling and powering the first boards,
 not a reader of a 400-line toolchain guide. Only the maintainer-side block below
