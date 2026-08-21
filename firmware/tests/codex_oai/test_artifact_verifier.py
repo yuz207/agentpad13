@@ -157,13 +157,55 @@ class ArtifactVerifierTest(unittest.TestCase):
         unrelated_elf = self.root / "unrelated.elf"
         unrelated_elf.write_bytes(b"unrelated ELF fixture\n")
         with self.assertRaisesRegex(self.verifier.VerificationError, "ELF binary does not match UF2"):
-            self._verify(elf=unrelated_elf, elf_binary=b"unrelated flash image")
+            self._verify(elf=unrelated_elf, elf_binary=bytes([0xA5]) * len(self.elf_binary))
 
     def test_rejects_a_full_extra_zero_payload_beyond_the_elf(self) -> None:
         candidate = self.root / "extra-zero-block.uf2"
         candidate.write_bytes(make_uf2(self.uf2_image + bytes(UF2_PAYLOAD_SIZE)))
         with self.assertRaisesRegex(self.verifier.VerificationError, "padding"):
             self._verify(uf2=candidate, evidence=self._evidence_for(candidate))
+
+    def test_rejects_short_gapped_block_when_omitted_elf_bytes_are_zero(self) -> None:
+        elf_binary = bytes(range(248)) + bytes(8) + b"second block fixture\n"
+        uf2_image = elf_binary + bytes((-len(elf_binary)) % UF2_PAYLOAD_SIZE)
+        contents = bytearray(make_uf2(uf2_image))
+        struct.pack_into("<I", contents, 16, 248)
+        candidate = self.root / "short-gapped-block.uf2"
+        candidate.write_bytes(contents)
+
+        with self.assertRaisesRegex(self.verifier.VerificationError, "payload"):
+            self._verify(
+                uf2=candidate,
+                evidence=self._evidence_for(candidate),
+                elf_binary=elf_binary,
+            )
+
+    def test_rejects_expanded_last_payload_even_when_extra_bytes_are_zero(self) -> None:
+        contents = bytearray(self.good_uf2.read_bytes())
+        final_block = len(contents) - UF2_BLOCK_SIZE
+        struct.pack_into("<I", contents, final_block + 16, UF2_PAYLOAD_SIZE + 4)
+        candidate = self.root / "expanded-last-payload.uf2"
+        candidate.write_bytes(contents)
+
+        with self.assertRaisesRegex(self.verifier.VerificationError, "payload"):
+            self._verify(uf2=candidate, evidence=self._evidence_for(candidate))
+
+    def test_rejects_noncanonical_family_flags_and_id(self) -> None:
+        mutations = (
+            ("missing-family-flag", 0x00000000, 0xE48BFF56, "flags"),
+            ("wrong-family-id", 0x00002000, 0xE48BFF57, "family ID"),
+            ("missing-family-id", 0x00002000, 0x00000000, "family ID"),
+            ("unexpected-flag", 0x00006000, 0xE48BFF56, "flags"),
+        )
+        for name, flags, family_id, message in mutations:
+            with self.subTest(name=name):
+                contents = bytearray(self.good_uf2.read_bytes())
+                struct.pack_into("<I", contents, 8, flags)
+                struct.pack_into("<I", contents, 28, family_id)
+                candidate = self.root / f"{name}.uf2"
+                candidate.write_bytes(contents)
+                with self.assertRaisesRegex(self.verifier.VerificationError, message):
+                    self._verify(uf2=candidate, evidence=self._evidence_for(candidate))
 
     def test_rejects_uf2_with_bad_magic_or_payload_bounds(self) -> None:
         cases: list[tuple[str, bytearray, str]] = []

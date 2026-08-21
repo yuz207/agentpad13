@@ -38,7 +38,9 @@ UF2_DATA_LIMIT = 508
 UF2_MAGIC_START0 = 0x0A324655
 UF2_MAGIC_START1 = 0x9E5D5157
 UF2_MAGIC_END = 0x0AB16F30
-UF2_FLAG_NOFLASH = 0x00000001
+UF2_EXPECTED_FLAGS = 0x00002000
+UF2_PAYLOAD_SIZE = 256
+RP2040_FAMILY_ID = 0xE48BFF56
 RP2040_FLASH_BASE = 0x10000000
 RP2040_FLASH_LIMIT = 0x11000000
 
@@ -88,8 +90,8 @@ def file_sha256(path: Path, *, label: str) -> str:
     return digest.hexdigest()
 
 
-def uf2_flash_image(path: Path) -> tuple[bytes, int]:
-    """Return validated RP2040 flash bytes and the final UF2 payload size."""
+def uf2_flash_image(path: Path) -> bytes:
+    """Return flash bytes from canonical QMK RP2040 UF2 blocks."""
     source = require_regular_file(path, label="UF2")
     contents = source.read_bytes()
     if not contents or len(contents) % UF2_BLOCK_SIZE:
@@ -97,10 +99,8 @@ def uf2_flash_image(path: Path) -> tuple[bytes, int]:
 
     actual_block_count = len(contents) // UF2_BLOCK_SIZE
     image = bytearray()
-    expected_target = RP2040_FLASH_BASE
     seen_numbers: set[int] = set()
     seen_targets: set[int] = set()
-    final_payload_size = 0
 
     for index in range(actual_block_count):
         block = contents[index * UF2_BLOCK_SIZE : (index + 1) * UF2_BLOCK_SIZE]
@@ -112,7 +112,7 @@ def uf2_flash_image(path: Path) -> tuple[bytes, int]:
             payload_size,
             block_number,
             declared_block_count,
-            _family_id,
+            family_id,
         ) = struct.unpack_from("<IIIIIIII", block, 0)
         (end_magic,) = struct.unpack_from("<I", block, UF2_DATA_LIMIT)
 
@@ -122,10 +122,21 @@ def uf2_flash_image(path: Path) -> tuple[bytes, int]:
             UF2_MAGIC_END,
         ):
             raise VerificationError(f"UF2 block {index} has invalid magic")
-        if flags & UF2_FLAG_NOFLASH:
-            raise VerificationError(f"UF2 block {index} is marked no-flash")
-        if payload_size < 1 or UF2_DATA_OFFSET + payload_size > UF2_DATA_LIMIT:
-            raise VerificationError(f"UF2 block {index} has invalid payload bounds")
+        if flags != UF2_EXPECTED_FLAGS:
+            raise VerificationError(
+                f"UF2 block {index} flags must be 0x{UF2_EXPECTED_FLAGS:08x}; "
+                f"found 0x{flags:08x}"
+            )
+        if family_id != RP2040_FAMILY_ID:
+            raise VerificationError(
+                f"UF2 block {index} family ID must be 0x{RP2040_FAMILY_ID:08x}; "
+                f"found 0x{family_id:08x}"
+            )
+        if payload_size != UF2_PAYLOAD_SIZE:
+            raise VerificationError(
+                f"UF2 block {index} payload must be {UF2_PAYLOAD_SIZE} bytes; "
+                f"found {payload_size}"
+            )
         if declared_block_count != actual_block_count:
             raise VerificationError(
                 f"UF2 block {index} declares {declared_block_count} blocks; found {actual_block_count}"
@@ -140,23 +151,21 @@ def uf2_flash_image(path: Path) -> tuple[bytes, int]:
         if target in seen_targets:
             raise VerificationError(f"duplicate UF2 target address: 0x{target:08x}")
         seen_targets.add(target)
-        target_end = target + payload_size
+        target_end = target + UF2_PAYLOAD_SIZE
         if target < RP2040_FLASH_BASE or target_end > RP2040_FLASH_LIMIT:
             raise VerificationError(
                 f"UF2 block {index} target is outside RP2040 flash range: "
                 f"0x{target:08x}..0x{target_end:08x}"
             )
-        if target < expected_target:
+        expected_target = RP2040_FLASH_BASE + block_number * UF2_PAYLOAD_SIZE
+        if target != expected_target:
             raise VerificationError(
-                f"UF2 target order overlaps or moves backwards at block {index}: 0x{target:08x}"
+                f"UF2 block {index} target must be contiguous at 0x{expected_target:08x}; "
+                f"found 0x{target:08x}"
             )
-        if target > expected_target:
-            image.extend(bytes(target - expected_target))
-        image.extend(block[UF2_DATA_OFFSET : UF2_DATA_OFFSET + payload_size])
-        expected_target = target_end
-        final_payload_size = payload_size
+        image.extend(block[UF2_DATA_OFFSET : UF2_DATA_OFFSET + UF2_PAYLOAD_SIZE])
 
-    return bytes(image), final_payload_size
+    return bytes(image)
 
 
 def elf_binary(path: Path) -> bytes:
@@ -182,15 +191,22 @@ def elf_binary(path: Path) -> bytes:
 
 def verify_elf_uf2_equivalence(uf2: Path, elf: Path) -> dict[str, Any]:
     """Require UF2 flash bytes to equal the ELF binary plus zero-only UF2 padding."""
-    uf2_image, final_payload_size = uf2_flash_image(uf2)
+    uf2_image = uf2_flash_image(uf2)
     binary = elf_binary(elf)
-    if len(uf2_image) < len(binary) or uf2_image[: len(binary)] != binary:
+    expected_padding_size = (-len(binary)) % UF2_PAYLOAD_SIZE
+    expected_image_size = len(binary) + expected_padding_size
+    if len(uf2_image) != expected_image_size:
+        raise VerificationError(
+            "UF2 flash image length does not match canonical ELF padding: "
+            f"expected {expected_image_size}; found {len(uf2_image)}"
+        )
+    if uf2_image[: len(binary)] != binary:
         raise VerificationError("ELF binary does not match UF2 flash image")
     padding = uf2_image[len(binary) :]
+    if len(padding) != expected_padding_size:
+        raise VerificationError("UF2 trailing zero padding length is not canonical")
     if any(padding):
         raise VerificationError("UF2 contains non-zero bytes beyond the ELF binary")
-    if len(padding) >= final_payload_size:
-        raise VerificationError("UF2 zero padding includes a full payload beyond the ELF binary")
     return {
         "status": "pass",
         "flash_base": f"0x{RP2040_FLASH_BASE:08x}",
