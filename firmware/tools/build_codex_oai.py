@@ -10,16 +10,17 @@ created.  Its only published artifact is the direct-OAI UF2 in this repo.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import os
 import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import Sequence
+from typing import Mapping, Sequence
 
 
-PINNED_QMK_COMMIT = "00fc4627"
+PINNED_QMK_COMMIT = "00fc4627cd038ac9b7e9b8bf2b40b50e9e88aecb"
 KEYBOARD_NAME = "loudest_micro"
 KEYMAPS = ("default", "vial", "codex_oai")
 REQUIRED_SUBMODULES = (
@@ -32,7 +33,26 @@ REQUIRED_SUBMODULES = (
 REPO_ROOT = Path(__file__).resolve().parents[2]
 KEYBOARD_SOURCE = REPO_ROOT / "firmware" / KEYBOARD_NAME
 OAI_ARTIFACT = REPO_ROOT / "release" / "firmware" / "prebuilt" / "agentpad13_codex_oai.uf2"
+VIA_COMMAND_PATCH = REPO_ROOT / "firmware" / "patches" / "0001-via-command-kb-backport.patch"
 OAI_DESCRIPTOR_PATCH = REPO_ROOT / "firmware" / "patches" / "0002-raw-hid-report-id-chibios.patch"
+VIA_COMMAND_PATCH_SHA256 = "b12c375f7de6361fb2b26ecd003b0ffd717fb54d1441f37574866c86f473268c"
+OAI_DESCRIPTOR_PATCH_SHA256 = "48eb5211383c8aa338e5b266b34cb3a90fc97cccc5586754f35d54a7bfdac002"
+QMK_PATCHED_FILE_SHA256 = {
+    "quantum/via.c": "48291b5dceb67de7daf7caad9db5399c69f463485203476ae4586814f3ad46f5",
+    "quantum/via.h": "0a8ef108af7114bbc1da252f2017d7a9dc502750e6d75bd6506e1513ef226e7d",
+}
+QMK_DESCRIPTOR_BASE_SHA256 = {
+    "tmk_core/protocol/usb_descriptor.c": "b5921e5311d40e50c5e4f88b133ba3b7cf10d4faa5cbd9c8da4ef4da7ba048aa",
+    "tmk_core/protocol/usb_descriptor.h": "a75bb9a088e37ec51d88b8143c2cfce076dc02865c528be7591f15e566c2d477",
+}
+QMK_DESCRIPTOR_PATCHED_SHA256 = {
+    "tmk_core/protocol/usb_descriptor.c": "09f655faea016c21e2318d1f34d1345b2e8424f64f064f1a92ef6be7118cf5e3",
+    "tmk_core/protocol/usb_descriptor.h": "2e8dc4cd1edf372b6ffd1308a1e9e7c42bda07642c0d373a7b3e124103b9339e",
+}
+PINNED_GCC_VERSION = (
+    "arm-none-eabi-gcc (Arm GNU Toolchain 15.2.Rel1 (Build arm-15.86)) "
+    "15.2.1 20251203"
+)
 
 
 class BuildError(RuntimeError):
@@ -59,6 +79,71 @@ def _git_head(qmk_home: Path) -> str:
         raise BuildError(f"QMK home is not a readable git worktree: {qmk_home}") from exc
 
 
+def _file_sha256(path: Path) -> str:
+    if path.is_symlink() or not path.is_file():
+        raise BuildError(f"required regular file is unavailable or unsafe: {path}")
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _verify_file_sha256(path: Path, expected: str, *, label: str) -> None:
+    actual = _file_sha256(path)
+    if actual != expected:
+        raise BuildError(f"{label} content digest must be {expected}; found {actual}")
+
+
+def validate_qmk_state(status: str, file_digests: Mapping[str, str]) -> str:
+    """Accept only the exact repository-owned patch 0001 or 0001+0002 states."""
+    patch1_paths = frozenset(QMK_PATCHED_FILE_SHA256)
+    patch2_paths = frozenset(QMK_DESCRIPTOR_PATCHED_SHA256)
+    actual_status = frozenset(line for line in status.splitlines() if line)
+    patch1_status = frozenset(f" M {path}" for path in patch1_paths)
+    patch12_status = patch1_status | frozenset(f" M {path}" for path in patch2_paths)
+    if actual_status == patch1_status:
+        expected_digests = QMK_PATCHED_FILE_SHA256 | QMK_DESCRIPTOR_BASE_SHA256
+        state = "patch-0001"
+    elif actual_status == patch12_status:
+        expected_digests = QMK_PATCHED_FILE_SHA256 | QMK_DESCRIPTOR_PATCHED_SHA256
+        state = "patch-0001+patch-0002"
+    else:
+        unexpected = ", ".join(sorted(actual_status ^ patch12_status)) or "unknown state"
+        raise BuildError(f"unexpected QMK modification set: {unexpected}")
+
+    for path, expected in expected_digests.items():
+        actual = file_digests.get(path)
+        if actual != expected:
+            raise BuildError(
+                f"QMK content digest mismatch for {path}: expected {expected}; found {actual}"
+            )
+    if set(file_digests) != set(expected_digests):
+        raise BuildError("unexpected QMK content digest inventory")
+    return state
+
+
+def verify_qmk_source_state(qmk_home: Path) -> str:
+    try:
+        status = subprocess.check_output(
+            (
+                "git",
+                "-C",
+                str(qmk_home),
+                "status",
+                "--porcelain=v1",
+                "--untracked-files=all",
+                "--ignore-submodules=none",
+            ),
+            text=True,
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError) as exc:
+        raise BuildError("could not read exact QMK worktree state") from exc
+    paths = QMK_PATCHED_FILE_SHA256 | QMK_DESCRIPTOR_BASE_SHA256
+    digests = {path: _file_sha256(qmk_home / path) for path in paths}
+    return validate_qmk_state(status, digests)
+
+
 def validate_qmk_home(qmk_home: Path, *, head: str | None = None) -> str:
     """Validate the exact Vial source and the required core backport."""
     qmk_home = qmk_home.resolve()
@@ -66,17 +151,17 @@ def validate_qmk_home(qmk_home: Path, *, head: str | None = None) -> str:
         raise BuildError(f"QMK home does not exist: {qmk_home}")
 
     actual_head = head or _git_head(qmk_home)
-    if not actual_head.startswith(PINNED_QMK_COMMIT):
+    if actual_head != PINNED_QMK_COMMIT:
         raise BuildError(
-            f"QMK home must be pinned to {PINNED_QMK_COMMIT}; found {actual_head}"
+            f"QMK home must be at exact QMK commit {PINNED_QMK_COMMIT}; found {actual_head}"
         )
-
-    via_c = qmk_home / "quantum" / "via.c"
-    via_h = qmk_home / "quantum" / "via.h"
-    if not via_c.is_file() or not via_h.is_file():
-        raise BuildError("QMK home is missing quantum/via.c or quantum/via.h")
-    if "via_command_kb" not in via_c.read_text(encoding="utf-8") or "via_command_kb" not in via_h.read_text(encoding="utf-8"):
-        raise BuildError("the required VIA command pre-hook patch is not applied")
+    _verify_file_sha256(
+        VIA_COMMAND_PATCH, VIA_COMMAND_PATCH_SHA256, label="repository patch 0001"
+    )
+    _verify_file_sha256(
+        OAI_DESCRIPTOR_PATCH, OAI_DESCRIPTOR_PATCH_SHA256, label="repository patch 0002"
+    )
+    verify_qmk_source_state(qmk_home)
 
     missing = [path for path in REQUIRED_SUBMODULES if not (qmk_home / path).is_dir()]
     if missing:
@@ -134,6 +219,9 @@ def apply_oai_descriptor_patch(qmk_home: Path, patch: Path = OAI_DESCRIPTOR_PATC
     """Apply the repository-owned descriptor patch, or verify it is already applied."""
     if patch.is_symlink() or not patch.is_file():
         raise BuildError(f"Raw HID descriptor patch is unavailable or unsafe: {patch}")
+    _verify_file_sha256(
+        patch, OAI_DESCRIPTOR_PATCH_SHA256, label="repository patch 0002"
+    )
     if _git_apply_check(qmk_home, patch):
         _run(("git", "-C", str(qmk_home), "apply", str(patch)), cwd=qmk_home)
     elif not _git_apply_check(qmk_home, patch, reverse=True):
@@ -174,6 +262,30 @@ def find_cross_compiler() -> str:
     compiler = shutil.which("arm-none-eabi-gcc")
     if compiler is None:
         raise BuildError("arm-none-eabi-gcc is not on PATH")
+    required_binutils = (
+        "arm-none-eabi-ar",
+        "arm-none-eabi-objcopy",
+        "arm-none-eabi-size",
+        "arm-none-eabi-nm",
+    )
+    binutils = {tool: shutil.which(tool) for tool in required_binutils}
+    missing_binutils = [tool for tool, path in binutils.items() if path is None]
+    if missing_binutils:
+        raise BuildError(
+            "cross toolchain is missing required binutils: " + ", ".join(missing_binutils)
+        )
+    compiler_path = Path(compiler).resolve()
+    if any(Path(path).resolve().parent != compiler_path.parent for path in binutils.values()):
+        raise BuildError("compiler and binutils must resolve from the same toolchain bin directory")
+    try:
+        version = subprocess.check_output((compiler, "--version"), text=True).splitlines()[0]
+    except (subprocess.CalledProcessError, IndexError) as exc:
+        raise BuildError("could not inspect arm-none-eabi-gcc version") from exc
+    if version != PINNED_GCC_VERSION:
+        raise BuildError(
+            "arm-none-eabi-gcc must be Arm GNU Toolchain 15.2.Rel1 with gcc 15.2.1; "
+            f"found {version}"
+        )
     for probe in ("include/stdint.h", "libc.a"):
         try:
             value = subprocess.check_output((compiler, f"-print-file-name={probe}"), text=True).strip()
@@ -181,18 +293,7 @@ def find_cross_compiler() -> str:
             raise BuildError(f"could not inspect cross compiler for {probe}") from exc
         if not value or value == probe or not Path(value).is_file():
             raise BuildError(f"cross compiler is missing newlib component: {probe}")
-    required_binutils = (
-        "arm-none-eabi-ar",
-        "arm-none-eabi-objcopy",
-        "arm-none-eabi-size",
-        "arm-none-eabi-nm",
-    )
-    missing_binutils = [tool for tool in required_binutils if shutil.which(tool) is None]
-    if missing_binutils:
-        raise BuildError(
-            "cross toolchain is missing required binutils: " + ", ".join(missing_binutils)
-        )
-    return compiler
+    return str(compiler_path)
 
 
 def _qmk_environment(qmk_home: Path) -> dict[str, str]:
@@ -252,6 +353,7 @@ def build_all(qmk_home: Path, *, clean: bool) -> None:
     """Validate, stage, lint, compile and publish without touching hardware."""
     validate_qmk_home(qmk_home)
     apply_oai_descriptor_patch(qmk_home)
+    verify_qmk_source_state(qmk_home)
     find_cross_compiler()
     link = keyboard_link(qmk_home, KEYBOARD_SOURCE)
     try:

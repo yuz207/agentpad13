@@ -1,8 +1,16 @@
 {
+  "elf_sha256": "c860e109a47d0ce506461a85323682aacf3c48aede375116aa818ecf5c71e61f",
   "elf_size": {
     "bss": 265192,
     "data": 0,
     "text": 46636
+  },
+  "elf_uf2_equivalence": {
+    "elf_binary_size_bytes": 46636,
+    "flash_base": "0x10000000",
+    "status": "pass",
+    "trailing_zero_padding_bytes": 212,
+    "uf2_flash_size_bytes": 46848
   },
   "emulator_evidence": {
     "descriptor_verified": true,

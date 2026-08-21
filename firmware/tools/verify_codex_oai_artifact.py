@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import json
 import os
+import struct
 import subprocess
 import sys
 import tempfile
@@ -30,7 +31,16 @@ REQUIRED_SYMBOLS = frozenset(
     {"raw_hid_receive", "codex_oai_notify", "codex_led_render", "encoder_update_user"}
 )
 REQUIRED_ACKS = ("rgbcfg_ack", "thstatus_ack", "device_status_ack")
-DEFINED_SYMBOL_TYPES = frozenset("TtDdBbRrSsGgVvWw")
+DEFINED_SYMBOL_TYPES = frozenset("TtDdBbRrSsGgVW")
+UF2_BLOCK_SIZE = 512
+UF2_DATA_OFFSET = 32
+UF2_DATA_LIMIT = 508
+UF2_MAGIC_START0 = 0x0A324655
+UF2_MAGIC_START1 = 0x9E5D5157
+UF2_MAGIC_END = 0x0AB16F30
+UF2_FLAG_NOFLASH = 0x00000001
+RP2040_FLASH_BASE = 0x10000000
+RP2040_FLASH_LIMIT = 0x11000000
 
 
 class VerificationError(RuntimeError):
@@ -68,6 +78,128 @@ def sha256_and_size(path: Path) -> tuple[str, int]:
     return digest.hexdigest(), size
 
 
+def file_sha256(path: Path, *, label: str) -> str:
+    """Calculate a regular local file's SHA-256 digest."""
+    source = require_regular_file(path, label=label)
+    digest = hashlib.sha256()
+    with source.open("rb") as input_file:
+        for block in iter(lambda: input_file.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def uf2_flash_image(path: Path) -> tuple[bytes, int]:
+    """Return validated RP2040 flash bytes and the final UF2 payload size."""
+    source = require_regular_file(path, label="UF2")
+    contents = source.read_bytes()
+    if not contents or len(contents) % UF2_BLOCK_SIZE:
+        raise VerificationError("UF2 size must be a non-zero multiple of 512 bytes")
+
+    actual_block_count = len(contents) // UF2_BLOCK_SIZE
+    image = bytearray()
+    expected_target = RP2040_FLASH_BASE
+    seen_numbers: set[int] = set()
+    seen_targets: set[int] = set()
+    final_payload_size = 0
+
+    for index in range(actual_block_count):
+        block = contents[index * UF2_BLOCK_SIZE : (index + 1) * UF2_BLOCK_SIZE]
+        (
+            magic0,
+            magic1,
+            flags,
+            target,
+            payload_size,
+            block_number,
+            declared_block_count,
+            _family_id,
+        ) = struct.unpack_from("<IIIIIIII", block, 0)
+        (end_magic,) = struct.unpack_from("<I", block, UF2_DATA_LIMIT)
+
+        if (magic0, magic1, end_magic) != (
+            UF2_MAGIC_START0,
+            UF2_MAGIC_START1,
+            UF2_MAGIC_END,
+        ):
+            raise VerificationError(f"UF2 block {index} has invalid magic")
+        if flags & UF2_FLAG_NOFLASH:
+            raise VerificationError(f"UF2 block {index} is marked no-flash")
+        if payload_size < 1 or UF2_DATA_OFFSET + payload_size > UF2_DATA_LIMIT:
+            raise VerificationError(f"UF2 block {index} has invalid payload bounds")
+        if declared_block_count != actual_block_count:
+            raise VerificationError(
+                f"UF2 block {index} declares {declared_block_count} blocks; found {actual_block_count}"
+            )
+        if block_number in seen_numbers:
+            raise VerificationError(f"duplicate UF2 block number: {block_number}")
+        seen_numbers.add(block_number)
+        if block_number != index:
+            raise VerificationError(
+                f"UF2 block order is invalid: position {index} contains block {block_number}"
+            )
+        if target in seen_targets:
+            raise VerificationError(f"duplicate UF2 target address: 0x{target:08x}")
+        seen_targets.add(target)
+        target_end = target + payload_size
+        if target < RP2040_FLASH_BASE or target_end > RP2040_FLASH_LIMIT:
+            raise VerificationError(
+                f"UF2 block {index} target is outside RP2040 flash range: "
+                f"0x{target:08x}..0x{target_end:08x}"
+            )
+        if target < expected_target:
+            raise VerificationError(
+                f"UF2 target order overlaps or moves backwards at block {index}: 0x{target:08x}"
+            )
+        if target > expected_target:
+            image.extend(bytes(target - expected_target))
+        image.extend(block[UF2_DATA_OFFSET : UF2_DATA_OFFSET + payload_size])
+        expected_target = target_end
+        final_payload_size = payload_size
+
+    return bytes(image), final_payload_size
+
+
+def elf_binary(path: Path) -> bytes:
+    """Convert a regular local ELF to its loadable binary image with objcopy."""
+    elf = require_regular_file(path, label="ELF")
+    with tempfile.TemporaryDirectory(prefix="agentpad13_elf_binary_") as temporary_dir:
+        output = Path(temporary_dir) / "firmware.bin"
+        command = ("arm-none-eabi-objcopy", "-O", "binary", str(elf), str(output))
+        try:
+            subprocess.run(command, check=True, capture_output=True, text=True)
+        except FileNotFoundError as exc:
+            raise VerificationError("required inspection tool is unavailable: arm-none-eabi-objcopy") from exc
+        except subprocess.CalledProcessError as exc:
+            raise VerificationError(
+                f"inspection command failed ({exc.returncode}): {' '.join(command)}\n"
+                f"{exc.stdout}{exc.stderr}"
+            ) from exc
+        binary = require_regular_file(output, label="ELF-derived binary").read_bytes()
+    if not binary:
+        raise VerificationError("ELF-derived binary is empty")
+    return binary
+
+
+def verify_elf_uf2_equivalence(uf2: Path, elf: Path) -> dict[str, Any]:
+    """Require UF2 flash bytes to equal the ELF binary plus zero-only UF2 padding."""
+    uf2_image, final_payload_size = uf2_flash_image(uf2)
+    binary = elf_binary(elf)
+    if len(uf2_image) < len(binary) or uf2_image[: len(binary)] != binary:
+        raise VerificationError("ELF binary does not match UF2 flash image")
+    padding = uf2_image[len(binary) :]
+    if any(padding):
+        raise VerificationError("UF2 contains non-zero bytes beyond the ELF binary")
+    if len(padding) >= final_payload_size:
+        raise VerificationError("UF2 zero padding includes a full payload beyond the ELF binary")
+    return {
+        "status": "pass",
+        "flash_base": f"0x{RP2040_FLASH_BASE:08x}",
+        "elf_binary_size_bytes": len(binary),
+        "uf2_flash_size_bytes": len(uf2_image),
+        "trailing_zero_padding_bytes": len(padding),
+    }
+
+
 def elf_size(path: Path) -> dict[str, int]:
     """Inspect ELF text/data/bss through the pinned ARM-size compatible tool."""
     elf = require_regular_file(path, label="ELF")
@@ -82,7 +214,7 @@ def elf_size(path: Path) -> dict[str, int]:
 def elf_symbols(path: Path) -> dict[str, str]:
     """Return defined and undefined ELF symbol names with their nm type letters."""
     elf = require_regular_file(path, label="ELF")
-    output = _run_text(("arm-none-eabi-nm", str(elf)))
+    output = _run_text(("arm-none-eabi-nm", "--defined-only", str(elf)))
     symbols: dict[str, str] = {}
     for line in output.splitlines():
         fields = line.split()
@@ -138,6 +270,7 @@ def verify(uf2: Path, elf: Path, evidence: Mapping[str, Any]) -> dict[str, Any]:
     """Return a JSON-safe manifest payload after all offline checks pass."""
     digest, size = sha256_and_size(uf2)
     verify_evidence(evidence, artifact_sha256=digest, artifact_size=size)
+    equivalence = verify_elf_uf2_equivalence(uf2, elf)
     metrics = elf_size(elf)
     verify_symbols(elf_symbols(elf))
     return {
@@ -149,7 +282,9 @@ def verify(uf2: Path, elf: Path, evidence: Mapping[str, Any]) -> dict[str, Any]:
         "report_bytes": EXPECTED_REPORT_BYTES,
         "sha256": digest,
         "size_bytes": size,
+        "elf_sha256": file_sha256(elf, label="ELF"),
         "elf_size": metrics,
+        "elf_uf2_equivalence": equivalence,
         "required_symbols": sorted(REQUIRED_SYMBOLS),
         "emulator_evidence": {
             "usb_enumerated": evidence["usb_enumerated"],

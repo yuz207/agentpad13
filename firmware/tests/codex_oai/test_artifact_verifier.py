@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import struct
 import tempfile
 import unittest
 from pathlib import Path
@@ -14,6 +15,39 @@ from unittest import mock
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
 SCRIPT = REPO / "firmware" / "tools" / "verify_codex_oai_artifact.py"
+
+UF2_BLOCK_SIZE = 512
+UF2_PAYLOAD_SIZE = 256
+UF2_FLASH_BASE = 0x10000000
+
+
+def make_uf2(image: bytes) -> bytes:
+    if len(image) % UF2_PAYLOAD_SIZE:
+        raise ValueError("test UF2 image must contain complete payload blocks")
+    block_count = len(image) // UF2_PAYLOAD_SIZE
+    output = bytearray()
+    for block_number in range(block_count):
+        block = bytearray(UF2_BLOCK_SIZE)
+        payload = image[
+            block_number * UF2_PAYLOAD_SIZE : (block_number + 1) * UF2_PAYLOAD_SIZE
+        ]
+        struct.pack_into(
+            "<IIIIIIII",
+            block,
+            0,
+            0x0A324655,
+            0x9E5D5157,
+            0x00002000,
+            UF2_FLASH_BASE + block_number * UF2_PAYLOAD_SIZE,
+            UF2_PAYLOAD_SIZE,
+            block_number,
+            block_count,
+            0xE48BFF56,
+        )
+        block[32 : 32 + UF2_PAYLOAD_SIZE] = payload
+        struct.pack_into("<I", block, 508, 0x0AB16F30)
+        output.extend(block)
+    return bytes(output)
 
 
 def load_verifier():
@@ -29,8 +63,12 @@ class ArtifactVerifierTest(unittest.TestCase):
     def setUp(self) -> None:
         self.work = tempfile.TemporaryDirectory(prefix="agentpad13_artifact_test_")
         self.root = Path(self.work.name)
+        self.elf_binary = bytes(range(256)) + b"agentpad13 direct oai fixture\n"
+        self.uf2_image = self.elf_binary + bytes(
+            (-len(self.elf_binary)) % UF2_PAYLOAD_SIZE
+        )
         self.good_uf2 = self.root / "loudest_micro_codex_oai.uf2"
-        self.good_uf2.write_bytes(b"UF2\x00direct-oai\n")
+        self.good_uf2.write_bytes(make_uf2(self.uf2_image))
         self.good_elf = self.root / "loudest_micro_codex_oai.elf"
         self.good_elf.write_bytes(b"ELF fixture\n")
         uf2_bytes = self.good_uf2.read_bytes()
@@ -65,15 +103,110 @@ class ArtifactVerifierTest(unittest.TestCase):
             return "00000000 T raw_hid_receive\n00000000 T codex_oai_notify\n00000000 T codex_led_render\n00000000 T encoder_update_user\n"
         raise AssertionError(f"unexpected tool command: {command}")
 
+    def _verify(
+        self,
+        *,
+        uf2: Path | None = None,
+        elf: Path | None = None,
+        evidence: dict | None = None,
+        elf_binary: bytes | None = None,
+    ):
+        with mock.patch.object(
+            self.verifier.subprocess, "check_output", side_effect=self._tool_output
+        ), mock.patch.object(
+            self.verifier,
+            "elf_binary",
+            return_value=self.elf_binary if elf_binary is None else elf_binary,
+            create=True,
+        ):
+            return self.verifier.verify(
+                uf2 or self.good_uf2,
+                elf or self.good_elf,
+                evidence or self.good_evidence,
+            )
+
+    def _evidence_for(self, uf2: Path) -> dict:
+        data = uf2.read_bytes()
+        return {
+            **self.good_evidence,
+            "uf2_sha256": hashlib.sha256(data).hexdigest(),
+            "uf2_size_bytes": len(data),
+        }
+
     def test_accepts_exact_descriptor_symbols_and_hash(self) -> None:
-        with mock.patch.object(self.verifier.subprocess, "check_output", side_effect=self._tool_output):
-            result = self.verifier.verify(self.good_uf2, self.good_elf, self.good_evidence)
+        result = self._verify()
         self.assertEqual(result["target"], "loudest_micro:codex_oai")
         self.assertEqual(result["vid_pid"], "303a:8360")
         self.assertEqual(result["report_id"], 6)
         self.assertEqual(len(result["sha256"]), 64)
         self.assertEqual(result["size_bytes"], self.good_uf2.stat().st_size)
         self.assertEqual(result["elf_size"], {"text": 1000, "data": 20, "bss": 30})
+        self.assertEqual(result["elf_sha256"], hashlib.sha256(self.good_elf.read_bytes()).hexdigest())
+        self.assertEqual(
+            result["elf_uf2_equivalence"],
+            {
+                "status": "pass",
+                "flash_base": "0x10000000",
+                "elf_binary_size_bytes": len(self.elf_binary),
+                "uf2_flash_size_bytes": len(self.uf2_image),
+                "trailing_zero_padding_bytes": len(self.uf2_image) - len(self.elf_binary),
+            },
+        )
+
+    def test_rejects_unrelated_elf_even_when_symbols_and_emulator_evidence_pass(self) -> None:
+        unrelated_elf = self.root / "unrelated.elf"
+        unrelated_elf.write_bytes(b"unrelated ELF fixture\n")
+        with self.assertRaisesRegex(self.verifier.VerificationError, "ELF binary does not match UF2"):
+            self._verify(elf=unrelated_elf, elf_binary=b"unrelated flash image")
+
+    def test_rejects_a_full_extra_zero_payload_beyond_the_elf(self) -> None:
+        candidate = self.root / "extra-zero-block.uf2"
+        candidate.write_bytes(make_uf2(self.uf2_image + bytes(UF2_PAYLOAD_SIZE)))
+        with self.assertRaisesRegex(self.verifier.VerificationError, "padding"):
+            self._verify(uf2=candidate, evidence=self._evidence_for(candidate))
+
+    def test_rejects_uf2_with_bad_magic_or_payload_bounds(self) -> None:
+        cases: list[tuple[str, bytearray, str]] = []
+        bad_magic = bytearray(self.good_uf2.read_bytes())
+        struct.pack_into("<I", bad_magic, 0, 0)
+        cases.append(("magic", bad_magic, "magic"))
+        oversized_payload = bytearray(self.good_uf2.read_bytes())
+        struct.pack_into("<I", oversized_payload, 16, 477)
+        cases.append(("payload", oversized_payload, "payload"))
+
+        for name, contents, message in cases:
+            with self.subTest(name=name):
+                candidate = self.root / f"{name}.uf2"
+                candidate.write_bytes(contents)
+                with self.assertRaisesRegex(self.verifier.VerificationError, message):
+                    self._verify(uf2=candidate, evidence=self._evidence_for(candidate))
+
+    def test_rejects_uf2_target_outside_rp2040_flash(self) -> None:
+        contents = bytearray(self.good_uf2.read_bytes())
+        struct.pack_into("<I", contents, 12, UF2_FLASH_BASE - UF2_PAYLOAD_SIZE)
+        candidate = self.root / "outside-flash.uf2"
+        candidate.write_bytes(contents)
+        with self.assertRaisesRegex(self.verifier.VerificationError, "flash range"):
+            self._verify(uf2=candidate, evidence=self._evidence_for(candidate))
+
+    def test_rejects_out_of_order_or_duplicate_uf2_blocks(self) -> None:
+        original = self.good_uf2.read_bytes()
+        out_of_order = original[UF2_BLOCK_SIZE:] + original[:UF2_BLOCK_SIZE]
+        duplicate_target = bytearray(original)
+        struct.pack_into("<I", duplicate_target, UF2_BLOCK_SIZE + 12, UF2_FLASH_BASE)
+        duplicate_number = bytearray(original)
+        struct.pack_into("<I", duplicate_number, UF2_BLOCK_SIZE + 20, 0)
+
+        for name, contents, message in (
+            ("out-of-order", out_of_order, "order"),
+            ("duplicate-target", duplicate_target, "target"),
+            ("duplicate-number", duplicate_number, "block number"),
+        ):
+            with self.subTest(name=name):
+                candidate = self.root / f"{name}.uf2"
+                candidate.write_bytes(contents)
+                with self.assertRaisesRegex(self.verifier.VerificationError, message):
+                    self._verify(uf2=candidate, evidence=self._evidence_for(candidate))
 
     def test_rejects_wrong_report_id(self) -> None:
         evidence = {**self.good_evidence, "report_id": 0}
@@ -93,6 +226,20 @@ class ArtifactVerifierTest(unittest.TestCase):
         }
         with self.assertRaisesRegex(self.verifier.VerificationError, "not defined code/data"):
             self.verifier.verify_symbols(symbols)
+
+    def test_rejects_lowercase_undefined_weak_symbol_types(self) -> None:
+        for weak_type in ("w", "v"):
+            with self.subTest(weak_type=weak_type):
+                symbols = {
+                    "raw_hid_receive": "T",
+                    "codex_oai_notify": weak_type,
+                    "codex_led_render": "T",
+                    "encoder_update_user": "T",
+                }
+                with self.assertRaisesRegex(
+                    self.verifier.VerificationError, "not defined code/data"
+                ):
+                    self.verifier.verify_symbols(symbols)
 
     def test_nm_parser_does_not_turn_undefined_symbol_into_proof(self) -> None:
         output = (
@@ -115,13 +262,15 @@ class ArtifactVerifierTest(unittest.TestCase):
         )
 
         def fake_nm(command):
-            if "-g" in command:
-                return globals_only
-            return globals_only + "10000060 t codex_oai_notify\n"
+            defined = globals_only + "10000060 t codex_oai_notify\n"
+            if "--defined-only" in command:
+                return defined
+            return defined + "         w undefined_weak\n"
 
         with mock.patch.object(self.verifier, "_run_text", side_effect=fake_nm):
             symbols = self.verifier.elf_symbols(self.good_elf)
         self.assertIn("codex_oai_notify", symbols)
+        self.assertNotIn("undefined_weak", symbols)
         self.verifier.verify_symbols(symbols)
 
     def test_rejects_evidence_from_different_uf2_hash_or_size(self) -> None:
@@ -142,9 +291,8 @@ class ArtifactVerifierTest(unittest.TestCase):
         evidence_dir = self.root / "firmware" / "evidence"
         evidence_dir.mkdir(parents=True)
         output = evidence_dir / "codex-oai-manifest.json"
-        with mock.patch.object(self.verifier.subprocess, "check_output", side_effect=self._tool_output):
-            result = self.verifier.verify(self.good_uf2, self.good_elf, self.good_evidence)
-            self.verifier.write_manifest(output, result, evidence_root=evidence_dir)
+        result = self._verify()
+        self.verifier.write_manifest(output, result, evidence_root=evidence_dir)
         self.assertEqual(json.loads(output.read_text(encoding="utf-8")), result)
         self.assertFalse(any(path.name.startswith(".codex-oai-manifest.json.") for path in evidence_dir.iterdir()))
         with self.assertRaisesRegex(self.verifier.VerificationError, "firmware/evidence"):

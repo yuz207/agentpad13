@@ -45,6 +45,45 @@ class BuildToolSafetyTest(unittest.TestCase):
         with self.assertRaisesRegex(BuildError, "00fc4627"):
             validate_qmk_home(self.fake_qmk, head="deadbeef")
 
+    def test_refuses_short_prefix_of_pinned_qmk_commit(self) -> None:
+        with self.assertRaisesRegex(BuildError, "exact QMK commit"):
+            validate_qmk_home(self.fake_qmk, head="00fc4627")
+
+    def test_qmk_state_rejects_extra_modifications(self) -> None:
+        valid_digests = {
+            "quantum/via.c": "48291b5dceb67de7daf7caad9db5399c69f463485203476ae4586814f3ad46f5",
+            "quantum/via.h": "0a8ef108af7114bbc1da252f2017d7a9dc502750e6d75bd6506e1513ef226e7d",
+            "tmk_core/protocol/usb_descriptor.c": "09f655faea016c21e2318d1f34d1345b2e8424f64f064f1a92ef6be7118cf5e3",
+            "tmk_core/protocol/usb_descriptor.h": "2e8dc4cd1edf372b6ffd1308a1e9e7c42bda07642c0d373a7b3e124103b9339e",
+        }
+        status = (
+            " M quantum/via.c\n"
+            " M quantum/via.h\n"
+            " M tmk_core/protocol/usb_descriptor.c\n"
+            " M tmk_core/protocol/usb_descriptor.h\n"
+            "?? quantum/extra.c\n"
+        )
+        validate = getattr(builder, "validate_qmk_state", lambda *_args: None)
+        with self.assertRaisesRegex(BuildError, "unexpected QMK modification"):
+            validate(status, valid_digests)
+
+    def test_qmk_state_rejects_modified_content_at_allowed_path(self) -> None:
+        status = (
+            " M quantum/via.c\n"
+            " M quantum/via.h\n"
+            " M tmk_core/protocol/usb_descriptor.c\n"
+            " M tmk_core/protocol/usb_descriptor.h\n"
+        )
+        wrong_digests = {
+            "quantum/via.c": "0" * 64,
+            "quantum/via.h": "0a8ef108af7114bbc1da252f2017d7a9dc502750e6d75bd6506e1513ef226e7d",
+            "tmk_core/protocol/usb_descriptor.c": "09f655faea016c21e2318d1f34d1345b2e8424f64f064f1a92ef6be7118cf5e3",
+            "tmk_core/protocol/usb_descriptor.h": "2e8dc4cd1edf372b6ffd1308a1e9e7c42bda07642c0d373a7b3e124103b9339e",
+        }
+        validate = getattr(builder, "validate_qmk_state", lambda *_args: None)
+        with self.assertRaisesRegex(BuildError, "content digest"):
+            validate(status, wrong_digests)
+
     def test_refuses_existing_real_keyboard_directory(self) -> None:
         (self.fake_qmk / "keyboards" / "loudest_micro").mkdir()
         with self.assertRaisesRegex(BuildError, "already exists"):
@@ -217,6 +256,85 @@ class BuildToolSafetyTest(unittest.TestCase):
             builder.subprocess, "check_output", side_effect=[str(include), str(libc)]
         ):
             with self.assertRaisesRegex(BuildError, "arm-none-eabi-ar"):
+                find_cross_compiler()
+
+    def test_compiler_preflight_rejects_wrong_version(self) -> None:
+        tool_bin = self.root / "toolchain" / "bin"
+        tool_bin.mkdir(parents=True)
+        tools = (
+            "arm-none-eabi-gcc",
+            "arm-none-eabi-ar",
+            "arm-none-eabi-objcopy",
+            "arm-none-eabi-size",
+            "arm-none-eabi-nm",
+        )
+        for name in tools:
+            (tool_bin / name).touch()
+        include = self.root / "toolchain" / "include" / "stdint.h"
+        libc = self.root / "toolchain" / "lib" / "libc.a"
+        include.parent.mkdir()
+        libc.parent.mkdir()
+        include.touch()
+        libc.touch()
+
+        def fake_output(command, **_kwargs):
+            if command[-1] == "--version":
+                return "arm-none-eabi-gcc (Arm GNU Toolchain 14.3.Rel1) 14.3.1\n"
+            if command[-1] == "-print-file-name=include/stdint.h":
+                return str(include)
+            if command[-1] == "-print-file-name=libc.a":
+                return str(libc)
+            raise AssertionError(f"unexpected command: {command}")
+
+        with mock.patch.object(
+            builder.shutil, "which", side_effect=lambda name: str(tool_bin / name)
+        ), mock.patch.object(builder.subprocess, "check_output", side_effect=fake_output):
+            with self.assertRaisesRegex(BuildError, "15.2.Rel1.*15.2.1"):
+                find_cross_compiler()
+
+    def test_compiler_preflight_rejects_mixed_binutils_directories(self) -> None:
+        tool_bin = self.root / "toolchain" / "bin"
+        foreign_bin = self.root / "foreign" / "bin"
+        tool_bin.mkdir(parents=True)
+        foreign_bin.mkdir(parents=True)
+        tools = (
+            "arm-none-eabi-gcc",
+            "arm-none-eabi-ar",
+            "arm-none-eabi-objcopy",
+            "arm-none-eabi-size",
+            "arm-none-eabi-nm",
+        )
+        for name in tools:
+            (tool_bin / name).touch()
+        (foreign_bin / "arm-none-eabi-nm").touch()
+        include = self.root / "toolchain" / "include" / "stdint.h"
+        libc = self.root / "toolchain" / "lib" / "libc.a"
+        include.parent.mkdir()
+        libc.parent.mkdir()
+        include.touch()
+        libc.touch()
+
+        def fake_which(name: str) -> str:
+            if name == "arm-none-eabi-nm":
+                return str(foreign_bin / name)
+            return str(tool_bin / name)
+
+        def fake_output(command, **_kwargs):
+            if command[-1] == "--version":
+                return (
+                    "arm-none-eabi-gcc (Arm GNU Toolchain 15.2.Rel1 "
+                    "(Build arm-15.86)) 15.2.1 20251203\n"
+                )
+            if command[-1] == "-print-file-name=include/stdint.h":
+                return str(include)
+            if command[-1] == "-print-file-name=libc.a":
+                return str(libc)
+            raise AssertionError(f"unexpected command: {command}")
+
+        with mock.patch.object(builder.shutil, "which", side_effect=fake_which), mock.patch.object(
+            builder.subprocess, "check_output", side_effect=fake_output
+        ):
+            with self.assertRaisesRegex(BuildError, "same toolchain bin directory"):
                 find_cross_compiler()
 
     def test_tool_has_no_physical_operation_vocabulary(self) -> None:
