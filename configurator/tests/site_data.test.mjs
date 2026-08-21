@@ -92,7 +92,7 @@ S.test('the MX stand-in seats the cap ON the stem, not on top of it', () => {
   ok(seat - p.housing.max[1] < 0.7, 'the housing must reach up to just under the cap rim');
 });
 
-S.test('the EC11E stand-in IS the Alps dimension chain, tip to tail', () => {
+S.test('the EC11E stand-in keeps the Alps body and the owner-set viewer stem', () => {
   /* research/04-mechanical-case-dossier.md §1C (CONFIRMED against the Alps
      datasheet pp.163-168 / drawing 4-5): "overall to shaft tip 24.5 mm",
      "Shaft ⌀6 mm metal, flat (D-cut) leaves 4.5 mm across the flat", and the
@@ -105,16 +105,16 @@ S.test('the EC11E stand-in IS the Alps dimension chain, tip to tail', () => {
   eq(r2(p.can.max[0] - p.can.min[0]), 13.4, 'body 13.4 across board x (tabs included)');
   eq(r2(p.can.max[2] - p.can.min[2]), 12.5, 'body 12.5 across board y');
   eq(r2(p.shaft.min[1]), 4.5, 'the bushing starts where the body stops');
-  eq(r2(p.shaft.max[1]), 24.5, 'shaft tip at +24.5 — the confirmed overall height');
+  eq(r2(p.shaft.max[1]), 22.0, 'viewer shaft tip is 2.5 mm below the physical +24.5 height');
   eq(r2(p.shaft.max[0] - p.shaft.min[0]), 7.0, 'Ø7.0 threaded bushing is the widest section');
   /* The body is symmetric about RE1's shaft, which is what lets the viewer
      place it with the ordinary bounding-box recentre. */
   for (const b of [p.can, p.shaft]) {
     for (const ax of [0, 2]) eq(r2(b.min[ax] + b.max[ax]), 0, 'the module must be symmetric on the shaft');
   }
-  /* It stands proud of today's knobs ON PURPOSE — knob_top_z is 17.5 and the
-     +27 knobs are being built in parallel. Do not "fix" this by shortening. */
-  ok(p.shaft.max[1] - 17.5 > 5, 'the shaft is meant to overshoot the current knobs');
+  /* Owner ruling 2026-08-21: this is a viewer-only reduction. The physical
+     shaft and every fit-critical topper artifact remain unchanged. */
+  eq(r2(24.5 - p.shaft.max[1]), 2.5, 'the visible bare stem is shortened exactly 2.5 mm');
 });
 
 S.test('the YA13 stand-in carries its rot-180 clocking as geometry', () => {

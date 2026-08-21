@@ -692,10 +692,10 @@ for (const [id, wall] of [['w3.0', 3.0], ['w5.4', 5.4], ['w7.4', 7.4]]) {
      0.00 ..  4.50  body 13.4 (board x) x 12.5 (board y)        [1]
      4.50 .. 11.50  threaded bushing Ø7.0, 7.0 long             [1]
     11.50 .. 14.50  Ø6.0 shaft, full round                      [1][2]
-    14.50 .. 24.50  Ø6.0 shaft with the D-flat, across-flat 4.5 [1][2][3]
+    14.50 .. 22.00  Ø6.0 shaft with the D-flat, across-flat 4.5 [1][2][3][4]
 
-   [1] the Alps EC11E drawing, as specified for this pass: body 4.5 tall, the
-       bushing 7.0 long above it, and the shaft tip at +24.5.
+   [1] the Alps EC11E drawing: body 4.5 tall, the bushing 7.0 long above it,
+       and the physical shaft tip at +24.5.
    [2] research/04-mechanical-case-dossier.md §1C, CONFIRMED against the Alps
        datasheet pp.163-168 / drawing No. 4-5: "Vertical PCB-mount (EC11E) ...
        overall to shaft tip 24.5 mm (20 mm-class flat shaft)" and "Shaft ⌀6 mm
@@ -703,6 +703,9 @@ for (const [id, wall] of [['w3.0', 3.0], ['w5.4', 5.4], ['w7.4', 7.4]]) {
    [3] hardware/pcb/.../hand_solder_afterlist.csv: RE1 is
        RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm, Bourns PEC11R-4215F-S0024
        — the H20mm/20mm-class flat shaft this chain is built on.
+   [4] viewer-only owner ruling, 2026-08-21: shorten the visible bare stem by
+       2.5 mm. The configurator therefore stops at +22.0; this does not alter
+       the encoder specification, printed knobs, case CAD, or order sheet.
 
    Two envelopes in the CASE model differ from the numbers above and that is
    deliberate, not an oversight: agentpad13_case_v2.py carries ENC_BODY_SQ =
@@ -713,9 +716,9 @@ for (const [id, wall] of [['w3.0', 3.0], ['w5.4', 5.4], ['w7.4', 7.4]]) {
    west edge sits UNDER the plate slab — buried inside opaque material at
    z 3.4..4.5, invisible from every angle this viewer offers.
 
-   The Ø6 shaft tops out 7.0 mm ABOVE the current printed knobs (knob_top_z
-   17.5, encoder_knob_params.json). That is correct and temporary: the +27
-   knobs are being built in parallel and will swallow it. Do not shorten it.
+   This stand-in is intentionally a cosmetic viewer model. The 2.5 mm owner
+   adjustment applies only when the knob is hidden and the bare encoder is
+   visible; fit-critical knob geometry remains sourced from the real shaft.
 
    Instance mesh, absolute z, symmetric about RE1's shaft (13.525, 12.5), so
    the viewer's bounding-box recentre lands it correctly. Two named parts, so
@@ -723,8 +726,8 @@ for (const [id, wall] of [['w3.0', 3.0], ['w5.4', 5.4], ['w7.4', 7.4]]) {
 {
   const ENC_BODY_X = 13.4, ENC_BODY_Y = 12.5, ENC_BODY_Z1 = 4.5;
   const ENC_BUSH_D = 7.0, ENC_BUSH_Z1 = 11.5;
-  const ENC_SHAFT_D = 6.0, ENC_SHAFT_TIP = 24.5;
-  const ENC_FLAT_AF = 4.5, ENC_FLAT_LEN = 10.0;
+  const ENC_SHAFT_D = 6.0, ENC_SHAFT_TIP = 22.0;
+  const ENC_FLAT_AF = 4.5, ENC_FLAT_LEN = 7.5;
 
   const can = new Tris();
   boxTris(can, -ENC_BODY_X / 2, ENC_BODY_X / 2, -ENC_BODY_Y / 2, ENC_BODY_Y / 2, 0, ENC_BODY_Z1);
@@ -820,7 +823,7 @@ for (const w of written) console.log(`  ${w.file.split('/site/')[1]}  ${w.tris} 
 console.log(`keycap seat z = ${KEYCAP_SEAT_Z} (caps are emitted 0..${CAP_H} and placed at the seat)`);
 console.log(`MX stem: shoulder top ${SW_SEAT_Z} == the seat, cross top ${SW_STEM_TOP_Z}` +
   ` -> the stem stands ${(SW_STEM_TOP_Z - KEYCAP_SEAT_Z).toFixed(2)} mm INSIDE a ${CAP_H} mm cap`);
-console.log(`EC11E module: instance, symmetric on RE1 shaft (${ENC_SHAFT}); shaft tip +24.5` +
-  ` -> ${(24.5 - 17.5).toFixed(1)} mm proud of today's knobs, by design (the +27 knobs will swallow it)`);
+console.log(`EC11E module: instance, symmetric on RE1 shaft (${ENC_SHAFT}); viewer shaft tip +22.0` +
+  ` (owner-set cosmetic reduction of 2.5 mm from the physical +24.5)`);
 console.log(`YA13 module: instance at JS1 (${STICK}), pot boxes WEST+NORTH = CPL rot 180;` +
   ` 16.7 x 16.7 overall about the stick, blade ${STICK_BLADE.x} x ${STICK_BLADE.y} tip +${STICK_BLADE.tip_z}`);
