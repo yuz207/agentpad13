@@ -73,9 +73,9 @@ class BuildToolSafetyTest(unittest.TestCase):
     def test_publish_replaces_only_oai_destination(self) -> None:
         source = self.root / "loudest_micro_codex_oai.uf2"
         source.write_bytes(b"oai-artifact")
-        destination = self.root / "prebuilt" / "loudest_micro_codex_oai.uf2"
-        default = self.root / "prebuilt" / "loudest_micro_default.uf2"
-        vial = self.root / "prebuilt" / "loudest_micro_vial.uf2"
+        destination = self.root / "prebuilt" / "agentpad13_codex_oai.uf2"
+        default = self.root / "prebuilt" / "agentpad13_reference.uf2"
+        vial = self.root / "prebuilt" / "agentpad13.uf2"
         default.parent.mkdir()
         default.write_bytes(b"default")
         vial.write_bytes(b"vial")
@@ -85,6 +85,12 @@ class BuildToolSafetyTest(unittest.TestCase):
         self.assertEqual(destination.read_bytes(), b"oai-artifact")
         self.assertEqual(default.read_bytes(), b"default")
         self.assertEqual(vial.read_bytes(), b"vial")
+
+    def test_default_publish_destination_uses_agentpad13_release_layout(self) -> None:
+        self.assertEqual(
+            builder.OAI_ARTIFACT,
+            REPO / "release" / "firmware" / "prebuilt" / "agentpad13_codex_oai.uf2",
+        )
 
     def test_descriptor_patch_is_repository_owned_and_complete(self) -> None:
         patch = REPO / "firmware" / "patches" / "0002-raw-hid-report-id-chibios.patch"

@@ -15,6 +15,7 @@ PACKAGE = EMULATOR / "package.json"
 BOOTROM_SCRIPT = EMULATOR / "get-bootrom.sh"
 EVIDENCE = REPO / "firmware" / "evidence" / "codex-oai-emulator.json"
 EVIDENCE_README = REPO / "firmware" / "evidence" / "README.md"
+CURRENT_MANIFEST = REPO / "firmware" / "evidence" / "codex-oai-current-manifest.json"
 RUNBOOK = REPO / "docs" / "codex-oai-physical-runbook.md"
 UF2 = REPO / "release" / "firmware" / "prebuilt" / "agentpad13_codex_oai.uf2"
 
@@ -32,6 +33,20 @@ class Phase3ReleaseContractTest(unittest.TestCase):
             "--json ../../evidence/codex-oai-emulator.json",
         )
 
+    def test_default_and_vial_smokes_preserve_protocol_v1_release_contract(self) -> None:
+        package = json.loads(PACKAGE.read_text(encoding="utf-8"))
+        protocol_v1_caps = "04424c440118081f000000000000000000000000000000000000000000000000"
+        self.assertEqual(
+            package["scripts"].get("smoke:default"),
+            "node runner.cjs ../../../release/firmware/prebuilt/agentpad13_reference.uf2 "
+            + protocol_v1_caps,
+        )
+        self.assertEqual(
+            package["scripts"].get("smoke:vial"),
+            "node runner.cjs ../../../release/firmware/prebuilt/agentpad13.uf2 "
+            + protocol_v1_caps,
+        )
+
     def test_bootrom_source_is_pinned_and_digest_checked(self) -> None:
         script = BOOTROM_SCRIPT.read_text(encoding="utf-8")
         self.assertIn(BOOTROM_COMMIT, script)
@@ -40,11 +55,19 @@ class Phase3ReleaseContractTest(unittest.TestCase):
         self.assertIn("mktemp", script)
         self.assertIn("bootrom.cjs", script)
 
-    def test_current_emulator_evidence_matches_the_checked_in_uf2(self) -> None:
+    def test_current_manifest_and_emulator_evidence_match_the_checked_in_uf2(self) -> None:
+        self.assertTrue(UF2.is_file(), f"missing release artifact: {UF2}")
+        self.assertTrue(EVIDENCE.is_file(), f"missing emulator evidence: {EVIDENCE}")
+        self.assertTrue(CURRENT_MANIFEST.is_file(), f"missing current manifest: {CURRENT_MANIFEST}")
         evidence = json.loads(EVIDENCE.read_text(encoding="utf-8"))
+        manifest = json.loads(CURRENT_MANIFEST.read_text(encoding="utf-8"))
         digest = hashlib.sha256(UF2.read_bytes()).hexdigest()
         self.assertEqual(evidence["uf2_size_bytes"], UF2.stat().st_size)
         self.assertEqual(evidence["uf2_sha256"], digest)
+        self.assertEqual(manifest["size_bytes"], UF2.stat().st_size)
+        self.assertEqual(manifest["sha256"], digest)
+        self.assertEqual(manifest["emulator_evidence"]["uf2_size_bytes"], UF2.stat().st_size)
+        self.assertEqual(manifest["emulator_evidence"]["uf2_sha256"], digest)
 
     def test_physical_runbook_names_the_current_uf2_candidate(self) -> None:
         runbook = RUNBOOK.read_text(encoding="utf-8")

@@ -107,6 +107,23 @@ class ArtifactVerifierTest(unittest.TestCase):
         with self.assertRaisesRegex(self.verifier.VerificationError, "codex_oai_notify"):
             self.verifier.verify_symbols(symbols)
 
+    def test_nm_parser_keeps_defined_local_symbols_from_lto_builds(self) -> None:
+        globals_only = (
+            "10000000 T raw_hid_receive\n"
+            "10000020 T codex_led_render\n"
+            "10000040 T encoder_update_user\n"
+        )
+
+        def fake_nm(command):
+            if "-g" in command:
+                return globals_only
+            return globals_only + "10000060 t codex_oai_notify\n"
+
+        with mock.patch.object(self.verifier, "_run_text", side_effect=fake_nm):
+            symbols = self.verifier.elf_symbols(self.good_elf)
+        self.assertIn("codex_oai_notify", symbols)
+        self.verifier.verify_symbols(symbols)
+
     def test_rejects_evidence_from_different_uf2_hash_or_size(self) -> None:
         wrong_hash = {**self.good_evidence, "uf2_sha256": "0" * 64}
         with self.assertRaisesRegex(self.verifier.VerificationError, "SHA-256"):

@@ -1,0 +1,38 @@
+{
+  "elf_size": {
+    "bss": 265192,
+    "data": 0,
+    "text": 46636
+  },
+  "emulator_evidence": {
+    "descriptor_verified": true,
+    "device_status_ack": true,
+    "key_event": {
+      "act": 1,
+      "k": "AG00"
+    },
+    "keyboard_hid_enumerated": true,
+    "oai_hid_enumerated": true,
+    "rgbcfg_ack": true,
+    "task_status_fragment_count": 2,
+    "thstatus_ack": true,
+    "uf2_sha256": "64cd5f40cd444f519222baa17437f42cea45b41617ac133ea577dd312c39ae3c",
+    "uf2_size_bytes": 93696,
+    "usb_enumerated": true,
+    "ws2812_activity": true
+  },
+  "report_bytes": 64,
+  "report_id": 6,
+  "required_symbols": [
+    "codex_led_render",
+    "codex_oai_notify",
+    "encoder_update_user",
+    "raw_hid_receive"
+  ],
+  "sha256": "64cd5f40cd444f519222baa17437f42cea45b41617ac133ea577dd312c39ae3c",
+  "size_bytes": 93696,
+  "status": "pass",
+  "target": "loudest_micro:codex_oai",
+  "usage": "ff00:0061",
+  "vid_pid": "303a:8360"
+}

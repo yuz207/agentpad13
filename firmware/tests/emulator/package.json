@@ -4,8 +4,10 @@
     "description": "Boots the production UF2 in the rp2040js emulator and smoke-tests the Rev A pin map, key scan, WS2812 data pin, and raw HID protocol. The expected CAPS literal carries protocol_version in byte 4: it became 01 with protocol v1 on 2026-08-15 (was 00).",
     "scripts": {
         "get-bootrom": "./get-bootrom.sh",
-        "smoke:default": "node runner.cjs ../../prebuilt/agentpad13_reference.uf2 04424c440118081f000000000000000000000000000000000000000000000000",
-        "smoke:vial": "node runner.cjs ../../prebuilt/agentpad13.uf2 04424c440118081f000000000000000000000000000000000000000000000000"
+        "postinstall": "./get-bootrom.sh",
+        "smoke:default": "node runner.cjs ../../../release/firmware/prebuilt/agentpad13_reference.uf2 04424c440118081f000000000000000000000000000000000000000000000000",
+        "smoke:vial": "node runner.cjs ../../../release/firmware/prebuilt/agentpad13.uf2 04424c440118081f000000000000000000000000000000000000000000000000",
+        "smoke:codex-oai": "node oai_runner.cjs ../../../release/firmware/prebuilt/agentpad13_codex_oai.uf2 --json ../../evidence/codex-oai-emulator.json"
     },
     "dependencies": {
         "rp2040js": "1.3.3"
