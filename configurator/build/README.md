@@ -21,7 +21,7 @@ Runs, in order and stopping at the first failure:
 | `gen_textures.py` | `out/textures/*.png` | the three plate boards must share one Edge.Cuts profile; **loop census**; **orientation gate**; per-variant marker census |
 | `gen_costs.py` | `out/costs.json` | emits `{"updated": null, "lines": {}}` and refuses to clobber owner data |
 | `check_links.py` | — | every `release/...` path, every fixed build-sheet link, every `meshes/...` and `textures/...` reference resolves, and every plate variant declares a `decal` key |
-| `unittest` | — | 114 tests in `configurator/tests/` |
+| `unittest` | — | the full Python suite in `configurator/tests/` |
 
 Optional, needs `matplotlib` (not required by the build):
 
@@ -31,8 +31,18 @@ python3 configurator/build/verify_chirality.py out/chirality_check.png
 
 ## Environment
 
-Interpreter used in development: `cad-khana-python`
-(Python 3.13.7).
+Create an isolated environment and install the versions used for the committed
+assets:
+
+```sh
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r configurator/build/requirements.txt
+python configurator/build/build_all.py
+```
+
+The committed build was generated with Python 3.13.7 and the exact direct
+dependencies in `requirements.txt`.
 
 | package | used by | why |
 |---|---|---|
@@ -208,22 +218,21 @@ change and ≤0.25 mm bounding-box drift.
 The JSON contract is implemented as specified. Everything below is **additive**
 — no specified key changed name, type or meaning.
 
-* `catalog.board`: `gerbers`, `assembly.*` (the spec's Card 1 uploads the
+* `catalog.board`: `gerbers`, `assembly.*` (HOW-TO-ORDER §2 uploads the
   gerber zip and the BOM/CPL separately from the fabpack), `outline_mm`,
   `thickness_mm`, `mesh`, `texture`.
 * `catalog.plate`: `mesh`, `step`, `dxf`, `size_mm`, `thickness_mm`; each
   variant also carries `kicad_pcb`. One mesh serves all three variants — they
-  share one Edge.Cuts profile (`CASE-V2-NOTES.md:719`, "ALL GATES PASS (3/3
+  share one Edge.Cuts profile (`CASE-V2-NOTES.md` §14, "ALL GATES PASS (3/3
   variants)").
-* `catalog.band`: `default` (`w5.4`, `HOW-TO-ORDER.md:104`), per-width
+* `catalog.band`: `default` (`w5.4`, HOW-TO-ORDER §4), per-width
   `step` and `wall_mm`.
 * `catalog.bases`: `interface`, `default_peg` (`5p8`, `INTERFACE.md:41`),
   `peg_rungs`.
 * `catalog.toppers`: `bores` / `socks` maps (the fit ladders, mirroring how
   `bases.items[].pegs` works) alongside the single `stl`, which points at the
-  documented starting rung — bore `6p0` (`HOW-TO-ORDER.md:173`) and sock `nom`
-  (`HOW-TO-ORDER.md:174`); `default` flags the shipped default style
-  (`knurled_cup` / `taper`, from the toppers' own params files).
+  documented starting rung `nom` (HOW-TO-ORDER §8); `default` flags the
+  shipped default parts (`A` knob / `nub_C2`).
 * `catalog.keycaps.files[]`: `width_mm`. `catalog.firmware`: `polarity_doc`.
   `catalog.docs`: `how_to_order`, `release_notes`, `base_interface`.
 * `positions.json`: `frame`, `mesh_placement`, `pcb`, `stabilizer`, `base`.
@@ -251,42 +260,28 @@ The JSON contract is implemented as specified. Everything below is **additive**
   (30.162, 89.47) and (54.038, 89.47)). **And** `positions.stabilizer.slot_size`
   / `.slots`, additive inside the round-1 object. One computation again.
 
-**Two upstream documentation bugs found and RECORDED, not fixed** (the repo
-files are out of scope for this pipeline; both are cited in
-`positions.sources`):
+**One published parameter disagreement is recorded, not hidden:**
 
-1. `hardware/case/gen_plate_fab.py:136` — the `touch_pad_shapes()` docstring
-   says "Ø10 bottom landing pad", but its own code at `:140` emits radius 7.0
-   and all three shipped boards carry **Ø14** on B.Cu, as does
-   `CASE-V2-NOTES.md:280`. The Ø14 is published.
-2. `bases/params/agentpad13_base_params.json` lists `base_height_mm: 17.49`
-   for the **pedestal**, which is the wedge's full-footprint figure inherited
-   unchanged. The pedestal's own solid is **15.428** tall below the mating
-   plane, because its Ø78 plan never reaches the far edge. The
-   geometry-derived value is published and it matches the shipped STL.
+`bases/params/agentpad13_base_params.json` lists `base_height_mm: 17.49`
+for the **pedestal**, which is the wedge's full-footprint figure inherited
+unchanged. The pedestal's own solid is **15.428** tall below the mating plane,
+because its Ø78 plan never reaches the far edge. The geometry-derived value is
+published and it matches the shipped STL.
 
-**One open question for the owner — the 2U stabiliser.** Two shipped sources
-disagree and the difference is a real fitment fact, so `keycaps.counts`
-publishes both mixes rather than picking one:
+**2U stabilizer rule.** `keycaps.counts` publishes both valid mixes:
 
-* `counts` = 12 × 1U + 1 × 2U — `release/HOW-TO-ORDER.md:16` lists the parts as
-  "keycaps (12×1U + 1×2U)" and no stabiliser appears anywhere in its shopping
-  list.
-* `counts.with_stabilizer` = 12 × 1U + 1 × 2U-stab — the spec's self-buy list
-  (section 3.2) *does* include "one 2u plate-mount stabilizer", and
-  `KEYCAP-NOTES.md:1226-1232` records that the plate cuts stab slots for SW13
-  unconditionally and that "a 2U cap **with no stab sockets cannot seat**" once
-  stabs are fitted.
+* `counts` = 12 × 1U + 1 × 2U without a stabilizer.
+* `counts.with_stabilizer` = 12 × 1U + 1 × 2U-stab when the optional 2U
+  plate-mount stabilizer is fitted, exactly as HOW-TO-ORDER §7 specifies.
 
-The same note flags the stab socket XY (±11.938, y = 0) as **UNVERIFIED**
-against a real Cherry stabiliser. Surface that wherever `2u_stab` is offered.
+The slots themselves are measured from all three shipped plate boards. Public
+`CASE-V2-NOTES.md` §8 item 6 keeps the real-stabilizer coupon fit check open.
 
 ## Note for this public tree
 
-The shipped site runs entirely off the committed `build/out/` data, which the
-gates verify against `release/MANIFEST.md`. Regenerating that data from
-scratch (and 2 of the 30 test files) additionally reads parametric
-engineering sources that are not part of this mirror -- the mirror ships the
-finished STL/STEP and fab files, not the CAD generators. Everything the site
-serves, links to, or puts on an order sheet is in this repository and
-checksummed.
+The shipped site runs entirely off the committed `build/out/` data. The public
+pipeline regenerates it from the shipped release artifacts and public source
+files in this repository; it does not call a keycap, case, plate, or board CAD
+generator. `gen_meshes.py` only tessellates the shipped plate STEP and converts
+the shipped STL files to viewer GLBs. Everything the site serves, links to, or
+puts on an order sheet is public and checksummed.

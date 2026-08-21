@@ -22,8 +22,8 @@ enum loudest_keycodes {
 
 // ---------------------------------------------------------------------------
 // Raw-HID status protocol v1 - LOCKED. Wire counterpart and single source of
-// truth: daemon/loudestd/protocol.py, with docs/PROTOCOL-V1-CONTRACT.md as the
-// contract both sides are written against. Do NOT change framing/opcodes/CAPS
+// truth: docs/PROTOCOL-V1-CONTRACT.md. The public host oracle is
+// firmware/tests/conformance/protocol_oracle.py. Do NOT change framing/opcodes/CAPS
 // layout on one side without updating the other.
 // v1 (2026-08-15) added 0x50/0x51/0x52 (joystick calibration) and bumped the
 // CAPS protocol_version byte; every v0 frame is unchanged byte-for-byte.

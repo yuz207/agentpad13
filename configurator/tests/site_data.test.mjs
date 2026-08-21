@@ -79,7 +79,7 @@ const partBoxes = (rel) => {
 S.test('the MX stand-in seats the cap ON the stem, not on top of it', () => {
   const p = partBoxes('assets/switch_mx.glb');
   const seat = data.positions.keycap_seat_z;
-  // Cherry MX chain, hardware/case/keycaps/keycaps.py:149-165 + :289-291.
+  // Cherry MX chain, public topper_frame_v2.py CASE / PART FACTS block.
   eq(Math.round(p.shoulder.max[1] * 100) / 100, seat, 'the stem shoulder IS the cap seat');
   eq(Math.round(p.housing.max[1] * 100) / 100, 11.01, 'fixed housing top face, h = 6.01');
   eq(Math.round(p.stem.min[1] * 100) / 100, seat, 'the cross starts at the seat');

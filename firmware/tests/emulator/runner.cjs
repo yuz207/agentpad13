@@ -1,7 +1,7 @@
 // agentpad13 Rev A UF2 smoke test on rp2040js (headless RP2040 emulator).
 //
 // Loads the real production UF2, boots it, then verifies against the
-// ORDER-READINESS Layer 4 pin table:
+// definitive GPIO table embedded in firmware/check_pins_v4.py:
 //   1. pin muxing: matrix/encoder pins on SIO with pull-ups, GP16 (TTP223 OUT,
 //      active-high strap, handled outside the matrix) on SIO with a pull-DOWN,
 //      GP17 on PIO (ws2812 vendor driver), GP26/27 handed to the ADC
@@ -9,7 +9,7 @@
 //   3. full USB HID enumeration (device descriptor, config, interfaces)
 //   4. key scan: drive SW1 (GP12) low -> keyboard IN report; release -> clear
 //   5. raw HID: send PING on the raw OUT endpoint -> expect the 32-byte CAPS
-//      reply on the raw IN endpoint (byte-exact vs daemon protocol oracle)
+//      reply on the raw IN endpoint (byte-exact vs the public protocol oracle)
 //
 // Usage: node runner.cjs <uf2-file> <expected-caps-hex> [--press-gpio N]
 'use strict';
@@ -378,7 +378,7 @@ runForMicros(400000);
 const caps = rawReports.slice(rawBefore);
 verdict('raw HID: PING answered', caps.length >= 1, `got ${caps.length} raw reports`);
 if (caps.length) {
-  verdict('raw HID: CAPS byte-exact vs daemon oracle', caps[0] === expectedCapsHex, `got ${caps[0]}\n      want ${expectedCapsHex}`);
+  verdict('raw HID: CAPS byte-exact vs public protocol oracle', caps[0] === expectedCapsHex, `got ${caps[0]}\n      want ${expectedCapsHex}`);
 }
 
 console.log('-- event log');

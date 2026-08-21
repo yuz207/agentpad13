@@ -50,7 +50,7 @@
 
 // ---------------------------------------------------------------------------
 // Raw-HID status protocol v1 - device side of loudestd. LOCKED wire
-// format; the single source of truth is daemon/loudestd/protocol.py, and
+// format; the single source of truth is docs/PROTOCOL-V1-CONTRACT.md, and
 // docs/PROTOCOL-V1-CONTRACT.md is the contract both sides are written against.
 // 32-byte report-ID-less frames:
 //   0x01 SET_KEY   {chain_idx(0..23), r, g, b, effect(0 solid / 1 pulse / 2 blink)}
@@ -292,7 +292,7 @@ static void loudest_status_handle(uint8_t *data, uint8_t length) {
             memset(loudest_status, 0, sizeof(loudest_status));
             break;
         case LOUDEST_CMD_PING: {
-            // CAPS reply, byte-for-byte per daemon/loudestd/protocol.py build_caps():
+            // CAPS reply, byte-for-byte per the public protocol oracle build_caps():
             // [0x04, token, 'L', 'D', proto_ver, led_count, layer_count, features].
             uint8_t resp[LOUDEST_REPORT_LEN];
             memset(resp, 0, sizeof(resp));
@@ -383,7 +383,7 @@ static void loudest_status_handle(uint8_t *data, uint8_t length) {
 // the via_command_kb() pre-hook (mainline QMK; backported into the vial-qmk
 // fork by firmware/patches/0001-via-command-kb-backport.patch) sees every
 // frame before VIA parses it and claims only frames that are byte-valid v0
-// protocol commands (32-byte zero-padded, per daemon/loudestd/protocol.py).
+// protocol commands (32-byte zero-padded, per the public protocol contract).
 //
 // Dispatch rules, from the observed VIA/Vial client traffic (vial-gui sends
 // 0x01 with an all-zero payload at connect, 0x02 only with value ids 0x02
@@ -526,7 +526,7 @@ static void js_cycle_mode(void) {
 // necessarily booted with SW14 released, so requiring one observed release
 // before the first arming (selfcal_seen_release) costs a real user nothing.
 //
-// BOARD TRUTH, read off v5/hardware/pcb/v5_6.kicad_pcb: SW14 connects net
+// BOARD TRUTH, read off the public v5_7 board: SW14 connects net
 // BOOTSEL to GND, and R6 (1k) ties BOOTSEL to QSPI_CS -- the stock Pico
 // topology. SW15 connects RUN to GND: that is a hardware reset, invisible to
 // firmware, and nothing here touches it.

@@ -172,7 +172,7 @@ def _is_path_value(s: str) -> bool:
     """True for a bare repo path, False for prose that merely mentions one.
 
     A repo path is a single whitespace-free token under `release/`. Provenance
-    sentences quote paths inside prose ("per release/HOW-TO-ORDER.md:16, the
+    sentences quote paths inside prose ("per release/HOW-TO-ORDER.md §7, the
     parts list ..."), and those must not be mistaken for file references.
     """
     return s.startswith("release/") and not any(c.isspace() for c in s)
@@ -223,11 +223,9 @@ def iter_texture_refs(node, _trail: tuple = ()):
 # KiCad `.kicad_pcb` primitive reader
 # --------------------------------------------------------------------------
 # The three plate boards under `release/hardware/case/v2/fab/` are the ORDERED
-# artifacts, so they are the PRIMARY source for anything the plate shows --
-# ahead of `hardware/case/gen_plate_fab.py`, which is the working-tree
-# generator that produced them. Each board contains only gr_line / gr_arc /
-# gr_circle / gr_text, so an exact regex reader is enough here and no KiCad
-# install is needed at build time.
+# artifacts, so they are the PRIMARY source for anything the plate shows.
+# Each board contains only gr_line / gr_arc / gr_circle / gr_text, so an exact
+# regex reader is enough here and no KiCad install is needed at build time.
 #
 # Every reader below is paired with a COUNT GATE in read_pcb_shapes(): the
 # number of shapes parsed must equal the number of `(layer "...")` tokens in
@@ -324,13 +322,85 @@ def read_pcb_shapes(path: Path) -> dict:
     return out
 
 
+def read_named_zone_polygon(
+    path: Path, *, name: str, net_name: str, layer: str
+) -> list[tuple[float, float]]:
+    """Read one named KiCad zone's design polygon from a shipped board.
+
+    KiCad also stores one or more much larger ``filled_polygon`` blocks after
+    the design polygon. This reader isolates each top-level ``(zone ...)``
+    S-expression first, then reads only its first ``(polygon (pts ...))``.
+    Missing or duplicate matches are a hard gate: silently selecting a
+    different copper zone would publish a made-up touch area.
+    """
+    txt = Path(path).read_text(encoding="utf-8")
+
+    def block_at(start: int) -> str:
+        depth = 0
+        quoted = False
+        escaped = False
+        for i in range(start, len(txt)):
+            ch = txt[i]
+            if quoted:
+                if escaped:
+                    escaped = False
+                elif ch == "\\":
+                    escaped = True
+                elif ch == '"':
+                    quoted = False
+                continue
+            if ch == '"':
+                quoted = True
+            elif ch == "(":
+                depth += 1
+            elif ch == ")":
+                depth -= 1
+                if depth == 0:
+                    return txt[start:i + 1]
+        raise GateError(f"{path}: unterminated KiCad zone at byte {start}")
+
+    zones = []
+    for m in re.finditer(r"(?m)^\t\(zone\s*$", txt):
+        block = block_at(m.start() + 1)
+        header = re.search(
+            r'\(net_name "([^"]+)"\)\s+\(layer "([^"]+)"\)', block
+        )
+        if (
+            f'(name "{name}")' in block
+            and header is not None
+            and (header[1], header[2]) == (net_name, layer)
+        ):
+            zones.append(block)
+    if len(zones) != 1:
+        raise GateError(
+            f"{path}: expected exactly one zone named {name!r} on net "
+            f"{net_name!r} / {layer}, found {len(zones)}"
+        )
+
+    polygon = re.search(
+        r"\(polygon\s+\(pts\s+((?:\(xy\s+-?[\d.]+\s+-?[\d.]+\)\s*)+)\)\s*\)",
+        zones[0],
+    )
+    if not polygon:
+        raise GateError(f"{path}: zone {name!r} has no readable design polygon")
+    points = [
+        (float(m[1]), float(m[2]))
+        for m in re.finditer(r"\(xy\s+(-?[\d.]+)\s+(-?[\d.]+)\)", polygon[1])
+    ]
+    if len(points) < 3:
+        raise GateError(
+            f"{path}: zone {name!r} design polygon has only {len(points)} points"
+        )
+    return points
+
+
 def pcb_layer_signature(shapes: dict, layer: str) -> tuple:
     """A canonical, hashable signature of one layer's geometry.
 
     Used to PROVE that two boards carry the identical geometry on a layer
     (which is what lets three plate variants share one openings map). UUIDs and
     emission order are excluded on purpose; only the numbers matter, quantised
-    to 1e-4 mm, which is the precision `gen_plate_fab._f()` emits.
+    to 1e-4 mm, which is the precision the shipped plate boards carry.
     """
 
     def q(v: float) -> float:

@@ -18,14 +18,16 @@ BUILD = Path(__file__).resolve().parents[1] / "build"
 sys.path.insert(0, str(BUILD))
 
 import gen_positions  # noqa: E402
-from common import RELEASE, REPO_ROOT  # noqa: E402
+from common import GateError, RELEASE, REPO_ROOT  # noqa: E402
 
 CASE_PY = (RELEASE / "hardware/case/v2/agentpad13_case_v2.py").read_text()
 BASE_PY = (RELEASE / "hardware/case/v2/bases/agentpad13_base.py").read_text()
-KEYCAPS_PY = (REPO_ROOT / "hardware/case/keycaps/keycaps.py").read_text()
+TOPPER_FRAME_PY = (
+    RELEASE / "hardware/case/v2/toppers/topper_frame_v2.py"
+).read_text()
+PCB_BOARD = (RELEASE / "hardware/pcb/v5_7.kicad_pcb").read_text()
 HOW_TO_ORDER = (RELEASE / "HOW-TO-ORDER.md").read_text()
-NOTES = (REPO_ROOT / "hardware/case/CASE-V2-NOTES.md").read_text()
-PLATE_FAB_PY = (REPO_ROOT / "hardware/case/gen_plate_fab.py").read_text()
+NOTES = (RELEASE / "hardware/case/v2/CASE-V2-NOTES.md").read_text()
 BASE_PARAMS = json.loads(
     (RELEASE / "hardware/case/v2/bases/params/agentpad13_base_params.json").read_text()
 )
@@ -59,6 +61,12 @@ _T_LINE = re.compile(
     r'\(gr_line \(start (-?[\d.]+) (-?[\d.]+)\) \(end (-?[\d.]+) (-?[\d.]+)\) '
     r'\(stroke \(width ([\d.]+)\) \(type \w+\)\) \(layer "([^"]+)"\)'
 )
+_T_ZONE = re.compile(
+    r'\(zone\s+\(net \d+\)\s+\(net_name "([^"]+)"\)\s+'
+    r'\(layer "([^"]+)"\).*?\(name "([^"]+)"\).*?'
+    r'\(polygon\s+\(pts\s+((?:\(xy\s+-?[\d.]+\s+-?[\d.]+\)\s*)+)\)\s*\)',
+    re.S,
+)
 
 
 def board_circles(rel: str) -> list[dict]:
@@ -85,6 +93,19 @@ def board_edge_lines(rel: str) -> list[tuple]:
         tuple(float(m.group(i)) for i in (1, 2, 3, 4))
         for m in _T_LINE.finditer(txt)
         if m.group(6) == "Edge.Cuts"
+    ]
+
+
+def named_board_zone(name: str, net_name: str, layer: str) -> list[tuple]:
+    """Independent, strict reader for the one design polygon under test."""
+    hits = [
+        m for m in _T_ZONE.finditer(PCB_BOARD)
+        if (m[1], m[2], m[3]) == (net_name, layer, name)
+    ]
+    assert len(hits) == 1, f"expected one {name} zone, found {len(hits)}"
+    return [
+        (float(m[1]), float(m[2]))
+        for m in re.finditer(r"\(xy\s+(-?[\d.]+)\s+(-?[\d.]+)\)", hits[0][4])
     ]
 
 
@@ -191,8 +212,7 @@ class TestSwitchesAndControls(unittest.TestCase):
     def test_encoder_matches_the_ordered_plate_opening(self):
         # CASE-V2-NOTES.md validate_fab_v5 output:
         #   "[encoder] center (13.525,12.500) size 13.000x13.000  UNCHANGED"
-        notes = (REPO_ROOT / "hardware/case/CASE-V2-NOTES.md").read_text()
-        self.assertIn("[encoder] center (13.525,12.500)", notes)
+        self.assertIn("[encoder] center (13.525,12.500)", NOTES)
 
     def test_stick_matches_the_contract(self):
         js1 = CONTRACT["refs"]["JS1"]
@@ -200,8 +220,7 @@ class TestSwitchesAndControls(unittest.TestCase):
         self.assertEqual((js1["x"], js1["y"]), (69.71, 13.37))
 
     def test_stabilizer_slots_match_the_fab_gate_output(self):
-        notes = (REPO_ROOT / "hardware/case/CASE-V2-NOTES.md").read_text()
-        self.assertIn("stab L (30.162,89.47) / R (54.038,89.47)", notes)
+        self.assertIn("stab L (30.162,89.47) / R (54.038,89.47)", NOTES)
         left, right = POS["stabilizer"]["slot_centers"]
         self.assertAlmostEqual(left[0], 30.162, places=3)
         self.assertAlmostEqual(left[1], 89.47, places=3)
@@ -212,16 +231,21 @@ class TestSwitchesAndControls(unittest.TestCase):
 class TestKeycapSeat(unittest.TestCase):
     def test_seat_is_deck_plus_stem_shoulder(self):
         deck = const(CASE_PY, "PLATE_TOP_TO_PCB")
-        shoulder = const(KEYCAPS_PY, "SW_SHOULDER_H")
-        recess = const(KEYCAPS_PY, "MOUNT_RECESS")
+        self.assertEqual(deck, const(TOPPER_FRAME_PY, "DECK_Z"))
+        shoulder = const(TOPPER_FRAME_PY, "SW_SHOULDER_H")
+        recess = const(TOPPER_FRAME_PY, "CAP_MOUNT_RECESS")
         self.assertEqual(recess, 0.0)
         self.assertAlmostEqual(POS["keycap_seat_z"], deck + shoulder - recess, places=9)
         self.assertAlmostEqual(POS["keycap_seat_z"], 11.6, places=9)
 
-    def test_the_mx_datum_chain_says_11_6(self):
-        # keycaps.py:152 -- '11.6   PCB top -> the "11.6" datum == 6.60 above the deck'
-        self.assertIn('11.6   PCB top -> the "11.6" datum', KEYCAPS_PY)
-        self.assertIn("it is the STEM'S SHOULDER", KEYCAPS_PY)
+    def test_public_topper_frame_records_the_same_seat(self):
+        m = re.search(
+            r"^KEYCAP_RIM_Z = DECK_Z \+ SW_SHOULDER_H - CAP_MOUNT_RECESS\s+# \+([\d.]+)",
+            TOPPER_FRAME_PY,
+            re.M,
+        )
+        self.assertIsNotNone(m)
+        self.assertAlmostEqual(POS["keycap_seat_z"], float(m[1]), places=9)
 
     def test_cap_stl_local_origin_is_its_bottom_rim(self):
         lo, hi = stl_bbox(
@@ -336,7 +360,7 @@ class TestScrews(unittest.TestCase):
         self.assertEqual((z["head_top"], z["tip"]), (6.8, -3.0))
 
     def test_the_fab_gate_readback_agrees(self):
-        # CASE-V2-NOTES.md:714, validate_fab_v5's own output.
+        # Public CASE-V2-NOTES.md §14, validate_fab_v5's own output.
         self.assertIn("screw holes Ø3.2 @ (3.7,3.7) and (80.5,3.7) present", NOTES)
 
 
@@ -376,6 +400,15 @@ class TestStabSlots(unittest.TestCase):
 
 
 class TestTouchPad(unittest.TestCase):
+    def test_zone_reader_fails_closed_when_the_named_zone_is_absent(self):
+        with self.assertRaisesRegex(GateError, "found 0"):
+            gen_positions.read_named_zone_polygon(
+                gen_positions.PCB_BOARD,
+                name="not_the_touch_zone",
+                net_name="TOUCH_PAD",
+                layer="F.Cu",
+            )
+
     def test_centre_is_the_contract_ref(self):
         tp5 = CONTRACT["refs"]["TP5"]
         self.assertEqual((POS["touch_pad"]["x"], POS["touch_pad"]["y"]),
@@ -421,26 +454,25 @@ class TestTouchPad(unittest.TestCase):
         layers = {c["layer"] for c in board_circles(PLATE_BOARDS["blank"])}
         self.assertEqual(layers, {"Edge.Cuts"})
 
-    def test_ring_diameter_is_the_generators_tented_ring_constant(self):
-        self.assertEqual(POS["touch_pad"]["ring_d"],
-                         const(PLATE_FAB_PY, "TENTED_RING_D"))
+    def test_ring_diameter_is_the_ordered_and_documented_value(self):
+        self.assertEqual(POS["touch_pad"]["ring_d"], 16.0)
+        self.assertIn("Ø16 silk ring", HOW_TO_ORDER)
 
     def test_the_published_ring_is_the_16_the_notes_describe(self):
         self.assertIn("Ø14 F.Cu pad, Ø12 F.Mask opening", NOTES)
         self.assertIn("Ø14 B.Cu landing pad with Ø8 B.Mask opening", NOTES)
 
-    def test_the_stale_generator_docstring_is_cited_accurately(self):
-        """The Ø10 in gen_plate_fab's docstring is a DOC BUG we record."""
-        line = PLATE_FAB_PY.splitlines()[135]        # gen_plate_fab.py:136
-        self.assertIn("Ø10 bottom landing pad", line)
-        self.assertIn('filled_circle(cx, cy, 7.0, "B.Cu")',
-                      PLATE_FAB_PY.splitlines()[139])  # :140 -- the real Ø14
-        self.assertIn("Ø10 bottom landing", POS["sources"]["touch_pad"])
-        self.assertIn("DOC BUG", POS["sources"]["touch_pad"])
-
-    def test_board_side_pour_is_the_14x14_the_pcb_docs_record(self):
-        dd = (REPO_ROOT / "hardware/pcb/DESIGN-DECISIONS.md").read_text()
-        self.assertIn("14×14 mm touch pour", dd)
+    def test_board_side_pour_is_measured_from_the_shipped_pcb_zone(self):
+        pts = named_board_zone("TP5_touch", "TOUCH_PAD", "F.Cu")
+        xs, ys = zip(*pts)
+        self.assertEqual(
+            set(pts),
+            {(6.525, 81.85), (20.525, 81.85), (20.525, 95.85), (6.525, 95.85)},
+        )
+        self.assertEqual((min(xs), max(xs)), (6.525, 20.525))
+        self.assertEqual((min(ys), max(ys)), (81.85, 95.85))
+        self.assertAlmostEqual((min(xs) + max(xs)) / 2, 13.525, places=9)
+        self.assertAlmostEqual((min(ys) + max(ys)) / 2, 88.85, places=9)
         self.assertEqual(POS["touch_pad"]["board_pour_mm"], [14.0, 14.0])
 
 

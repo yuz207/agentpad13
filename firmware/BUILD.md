@@ -14,17 +14,13 @@ checkout does not.
 Status: **both keymaps compile to a clean `.uf2` with zero code warnings**
 (`-Werror` is on). No features were stubbed — the joystick, RGB status
 protocol, touch toggle, encoder map, Vial + VialRGB, and joystick modes are
-all real code. The pin map targets the **shipped board
-`v5/hardware/pcb/v5_6.kicad_pcb`** (md5 `221ebb98fcf44f860ed65f7ed8d1bc45`) —
-check this tree against **that** file. The map is **unchanged from v4** and was
-re-verified 20/20 GPIO directly against `v5_6` on 2026-08-13 (`v5/V5-NOTES.md`,
-firmware-verification pass, Task 3), so the Layer 4 per-GPIO table in
-`hardware/pcb/v4/ORDER-READINESS.md` is where it came from and still describes
-`v5_6` correctly; `check_pins_v4.py` (below) asserts the tree against that
-table. *(Corrected 2026-08-13; this used to read "the pin map targets the
-shipped Rev A board (`v4_r27`); its single source of truth is …", naming a
-superseded board file as the thing to verify firmware against. The values were
-correct; the citation was not.)*
+all real code. The pin map targets the **current public board
+`hardware/pcb/agentpad13/agentpad13.kicad_pcb`** (v5_7, md5
+`08cf68dae979ab28aadd5e0dda34de01`). The map was re-verified 20/20 GPIO against
+v5_6; v5_7 changes only the rotations of underglow LEDs 20 and 21, with zero net
+or pin-map changes. `check_pins_v4.py` (below) embeds the definitive table and
+asserts this tree against it. Board revision details and the v5_6-to-v5_7 delta
+are in `hardware/pcb/README.md` and `release/RELEASE.md` row M.
 
 ---
 
@@ -121,7 +117,7 @@ python3 firmware/check_pins_v4.py --qmk-info /tmp/info.json --qmk-home /path/to/
 
 # 2. Protocol conformance (v0 + v1 since 2026-08-15): compiles the real
 #    firmware handler on the host and drives it with frames built by the
-#    daemon's wire-format oracle. Contract: docs/PROTOCOL-V1-CONTRACT.md.
+#    vendored host wire-format oracle. Contract: docs/PROTOCOL-V1-CONTRACT.md.
 python3 firmware/tests/conformance/run_conformance.py
 
 # 3. QMK lint
@@ -249,8 +245,8 @@ reader does not have.
 > **SW14 on the board itself** and the board stores its own result.
 > (The paragraph this replaces warned that Steps 1–3 could not be followed as
 > written, which was true while it stood.) The retired typed-output flow is
-> preserved in the ledger (`v5/V5-NOTES.md`, 2026-08-13 entry *"BRING-UP
-> CALIBRATION FACILITY"*), not here. The 0x50/0x51/0x52 commands remain in place
+> preserved in the release ledger (`release/RELEASE.md`, rows K and L), not
+> here. The 0x50/0x51/0x52 commands remain in place
 > and working for diagnostics and host tooling; they are simply no longer the
 > only path to a calibrated board.
 
@@ -279,16 +275,15 @@ checks.
 
 ---
 
-## 5. Pin map (Rev A — shipped board `v5_6`; map unchanged from `v4_r27`)
+## 5. Pin map (Rev A — public board `v5_7`; map unchanged from `v5_6`)
 
-Source table: `hardware/pcb/v4/ORDER-READINESS.md` Layer 4 (the
-definitive 30-GPIO table, extracted twice from the final copper) — **re-verified
-20/20 GPIO against the shipped `v5/hardware/pcb/v5_6.kicad_pcb` on 2026-08-13**
-(`v5/V5-NOTES.md`), which is the board file to check against. *(Corrected
-2026-08-13; this heading and line used to say "board v4_r27" / "single source of
-truth", which pointed a future verifier at a superseded board.)* Direct-pin
-matrix — logical `[row][col]` positions unchanged, physical GPIOs follow the
-board's x-monotonic routing remap:
+Source table: the definitive 30-GPIO table embedded in `check_pins_v4.py`,
+originally extracted twice from the final copper and re-verified 20/20 GPIO
+against v5_6. The current public board is
+`hardware/pcb/agentpad13/agentpad13.kicad_pcb` (v5_7); its only v5_6 delta is
+LED20/LED21 orientation, so the GPIO table is unchanged. Direct-pin matrix —
+logical `[row][col]` positions unchanged, physical GPIOs follow the board's
+x-monotonic routing remap:
 
 | Matrix | Keys | GPIOs |
 |---|---|---|
@@ -299,7 +294,7 @@ board's x-monotonic routing remap:
 
 \* **GP16 is deliberately NOT in `matrix_pins.direct`** (it is `null` at
 `[3][2]`). The board straps the TTP223 **active-HIGH** — `R10` (0 Ω) ties
-`TOUCH_AHLB → GND` on `v5_6.kicad_pcb`, so `GP16` idles LOW and drives HIGH while
+`TOUCH_AHLB → GND` on the v5 board, so `GP16` idles LOW and drives HIGH while
 touched — which is the opposite of the 13 switch-to-GND keys. QMK's only
 direct-pin polarity knob, `MATRIX_INPUT_PRESSED_STATE`, is applied **globally**
 in `quantum/matrix.c` `readMatrixPin()`, so using it would invert all 13
@@ -319,9 +314,11 @@ never address it as GPIO21 (`check_pins_v4.py` guards this).
 
 ## 6. Raw-HID protocol v0 (LOCKED) and VIA/Vial coexistence
 
-The wire format is LOCKED; the single source of truth is
-`daemon/loudestd/protocol.py`, and `tests/conformance/run_conformance.py`
-asserts the firmware against it byte-for-byte:
+The wire format is LOCKED; the public contract is
+`docs/PROTOCOL-V1-CONTRACT.md`. `tests/conformance/protocol_oracle.py` is the
+dependency-free host oracle vendored with this tree, and
+`tests/conformance/run_conformance.py` asserts the firmware against it
+byte-for-byte:
 
 * Descriptor pinned in `config.h`: Usage Page `0xFF60`, Usage `0x61`, VID
   `0xFEED`, PID `0x4C4D`, 32-byte report-ID-less frames.

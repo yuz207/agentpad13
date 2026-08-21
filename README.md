@@ -84,20 +84,24 @@ operation requires the literal authorization and observation record in the
 
 ## First power-on
 
-Flash `release/firmware/prebuilt/agentpad13.uf2` — hold BOOTSEL and drag the file on. Then hold
+Flash [`agentpad13.uf2`](release/firmware/prebuilt/agentpad13.uf2) — hold BOOTSEL and drag the file on. Then hold
 SW14, the button in the back, for about a second and follow the 13 key LEDs: the board measures its
 own joystick and stores the result. About 15 seconds, no host software, no reflash, once ever —
 full procedure in [`release/firmware/BRING-UP.md`](release/firmware/BRING-UP.md). If an axis reads
 backwards that is polarity, not calibration:
 [`release/firmware/POLARITY-NOTE.md`](release/firmware/POLARITY-NOTE.md).
 
+Firmware source is in [`firmware/loudest_micro/`](firmware/loudest_micro/); the exact Vial/QMK
+build recipe and validation commands are in [`firmware/BUILD.md`](firmware/BUILD.md). The plain-QMK,
+byte-reproducible build is [`agentpad13_reference.uf2`](release/firmware/prebuilt/agentpad13_reference.uf2).
+
 ## Licensing
 
 - `hardware/` and `release/hardware/` — **CERN-OHL-W-2.0** (schematic, PCB, case CAD).
 - `firmware/` and `release/firmware/` — **GPL-2.0-or-later** (QMK/vial-qmk
-  derivative). Corresponding source for the prebuilt UF2s = this tree built
-  against [vial-qmk](https://github.com/vial-kb/vial-qmk) per
-  `firmware/BUILD.md`.
+  derivative), except `firmware/tests/conformance/protocol_oracle.py`, which is
+  **MIT**. Corresponding source for the prebuilt UF2s = this tree built against
+  [vial-qmk](https://github.com/vial-kb/vial-qmk) per `firmware/BUILD.md`.
 
 Vendored footprint libraries under `hardware/pcb/lib/` keep their upstream
 licenses (marbastlib: CERN-OHL-P v2; MX_V2: MIT) — see `hardware/pcb/lib/LIBS.md`.

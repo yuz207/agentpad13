@@ -2,7 +2,7 @@
   "schema": "agentpad13-configurator-catalog-v1",
   "generated_from": {
     "manifest": "release/MANIFEST.md",
-    "sha256": "bc36a8fda7a7a80c3c534e8152d4c3edf901e89d7c1be5d191fa163cbc32b369"
+    "sha256": "cd1128aa89263ae12452196f10e55169f36cd4c49ecf58d13a6916d64d493e1c"
   },
   "board": {
     "fabpacks": {
@@ -164,14 +164,14 @@
       "1u": 12,
       "2u": 1,
       "2u_stab": 0,
-      "source": "release/HOW-TO-ORDER.md:16 parts list 'keycaps (12x1U + 1x2U)'; positions from release/hardware/pcb/harness/contract_v4.json refs SW1..SW12 (1U grid) + SW13 (2U), split at release/hardware/case/v2/agentpad13_case_v2.py:310-311",
+      "source": "release/HOW-TO-ORDER.md §7 'Caps and switches': 12x1U + 1x2U; positions from release/hardware/pcb/harness/contract_v4.json refs SW1..SW12 (1U grid) + SW13 (2U), split at release/hardware/case/v2/agentpad13_case_v2.py:310-311",
       "with_stabilizer": {
         "1u": 12,
         "2u": 0,
         "2u_stab": 1,
-        "source": "hardware/case/keycaps/KEYCAP-NOTES.md:1226-1232 -- the plate cuts stab slots for SW13 unconditionally (STAB1 is a live ref in contract_v4.json) and 'a 2U cap with no stab sockets cannot seat' if the stabiliser is installed"
+        "source": "release/HOW-TO-ORDER.md §7: fitting a 2U plate-mount stabilizer means printing the shipped `2u_stab` cap; the slots are measured from all three public plate boards"
       },
-      "note": "Use `with_stabilizer` when the build sheet includes the 2u plate-mount stabiliser; otherwise the plain `2u` cap. The plate is identical either way. KEYCAP-NOTES.md:1231-1233 flags the stab socket XY (+/-11.938, y=0) as UNVERIFIED against a real Cherry stab -- surface that caveat wherever `2u_stab` is offered."
+      "note": "Use `with_stabilizer` when the build sheet includes the 2u plate-mount stabiliser; otherwise the plain `2u` cap. The plate is identical either way. The public CASE-V2-NOTES.md §8 item 6 keeps real-stabilizer coupon verification as an open fit check."
     },
     "files": [
       {

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """agentpad13 Rev A firmware pin-map checker.
 
-Asserts every pin in the firmware configuration against the definitive
-Rev A (board v4_r27) per-GPIO table in hardware/pcb/v4/ORDER-READINESS.md
-(Layer 4 - extracted twice from the final board: netlist + pcbnew copper
-read, identical on all 57 U1 pads).
+Asserts every pin in the firmware configuration against the definitive Rev A
+per-GPIO table embedded below. The table was extracted twice from the final
+board (netlist + pcbnew copper, identical on all 57 U1 pads), re-verified 20/20
+against v5_6, and remains unchanged on the current public v5_7 board.
 
 Checks, in order:
   1. keyboard.json matrix_pins.direct == the table, per logical key position.
@@ -38,7 +38,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 KEYBOARD_DIR = HERE / "loudest_micro"
 
-# --- The authority: ORDER-READINESS.md Layer 4 definitive GPIO table --------
+# --- The authority: definitive GPIO table, verified against the v5 board ---
 # function -> GPIO (only the firmware-relevant, assigned pins)
 TABLE = {
     "SW1": "GP12",   # U1 pad 15, net SW1
@@ -200,7 +200,7 @@ def main():
     args = ap.parse_args()
 
     print("agentpad13 Rev A pin-map check "
-          "(authority: hardware/pcb/v4/ORDER-READINESS.md Layer 4, board v4_r27)")
+          "(embedded definitive table; current public board v5_7)")
 
     kb_json = json.loads((KEYBOARD_DIR / "keyboard.json").read_text())
     assert_pin_config(kb_json, "keyboard.json")
@@ -239,8 +239,8 @@ def main():
         for f in failures:
             print(f"  - {f}")
         return 1
-    print(f"PASS: all {checks} pin-map checks against the ORDER-READINESS "
-          "Layer 4 table succeeded")
+    print(f"PASS: all {checks} pin-map checks against the definitive "
+          "v5 GPIO table succeeded")
     return 0
 
 

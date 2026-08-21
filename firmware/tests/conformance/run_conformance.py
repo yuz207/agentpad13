@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Raw HID status-protocol conformance test: firmware C vs daemon oracle (v0 + v1).
+"""Raw HID status-protocol conformance test: firmware C vs host oracle (v0 + v1).
 
 Compiles the REAL firmware handler (firmware/loudest_micro/loudest_micro.c)
 on the host against tests/conformance/stubs/, then drives it with frames
-built by the wire-format oracle, daemon/loudestd/protocol.py, asserting:
+built by the vendored wire-format oracle, protocol_oracle.py, asserting:
 
   * default (plain QMK) build path: every v0 command is handled and the CAPS
     reply to PING is byte-for-byte protocol.build_caps(...) - and parses back
-    through the daemon's own parse_caps().
+    through the host oracle's own parse_caps().
   * vial build path: the via_command_kb() dispatcher claims exactly the
     loudest frames and leaves every observed VIA/Vial client frame to VIA,
     with the three documented byte-collision exceptions:
@@ -37,13 +37,11 @@ import sys
 import tempfile
 from pathlib import Path
 
+import protocol_oracle as P  # the dependency-free public wire-format oracle
+
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
 KB_DIR = REPO / "firmware" / "loudest_micro"
-DAEMON = REPO / "daemon"
-
-sys.path.insert(0, str(DAEMON))
-from loudestd import protocol as P  # noqa: E402  (the wire-format oracle)
 
 FEATURES = P.Feature(0x1F)  # PER_KEY|UNDERGLOW|LAYER_INDICATOR|JOYSTICK|ENCODER
 LAYERS = 8
@@ -108,7 +106,7 @@ def caps_checks(label, ev, token):
         got = ev["sent"][0]
         check(f"{label}: CAPS == protocol.build_caps(token=0x{token:02x}) byte-for-byte",
               got == want, f"got {got.hex()} want {want.hex()}")
-        caps = P.parse_caps(got)  # daemon's own parser on firmware bytes
+        caps = P.parse_caps(got)  # host oracle's own parser on firmware bytes
         # protocol_version is 1 from 2026-08-15: the contract's Version section,
         # "LOUDEST_PROTO_VERSION 0 -> 1. The CAPS reply (PING 0x04) now reports 1
         # in byte 4." Every other CAPS byte is unchanged from v0.
@@ -171,7 +169,7 @@ def joystick_checks(label, ev, token, cal=None, live=(ADC_X, ADC_Y)):
     got = ev["sent"][0]
     check(f"{label}: JOYSTICK == protocol.build_joystick(...) byte-for-byte",
           got == want, f"got {got.hex()} want {want.hex()}")
-    js = P.parse_joystick(got)  # daemon's own parser on firmware bytes
+    js = P.parse_joystick(got)  # host oracle's own parser on firmware bytes
     check(f"{label}: token echoed", js.token == token, js.token)
     check(f"{label}: GP26 -> live_x, GP27 -> live_y (no axis swap)",
           (js.live_x, js.live_y) == live, f"got ({js.live_x}, {js.live_y})")
@@ -472,7 +470,7 @@ def main():
         print(f"FAIL: {failed}/{total} conformance checks failed")
         return 1
     print(f"PASS: all {total} protocol v0+v1 conformance checks passed "
-          "(firmware C handler vs daemon/loudestd/protocol.py oracle)")
+          "(firmware C handler vs vendored protocol_oracle.py)")
     return 0
 
 

@@ -36,11 +36,11 @@ from common import (  # noqa: E402
 # Source-of-truth constants. Every one of these is a QUOTATION, not a choice.
 # --------------------------------------------------------------------------
 
-# release/HOW-TO-ORDER.md:104 -- "`_w5.4` is the default and the recommended file."
+# release/HOW-TO-ORDER.md §4 Band -- `_w5.4` is the default.
 BAND_DEFAULT = "w5.4"
-# release/HOW-TO-ORDER.md Card 4 (v2) -- bore ladder tight/nom/loose, start nom
+# release/HOW-TO-ORDER.md §8 Toppers -- bore ladder, print `nom` first.
 KNOB_DEFAULT_BORE = "nom"
-# release/HOW-TO-ORDER.md Card 4 (v2) -- start nom on either stick part
+# release/HOW-TO-ORDER.md §8 Toppers -- start `nom` on either stick part.
 STICK_DEFAULT_SOCK = "nom"
 # release/hardware/case/v2/bases/INTERFACE.md:41 -- "start with 5.8 in rigid
 # filament, 5.9 in TPU". 5p8 is the rigid-filament start and is what the
@@ -49,7 +49,7 @@ BASE_DEFAULT_PEG = "5p8"
 # v2 toppers (2026-08-21): three knobs, no params default_variant -- A (helical
 # knurl) is the knurled_cup's successor and the catalog default.
 KNOB_DEFAULT_STYLE = "A"
-# v2 stick: two PARTS (release/HOW-TO-ORDER.md Card 4) -- the nub is the
+# v2 stick: two PARTS (release/HOW-TO-ORDER.md §8) -- the nub is the
 # full-throw-safe default; the puck needs TPU and its integral stop.
 STICK_DEFAULT_STYLE = "nub_C2"
 
@@ -144,7 +144,7 @@ def build_catalog(manifest_sha: str, bringup: Path | None = None) -> dict:
             "opaque": R(f"{FABPACK}/fabpack_opaque.zip"),
             "translucent": R(f"{FABPACK}/fabpack_translucent.zip"),
         },
-        # additive: the spec's Card 1 uploads gerbers + bom/cpl separately
+        # HOW-TO-ORDER §2 uploads gerbers + BOM/CPL separately.
         "gerbers": R(f"{FABPACK}/gerbers_v5_7.zip"),
         "assembly": {
             "bom_opaque": R(f"{FABPACK}/assembly/bom_opaque.csv"),
@@ -203,7 +203,7 @@ def build_catalog(manifest_sha: str, bringup: Path | None = None) -> dict:
         "variants": plate_variants,
         # All three variants share ONE Edge.Cuts profile -- validate_fab_v5.py
         # reports "RESULT: ALL GATES PASS (3/3 variants)" against the same
-        # geometry (CASE-V2-NOTES.md:719). So one mesh AND one openings map
+        # geometry (public CASE-V2-NOTES.md §14). So one mesh AND one openings map
         # serve all three; gen_textures.py re-proves the identity from the
         # boards themselves before sharing the map.
         "mesh": "meshes/plate.glb",
@@ -379,21 +379,16 @@ def keycap_counts() -> dict:
     is the single 2U station; agentpad13_case_v2.py:310-311 splits them
     exactly that way (`SW_1U = [SW1..SW12]`, `SW_2U = SW13`).
 
-    Which 2U file: two shipped sources disagree about the stabiliser and the
-    difference is a real fitment fact, so BOTH mixes are published rather than
-    one being guessed. release/HOW-TO-ORDER.md:16 lists the parts as
-    "keycaps (12x1U + 1x2U)" with no stabiliser anywhere in the shopping list.
-    hardware/case/keycaps/KEYCAP-NOTES.md:1226-1232 records that the shipped
-    FR4 plate cuts Cherry plate-mount stab slots for SW13 unconditionally and
-    that "a 2U cap with no stab sockets cannot seat" once stabs are fitted --
-    so a build that installs the stabiliser needs the `2u_stab` file.
+    Which 2U file: release/HOW-TO-ORDER.md §7 gives the complete rule. Print
+    the ordinary `2u` cap without a stabilizer and the shipped `2u_stab` cap
+    when a 2U plate-mount stabilizer is fitted.
     """
     return {
         "1u": 12,
         "2u": 1,
         "2u_stab": 0,
         "source": (
-            "release/HOW-TO-ORDER.md:16 parts list 'keycaps (12x1U + 1x2U)'; "
+            "release/HOW-TO-ORDER.md §7 'Caps and switches': 12x1U + 1x2U; "
             "positions from release/hardware/pcb/harness/contract_v4.json "
             "refs SW1..SW12 (1U grid) + SW13 (2U), split at "
             "release/hardware/case/v2/agentpad13_case_v2.py:310-311"
@@ -403,18 +398,16 @@ def keycap_counts() -> dict:
             "2u": 0,
             "2u_stab": 1,
             "source": (
-                "hardware/case/keycaps/KEYCAP-NOTES.md:1226-1232 -- the plate "
-                "cuts stab slots for SW13 unconditionally (STAB1 is a live ref "
-                "in contract_v4.json) and 'a 2U cap with no stab sockets "
-                "cannot seat' if the stabiliser is installed"
+                "release/HOW-TO-ORDER.md §7: fitting a 2U plate-mount "
+                "stabilizer means printing the shipped `2u_stab` cap; the "
+                "slots are measured from all three public plate boards"
             ),
         },
         "note": (
             "Use `with_stabilizer` when the build sheet includes the 2u "
             "plate-mount stabiliser; otherwise the plain `2u` cap. The plate "
-            "is identical either way. KEYCAP-NOTES.md:1231-1233 flags the "
-            "stab socket XY (+/-11.938, y=0) as UNVERIFIED against a real "
-            "Cherry stab -- surface that caveat wherever `2u_stab` is offered."
+            "is identical either way. The public CASE-V2-NOTES.md §8 item 6 "
+            "keeps real-stabilizer coupon verification as an open fit check."
         ),
     }
 

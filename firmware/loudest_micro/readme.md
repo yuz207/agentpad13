@@ -6,18 +6,19 @@ hero), EC11 encoder with push, planar analog joystick, TTP223 touch pad, and
 a live agent-status display over Raw HID.
 
 * Keyboard Maintainer: [yuz207](https://github.com/yuz207)
-* Hardware Supported: agentpad13 Rev A PCB (RP2040, board `v4_r27`)
+* Hardware Supported: agentpad13 Rev A PCB (RP2040, public board `v5_7`)
 * Hardware Availability: open source (CERN-OHL-W v2), <https://github.com/yuz207/agentpad13>
 
 The QMK keyboard/module name is `loudest_micro` (the project's working name);
 the user-visible product name, USB product string, and Vial sidebar name are
 **agentpad13**. The directory name is kept because QMK derives build targets,
-artifact names, and file names from it, and the Raw HID daemon contract
-(`daemon/loudestd/protocol.py`) predates the rename.
+artifact names, and file names from it. The public Raw HID contract is
+`docs/PROTOCOL-V1-CONTRACT.md`.
 
-Pin map source of truth: `hardware/pcb/v4/ORDER-READINESS.md` (Layer 4 - the
-definitive per-GPIO table for board `v4_r27`, extracted twice from the final
-copper). `firmware/check_pins_v4.py` asserts this tree against that table.
+Pin map source of truth: the definitive table embedded in
+`firmware/check_pins_v4.py`, extracted twice from the final copper and
+re-verified against v5_6. The public v5_7 board changes only LED20/LED21
+orientation, so the GPIO map is identical; see `hardware/pcb/README.md`.
 
 Make example for this keyboard (after setting up your build environment):
 
@@ -80,7 +81,8 @@ unchanged, only the physical GPIOs moved):
   plus `GET_JOYSTICK`/`SET_CALIBRATION`/`RESET_CALIBRATION` — the same
   calibration store the SW14 routine writes, exposed for host tooling), wire
   contract in `docs/PROTOCOL-V1-CONTRACT.md` with
-  `daemon/loudestd/protocol.py` as the reference implementation. In the vial build the
+  `firmware/tests/conformance/protocol_oracle.py` as the public, dependency-free
+  host oracle. In the vial build the
   protocol coexists with VIA/Vial through a `via_command_kb()` dispatcher
   (see `firmware/BUILD.md` for the documented edge-case collisions).
 * Touch key gated by the `TP_TOG` keycode.

@@ -343,17 +343,17 @@ const KEYCAP_SEAT_Z = 11.6, CAP_H = 6.0;
    were cut against these numbers. */
 const STICK_BLADE = { x: 1.85, y: 1.15, tip_z: 18.4 };
 
-/* MX switch stand-in — every number is the Cherry MX chain read off
-   hardware/case/keycaps/keycaps.py (see the switch block at the bottom of
-   this file for the full citation). z = deck + h, deck = 5.0. */
+/* MX switch stand-in — its vertical assembly datum is the Cherry MX chain in
+   shipped release/hardware/case/v2/toppers/topper_frame_v2.py. Lateral body
+   proportions are viewer-only approximations, never manufacturing inputs. */
 const SW_BOTTOM_SQ = 13.9;                       // passes the plate's 14.0 cutout
-const SW_LIP_SQ = 15.60, SW_LIP_Z0 = 4.65, SW_LIP_Z1 = 5.75;   // :297-298, h -0.35..0.75
-const SW_TAPER_Z1 = 10.70;                       // :164  h 5.70, housing 10.12 wide
-const SW_HOUSING_TOP_SQ = 9.17, SW_HOUSING_TOP_Z = 11.01;      // :292  h 6.01
-const SW_WELL = 6.44, SW_COLLAR_SQ = 5.80;       // :294-296 collar base / :161 top
-const SW_SEAT_Z = KEYCAP_SEAT_Z;                 // :289  shoulder h 6.60 == the seat
-const SW_CROSS_L = 4.00, SW_CROSS_W_WIDE = 1.30, SW_CROSS_W_NARROW = 1.10;   // :327-329
-const SW_STEM_TOP_Z = SW_SEAT_Z + 3.60;          // :290-291 cross 3.60 above the seat
+const SW_LIP_SQ = 15.60, SW_LIP_Z0 = 4.65, SW_LIP_Z1 = 5.75;
+const SW_TAPER_Z1 = 10.70;
+const SW_HOUSING_TOP_SQ = 9.17, SW_HOUSING_TOP_Z = 11.01;
+const SW_WELL = 6.44, SW_COLLAR_SQ = 5.80;
+const SW_SEAT_Z = KEYCAP_SEAT_Z;                 // public KEYCAP_RIM_Z
+const SW_CROSS_L = 4.00, SW_CROSS_W_WIDE = 1.30, SW_CROSS_W_NARROW = 1.10;
+const SW_STEM_TOP_Z = SW_SEAT_Z + 3.60;          // public SW_CROSS_H
 
 /* 2u plate-mount stabiliser stand-in, from the stabilizer block of
    positions.json (x, slot-centre y, half spacing). View only. */
@@ -558,14 +558,11 @@ for (const [id, wall] of [['w3.0', 3.0], ['w5.4', 5.4], ['w7.4', 7.4]]) {
    has no entry. The viewer ships this stand-in so the deck is not bare with
    keycaps off — and so the caps SEAT correctly when they are on.
 
-   PROPORTIONS ARE THE CHERRY MX DATUM CHAIN, not an invention. Source:
-   hardware/case/keycaps/keycaps.py — the dimension chain at :149-153
-   ("5.0 PCB top -> plate top == our DECK", "11.6 PCB top -> the 11.6 datum",
-   "3.6 that datum -> the stem top"), the measured elevation at :160-165, the
-   seating fact at :183-190 ("The cap seats with its socket mouth flat on that
-   shoulder at h = 6.60, and ABOVE THAT PLANE THE ONLY SWITCH MATERIAL IS THE
-   3.60 mm CROSS -- which lives inside the socket"), and the named constants
-   at :289-298 / :327-329.
+   The load-bearing VERTICAL DATUM CHAIN is public in
+   release/hardware/case/v2/toppers/topper_frame_v2.py: DECK_Z,
+   SW_SHOULDER_H, SW_CROSS_H, SW_STEM_TOP_H, SW_HOUSING_TOP_H and KEYCAP_RIM_Z.
+   Body and cross widths are only a legible viewer proxy; nobody builds or
+   orders a switch from this mesh.
 
      h above deck   what                          z (deck = 5.0)
      -0.35 .. 0.75  plate-mount lip, 15.60 sq      4.65 .. 5.75

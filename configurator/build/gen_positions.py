@@ -21,6 +21,7 @@ from common import (  # noqa: E402
     OUT_DIR,
     RELEASE,
     REPO_ROOT,
+    read_named_zone_polygon,
     read_pcb_shapes,
     round_floats,
     write_json,
@@ -31,13 +32,10 @@ CASE_PY = RELEASE / "hardware/case/v2/agentpad13_case_v2.py"
 BASE_PY = RELEASE / "hardware/case/v2/bases/agentpad13_base.py"
 BASE_PARAMS = RELEASE / "hardware/case/v2/bases/params/agentpad13_base_params.json"
 CONTRACT = RELEASE / "hardware/pcb/harness/contract_v4.json"
-# keycaps.py is NOT in the release bundle (the shipped keycap artifacts are the
-# STLs); it is the generator of record for the cap datum and lives in the
-# working tree. Cited as a working-tree path, deliberately distinguished.
-KEYCAPS_PY = REPO_ROOT / "hardware/case/keycaps/keycaps.py"
-# The ORDERED plate boards. These -- not the working-tree generator that made
-# them (hardware/case/gen_plate_fab.py) -- are the primary source for what the
-# plate actually shows: screw holes, stab slots and the TP5 touch marker.
+TOPPER_FRAME_PY = RELEASE / "hardware/case/v2/toppers/topper_frame_v2.py"
+PCB_BOARD = RELEASE / "hardware/pcb/v5_7.kicad_pcb"
+# The ORDERED plate boards are the primary source for what the plate actually
+# shows: screw holes, stab slots and the TP5 touch marker.
 PLATE_FAB = RELEASE / "hardware/case/v2/fab"
 PLATE_BOARDS = {
     "standard": PLATE_FAB / "agentpad13_v2_plate_v5.kicad_pcb",
@@ -49,8 +47,8 @@ BAND_WIDTHS = {"w3.0": 3.0, "w5.4": 5.4, "w7.4": 7.4}
 BASE_ITEMS = ("riser", "wedge", "pedestal")
 
 # Tolerance for matching a value read out of a board file against the same
-# value computed from the case model's constants. gen_plate_fab._f() emits 4
-# decimals, so anything above 1e-4 is a real disagreement, not formatting.
+# value computed from the case model's constants. The boards carry 4 decimal
+# places, so anything above 1e-4 is a real disagreement, not formatting.
 FAB_TOL = 5e-4
 
 
@@ -120,12 +118,14 @@ def _screws(boards: dict, case) -> list[list[float]]:
     return [list(p) for p in first]
 
 
-def _touch_pad(boards: dict, tp5: tuple[float, float]) -> dict:
+def _touch_pad(
+    boards: dict, tp5: tuple[float, float], board_zone: list[tuple[float, float]]
+) -> dict:
     """The TP5 touch electrode + its per-variant marker, from the ORDERED boards.
 
-    Every diameter here is measured off the shipped board, not copied from
-    hardware/case/gen_plate_fab.py -- whose touch_pad_shapes() docstring is
-    stale on exactly this point (see `sources.touch_pad`).
+    Every diameter here is measured off the shipped plate boards. The board-
+    side copper area is independently measured from the named zone in the
+    shipped v5.7 PCB source.
     """
     per_variant, pad_ds, back_ds, back_open_ds = {}, set(), set(), set()
     for vid, shapes in boards.items():
@@ -178,6 +178,29 @@ def _touch_pad(boards: dict, tp5: tuple[float, float]) -> dict:
                 f"diameter ({sorted(seen)}). Do not average or pick."
             )
 
+    xs = [p[0] for p in board_zone]
+    ys = [p[1] for p in board_zone]
+    rectangle = {
+        (min(xs), min(ys)),
+        (min(xs), max(ys)),
+        (max(xs), min(ys)),
+        (max(xs), max(ys)),
+    }
+    if len(board_zone) != 4 or set(board_zone) != rectangle:
+        raise SystemExit(
+            "STOP: the shipped PCB's TP5_touch design polygon is no longer "
+            f"one four-corner rectangle: {board_zone}. Re-derive how its size "
+            "is represented instead of publishing its bounding box as copper."
+        )
+    board_pour = [max(xs) - min(xs), max(ys) - min(ys)]
+    board_pour_center = [(max(xs) + min(xs)) / 2.0, (max(ys) + min(ys)) / 2.0]
+    if any(abs(a - b) >= FAB_TOL for a, b in zip(board_pour_center, tp5)):
+        raise SystemExit(
+            "STOP: the shipped PCB's TP5_touch zone is centred at "
+            f"{board_pour_center}, but contract refs.TP5 is {tp5}. Do not "
+            "publish a touch area from a different location."
+        )
+
     return {
         "ref": "TP5",
         "x": tp5[0],
@@ -187,7 +210,7 @@ def _touch_pad(boards: dict, tp5: tuple[float, float]) -> dict:
         "pad_d": next(iter(pad_ds)) if pad_ds else None,
         "back_pad_d": next(iter(back_ds)) if back_ds else None,
         "back_mask_open_d": next(iter(back_open_ds)) if back_open_ds else None,
-        "board_pour_mm": [14.0, 14.0],
+        "board_pour_mm": board_pour,
         "variants": per_variant,
     }
 
@@ -302,7 +325,7 @@ def build() -> dict:
     # PCB_W/PCB_H are unpacked from the contract at case:294; seed them so the
     # derived chain (INNER_W -> PLATE_W -> TRAY_W ...) evaluates statically.
     case = SourceConstants(CASE_PY, REPO_ROOT, seed={"PCB_W": pcb_w, "PCB_H": pcb_h})
-    caps = SourceConstants(KEYCAPS_PY, REPO_ROOT)
+    topper = SourceConstants(TOPPER_FRAME_PY, REPO_ROOT)
     # agentpad13_base.py CONSUMES the case module (`import ... as C`), so its
     # first six constants are attribute reads that srcconst refuses to guess at.
     # They are seeded here from the case module's OWN cited constants, which is
@@ -356,18 +379,33 @@ def build() -> dict:
     ] + [{"ref": "SW13", "x": refs["SW13"]["x"], "y": refs["SW13"]["y"], "size": "2u"}]
 
     # --- keycap seat -------------------------------------------------------
-    # keycaps.py:430 MOUNT_RECESS = 0.0, so the cap's local z=0 (bottom rim) IS
-    # its socket mouth and IS the seating face; keycaps.py:289 SW_SHOULDER_H =
-    # 6.60 puts that face 6.60 above the deck; deck = +5.0 => 11.6 above PCB.
-    mount_recess = caps.get("MOUNT_RECESS")
-    shoulder_h = caps.get("SW_SHOULDER_H")
+    # The public topper frame records the cap/switch datum chain it consumes.
+    # CAP_MOUNT_RECESS = 0.0 means the shipped cap STL's local z=0 bottom rim
+    # is the seating face; the 6.60 mm shoulder over the 5.0 mm deck gives
+    # KEYCAP_RIM_Z = 11.6 mm above the PCB.
+    topper_deck = topper.get("DECK_Z")
+    mount_recess = topper.get("CAP_MOUNT_RECESS")
+    shoulder_h = topper.get("SW_SHOULDER_H")
+    recorded_seat = topper.get("KEYCAP_RIM_Z")
+    if abs(topper_deck - deck_z) >= FAB_TOL:
+        raise SystemExit(
+            f"STOP: topper_frame_v2.py DECK_Z is {topper_deck}, but the case "
+            f"model's PLATE_TOP_TO_PCB is {deck_z}. Reconcile the public "
+            "assembly datums before placing keycaps."
+        )
     if mount_recess != 0.0:
         raise SystemExit(
-            f"STOP: keycaps.py MOUNT_RECESS is {mount_recess}, not 0.0. The cap's "
-            "local z=0 is then no longer the seating face and keycap_seat_z must "
-            "be re-derived (seat = deck + SW_SHOULDER_H - MOUNT_RECESS)."
+            f"STOP: topper_frame_v2.py CAP_MOUNT_RECESS is {mount_recess}, not "
+            "0.0. The cap's local z=0 is then no longer the seating face and "
+            "keycap_seat_z must be re-derived."
         )
     keycap_seat_z = deck_z + shoulder_h - mount_recess
+    if abs(keycap_seat_z - recorded_seat) >= FAB_TOL:
+        raise SystemExit(
+            "STOP: the derived keycap seat "
+            f"{keycap_seat_z} disagrees with topper_frame_v2.py KEYCAP_RIM_Z "
+            f"{recorded_seat}. Reconcile the public datum chain."
+        )
 
     stab_half = case.get("STAB_HALF_SPACING")
     stab_y_shift = case.get("STAB_Y_SHIFT")
@@ -385,7 +423,10 @@ def build() -> dict:
     # --- the plate's own record: screws, touch marker, base lean ------------
     screw_xy = _screws(boards, case)
     tp5 = (float(refs["TP5"]["x"]), float(refs["TP5"]["y"]))
-    touch_pad = _touch_pad(boards, tp5)
+    board_zone = read_named_zone_polygon(
+        PCB_BOARD, name="TP5_touch", net_name="TOUCH_PAD", layer="F.Cu"
+    )
+    touch_pad = _touch_pad(boards, tp5, board_zone)
     bases = _bases(case, base)
 
     sources = {
@@ -425,12 +466,11 @@ def build() -> dict:
         "pcb_z": case.cite("Z_PCB_BOT") + " = -" + case.cite("PCB_T_DESIGN"),
         "keycap_seat_z": (
             f"{deck_z} (deck, {case.cite('PLATE_TOP_TO_PCB')}) + {shoulder_h} "
-            f"(stem shoulder above deck, {caps.cite('SW_SHOULDER_H')}) - "
-            f"{mount_recess} ({caps.cite('MOUNT_RECESS')}) = {keycap_seat_z}. "
-            "The cap STL's local z=0 is its bottom rim / socket mouth "
-            "(keycaps params_boxfit/keycap_params.json 'datum'), and "
-            "KEYCAP-NOTES.md:184 states the cap 'seats with its socket mouth "
-            "flat on that shoulder'."
+            f"(stem shoulder above deck, {topper.cite('SW_SHOULDER_H')}) - "
+            f"{mount_recess} ({topper.cite('CAP_MOUNT_RECESS')}) = "
+            f"{keycap_seat_z}, cross-checked against "
+            f"{topper.cite('KEYCAP_RIM_Z')}. The shipped cap STLs are measured "
+            "independently by the tests: their local z=0 is the bottom rim."
         ),
         "tray": (
             case.cite("Z_TRAY_BOT")
@@ -475,7 +515,7 @@ def build() -> dict:
             + " about contract refs.SW13, envelope from "
             + case.cite("STAB_W")
             + ". Independently confirmed by the fab gate's own readback in "
-            "hardware/case/CASE-V2-NOTES.md line 713: '[SW13] cutout center "
+            "release/hardware/case/v2/CASE-V2-NOTES.md §14: '[SW13] cutout center "
             "(42.100,88.850) size 14.000x14.000 + stab L (30.162,89.47) / R "
             "(54.038,89.47) 6.65x12.3 UNCHANGED', and re-measured from the "
             "Edge.Cuts rectangles of the three shipped plate boards under "
@@ -508,27 +548,22 @@ def build() -> dict:
             "cap: agentpad13_case_v2.py line 10 says the 'exposed M3 button "
             "heads sit PROUD on the deck'. A socket-head cap would be Ø5.5 x "
             "3.0 and would not match the shipped counterbore-free plate. "
-            "Also confirmed by the fab gate readback, CASE-V2-NOTES.md line "
-            "714: 'screw holes Ø3.2 @ (3.7,3.7) and (80.5,3.7) present'."
+            "Also confirmed by the fab gate readback in the public "
+            "CASE-V2-NOTES.md §14: 'screw holes Ø3.2 @ (3.7,3.7) and "
+            "(80.5,3.7) present'."
         ),
         "touch_pad": (
             f"Centre from {contract_rel} refs.TP5, restated at "
             + case.cite("TP5")
             + ". Every DIAMETER is measured off the ordered boards under "
-            "release/hardware/case/v2/fab/, not copied from the generator: "
+            "release/hardware/case/v2/fab/: "
             "F.Cu electrode Ø14, B.Cu landing Ø14, B.Mask foam opening Ø8, "
             "and the per-variant marker -- Ø12 F.Mask opening (standard, the "
             "exposed ENIG gold disc) or Ø16 F.SilkS ring at 0.2 stroke "
-            "(tented_ring) or nothing (blank). "
-            "DOC BUG, recorded not fixed: hardware/case/gen_plate_fab.py "
-            "touch_pad_shapes() docstring (line 136) says 'Ø10 bottom landing "
-            "pad', but its own code (line 140) emits radius 7.0 and all three "
-            "shipped boards carry Ø14 on B.Cu -- as does CASE-V2-NOTES.md line "
-            "280 ('Ø14 B.Cu landing pad with Ø8 B.Mask opening'). The Ø14 "
-            "published here is the ordered artifact's value. "
-            "board_pour_mm is the BOARD-side 14x14 mm TOUCH_PAD copper pour "
-            "under the plate (hardware/pcb/DESIGN-DECISIONS.md line 173, and "
-            "the frozen-board readback in CASE-V2-NOTES.md line 251)."
+            "(tented_ring) or nothing (blank). board_pour_mm is measured from "
+            "the design polygon of the named TP5_touch / TOUCH_PAD zone in "
+            "release/hardware/pcb/v5_7.kicad_pcb and cross-checked against "
+            "contract refs.TP5."
         ),
         "bases": (
             "Tilt from "
@@ -701,11 +736,11 @@ def build() -> dict:
             "slot_size": [stab_w, stab_h],
             "slots": stab_slots,
             "caveat": (
-                "hardware/case/keycaps/KEYCAP-NOTES.md lines 1231-1233 flag the "
-                "2U cap's stab SOCKET xy (+/-11.938, y = 0) as UNVERIFIED "
-                "against a real Cherry stabiliser. The plate SLOTS published "
-                "here are measured off the ordered board and are not in doubt; "
-                "the caveat is about the printed cap that has to meet them."
+                "The plate slots are measured from every shipped plate board. "
+                "release/hardware/case/v2/CASE-V2-NOTES.md §8 item 6 still "
+                "requires coupon verification with the real 2U stabilizer; "
+                "release/HOW-TO-ORDER.md §7 therefore tells stabilized builds "
+                "to use the shipped 2u_stab cap."
             ),
         },
         "screws": {

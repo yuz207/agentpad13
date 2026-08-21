@@ -86,7 +86,7 @@ straight into CI. No network, no account, no cloud upload, no browser.
 
 | Mode | GP16 at rest | Meaning |
 |---|---|---|
-| `board` *(default)* | **LOW** | What the fabricated PCB does. `R10` (0 Ω) ties `TOUCH_AHLB → GND` on `v5_6.kicad_pcb`; on a TTP223, AHLB low selects **active-high** output, so Q idles LOW and drives HIGH while touched. **This is the mode that must pass.** |
+| `board` *(default)* | **LOW** | What the v5 PCB does. `R10` (0 Ω) ties `TOUCH_AHLB → GND`; on a TTP223, AHLB low selects **active-high** output, so Q idles LOW and drives HIGH while touched. **This is the mode that must pass.** |
 | `firmware` | HIGH | The polarity `config.h` *used to* assume — *"idle high, touched low"*. Kept as the counterfactual arm of the A/B; it does **not** describe any board that exists, and since the fix it is the arm that fails. |
 
 Both shipped builds, run four ways — **before** the fix (Rev-A binaries
@@ -137,7 +137,7 @@ falsified assumption was turned into a switch rather than left standing:
 
 | Mode | "Clockwise" is | Meaning |
 |---|---|---|
-| `board` *(default)* | the **reversed** GP13/GP14 walk | The as-built `v5_6` A/B landing, measured on hardware. **This is the mode that must pass.** |
+| `board` *(default)* | the **reversed** GP13/GP14 walk | The fabricated v5_6 A/B landing, measured on hardware and unchanged in public v5_7. **This is the mode that must pass.** |
 | `firmware` | the **forward** walk | What this file asserted before 2026-08-15, i.e. the pre-flip assumption. It describes no board that exists; since the flip it is the arm that fails. |
 
 Both modes assert the **same behavior** — CW must give `KC_VOLU`, CCW must give
@@ -165,7 +165,7 @@ each isolates its own fault. Measured on both current builds:
 
 **Board truth**, confirmed in four independent places:
 
-* `hardware/pcb/v5_6.kicad_pcb` — footprint `R10`, value `0R`, pads
+* `hardware/pcb/agentpad13/agentpad13.kicad_pcb` (public v5_7) — footprint `R10`, value `0R`, pads
   `1 → TOUCH_AHLB`, `2 → GND`
 * `hardware/pcb/SCHEMATIC-REVIEW.md:156` — *"R10 0 Ω strap AHLB→GND
   (active-high); move to +3V3 for active-low"*

@@ -101,10 +101,9 @@ CIRCLE_SEGMENTS = 720  # 0.5 deg -- smoother than one output pixel at Ø3
 # is one edit.
 #
 # ENIG_GOLD: the standard plate's marker is an exposed immersion-gold disc.
-# The FINISH is a sourced fact -- hardware/case/CASE-V2-NOTES.md line 302 says
-# to order "ENIG 1U\" (exposed gold touch disc)" and line 299 repeats "order
-# ENIG finish so the exposed disc is flat gold, not HASL solder". The RGB
-# value below is our render of that finish.
+# The FINISH is a sourced fact -- release/HOW-TO-ORDER.md §3 requires ENIG for
+# the exposed disc so the touch surface is flat, lead-free gold rather than
+# HASL solder. The RGB value below is our render of that finish.
 ENIG_GOLD_RGB = (0xC8, 0xA5, 0x5A)
 # SILK_WHITE: silkscreen is white on every soldermask colour, so the
 # tented-ring marker reads the same whatever plate colour the owner picks.
@@ -124,7 +123,7 @@ EXPECTED_LOOPS = {
     (14.0, 14.0): 13,     # FR4_CUTOUT, SW1..SW13
     (6.65, 12.3): 2,      # STAB_W x STAB_H
     (14.0, 13.0): 1,      # ENC_OPENING, widened +1.0 on board +x in v2.12
-    (18.45, 18.45): 1,    # YA13 joystick opening (JS_OPEN_* in gen_plate_fab)
+    (18.45, 18.45): 1,    # YA13 joystick opening in the shipped boards
     (3.0, 3.0): 1,        # LYR_HOLE_D over LED14
     (3.2, 3.2): 4,        # M3_SCREW_CLEAR corner holes
 }
@@ -136,8 +135,8 @@ EXPECTED_LOOPS = {
 
 
 def _key(p) -> tuple:
-    """Vertex identity. gen_plate_fab._f() emits 4 decimals and shared
-    endpoints come from one computation, so 4-decimal equality is exact."""
+    """Vertex identity. The shipped boards carry 4 decimals and shared
+    endpoints are identical, so 4-decimal equality is exact."""
     return (round(p[0], 4) + 0.0, round(p[1], 4) + 0.0)
 
 
@@ -305,7 +304,7 @@ def write_rgba(path: Path, rgb: tuple, alpha: np.ndarray) -> int:
 def gate_identity(boards: dict) -> None:
     """All three variants must carry the SAME Edge.Cuts geometry.
 
-    This is what licenses one shared openings map. CASE-V2-NOTES.md line 719
+    This is what licenses one shared openings map. CASE-V2-NOTES.md §14
     records validate_fab_v5 reporting "ALL GATES PASS (3/3 variants)" against
     one profile; this re-proves it from the boards themselves.
     """
