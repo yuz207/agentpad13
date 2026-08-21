@@ -311,9 +311,11 @@ class ProtocolParityTest(unittest.TestCase):
         ).snapshot
         self.assertEqual(before.link, 1)
 
-        after = self.harness.thstatus(
+        invalid = self.harness.thstatus(
             [{"id": 2, "b": 0.25}, {"id": 2, "b": 0.75}]
-        ).snapshot
+        )
+        after = invalid.snapshot
+        self.assertEqual(invalid.sent, ())
         self.assertEqual(after.error_revision, (before.error_revision + 1) & 0xFF)
         self.assertEqual(after.link, 2)
         self.assertEqual(after.revision, before.revision)

@@ -1125,9 +1125,8 @@ static bool dispatch_request(const char *input, size_t length) {
         bool valid_status = parse_thstatus_params(input, request.params_start, request.params_end);
         if (valid_status) {
             saw_thstatus = true;
-        }
-        send_response("{\"result\":true,\"id\":", request.id);
-        if (!valid_status) {
+            send_response("{\"result\":true,\"id\":", request.id);
+        } else {
             return false;
         }
     } else if (strcmp(request.method, "device.status") == 0) {

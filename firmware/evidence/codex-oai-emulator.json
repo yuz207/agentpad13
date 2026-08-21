@@ -1,7 +1,7 @@
 {
   "uf2_blocks": 183,
   "uf2_size_bytes": 93696,
-  "uf2_sha256": "64cd5f40cd444f519222baa17437f42cea45b41617ac133ea577dd312c39ae3c",
+  "uf2_sha256": "fcb50b2419419be43b7cf90b00a96b16063fcaf182bc24b9642d57e2e8adf54d",
   "usb_enumerated": true,
   "vid_pid": "303a:8360",
   "usage": "ff00:0061",

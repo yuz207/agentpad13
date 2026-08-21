@@ -3,7 +3,7 @@
 > **Plan histórico:** conserva la secuencia y los contratos de esta fase. Sus
 > artefactos intermedios están superseded por
 > `release/firmware/prebuilt/agentpad13_codex_oai.uf2` (93.696 bytes, SHA-256
-> `64cd5f40cd444f519222baa17437f42cea45b41617ac133ea577dd312c39ae3c`).
+> `fcb50b2419419be43b7cf90b00a96b16063fcaf182bc24b9642d57e2e8adf54d`).
 > La validación física sigue PENDING y no hubo flash.
 
 > **Nota de ejecución:** aplicar este plan tarea por tarea, manteniendo el firmware de las capas BASE/FN sin cambios de contrato y sin realizar ningún flash.

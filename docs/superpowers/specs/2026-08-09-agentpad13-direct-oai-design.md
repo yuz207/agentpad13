@@ -4,7 +4,7 @@
 > original. Las comparaciones con prototipos previos se han retirado para que
 > este documento describa únicamente AgentPad13. El artefacto actual es
 > `release/firmware/prebuilt/agentpad13_codex_oai.uf2`, 93.696 bytes, SHA-256
-> `64cd5f40cd444f519222baa17437f42cea45b41617ac133ea577dd312c39ae3c`;
+> `fcb50b2419419be43b7cf90b00a96b16063fcaf182bc24b9642d57e2e8adf54d`;
 > la validación física sigue PENDING y no hubo flash.
 
 Fecha: 2026-08-09

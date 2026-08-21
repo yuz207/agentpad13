@@ -5,7 +5,7 @@
 this checkout and must match the UF2 SHA-256 and byte size recorded in
 `codex-oai-current-manifest.json`. The current port rebuild is 93,696 bytes
 with SHA-256
-`64cd5f40cd444f519222baa17437f42cea45b41617ac133ea577dd312c39ae3c`.
+`fcb50b2419419be43b7cf90b00a96b16063fcaf182bc24b9642d57e2e8adf54d`.
 
 Two earlier provenance layers remain explicit:
 

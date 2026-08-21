@@ -4,7 +4,7 @@
 > candidate facts observed during the original AgentPad13 work. Its artifact
 > values are superseded. The current destination release is
 > `release/firmware/prebuilt/agentpad13_codex_oai.uf2`, 93,696 bytes, SHA-256
-> `64cd5f40cd444f519222baa17437f42cea45b41617ac133ea577dd312c39ae3c`.
+> `fcb50b2419419be43b7cf90b00a96b16063fcaf182bc24b9642d57e2e8adf54d`.
 > Current physical validation remains PENDING; no flash occurred.
 
 ## Scope and verdict
@@ -33,9 +33,9 @@ evidence alone.
 | Six task slots | RGB, effect, brightness, speed and flags retained; partial updates; FIFO projection, oldest eviction and working-task preference | C/Python renderer/protocol parity PASS. |
 | Task LED renderer | LEDs 0–5 slots; 6–12 action feedback; 13 TP5/layer indicator (always CODEX/FN/NAV/MEDIA colour, with link tint/pulse); 14–23 dim global task; steady state by default with optional compile-time animation | 24-frame C/Python LED suite PASS, including four-layer indicator parity. Physical mapping remains unobserved. |
 | Startup diagnostic | White dot visits chain indexes 0→23 at 80 ms; two green full-chain flashes; one-shot, no EEPROM writes; RGB remains runtime-enabled afterward | C/Python parity and keymap contract PASS. Requires the 24-pixel WS2812 chain; a bare Pico onboard LED is not part of this path. |
-| CODEX layer | 15-position runtime map with a legacy reserved TP5 slot; native fallback before handshake; OAI notifications after handshake; matrix key 11 is protected ACCEPT, matrix key 12 is ACT12/SEND, and the separate 2U key is MICROPHONE via ACT10 press/release | Static keymap contract, protocol and emulator AG00 event PASS. Physical matrix pending. |
-| FN/layer navigation | F2–F12, joystick mode, media controls; four default layers (`CODEX`, `FN`, `NAV`, `MEDIA`) cycled by encoder click or TP5; human layer 1/QMK index 0 is forced to OAI on boot | Static contract and clean build PASS. Actual F2/touch/layer observations remain pending. |
-| Encoder | Click emits `ENC` when ready and cycles CODEX/FN; hold ≥800 ms toggles persisted OS mode; rotation is reasoning in CODEX and scroll in FN | Source contracts and build PASS; direction/gesture timing physically pending. |
+| CODEX layer | 15-position runtime map with a legacy reserved TP5 slot; native fallback before handshake; OAI notifications after handshake; matrix key 11 is protected ACCEPT, matrix key 12 is ACT11 (the second microphone contact), and the separate 2U key is ACT12/SEND | Static keymap contract, protocol and emulator AG00 event PASS. Physical matrix pending. |
+| FN/layer navigation | F2–F12, joystick mode, media controls; four default layers (`CODEX`, `FN`, `NAV`, `MEDIA`) cycled by TP5 only; human layer 1/QMK index 0 is forced to OAI on boot | Static contract and clean build PASS. Actual F2/touch/layer observations remain pending. |
+| Encoder | Click emits `ENC` when ready; it never changes layers or toggles OS mode; rotation emits `ENC_CW`/`ENC_CC` in CODEX and native scroll/media behavior on auxiliary layers | Source contracts and build PASS; direction/gesture timing physically pending. |
 | ACCEPT/SAFE/NEW | Native fallback has short ACCEPT suppression, ≥600 ms one-shot release, SAFE arming/release clear, and NEW short/hold split | Static contract and clean build PASS; physical timing remains pending. |
 | Keymap RPC | `v.oai.keymap.get/set`, 15 hex positions, validation, atomic update and RP2040 wear-leveling persistence | 75-test host suite PASS; no helper/Vial required. |
 | Touch/joystick | TP5 cycles layers; `TP_TOG` remains on NAV; joystick supports native gamepad plus arrow/scroll modes | Build/static coverage. Touch/layer timing and joystick center/direction are still calibration items. |
