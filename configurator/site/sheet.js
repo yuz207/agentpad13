@@ -15,7 +15,7 @@ import { derive, applyOrder, finishOf } from './rules.js';
 const FLASH_FALLBACK = 'dd if=firmware/prebuilt/agentpad13.uf2 of=/Volumes/RPI-RP2/fw.uf2 bs=1m';
 
 /**
- * The fab finish per plate variant — release/HOW-TO-ORDER.md card 3, and the
+ * The fab finish per plate variant — release/HOW-TO-ORDER.md §3 Plate, and the
  * one line on this sheet that is a MANUFACTURING instruction rather than a
  * taste. Round 4 owner ruling, verbatim: "call standard something else b/c that
  * matters for the manufacturing process (not leaded!)".
