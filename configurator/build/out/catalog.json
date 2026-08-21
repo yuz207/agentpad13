@@ -2,7 +2,7 @@
   "schema": "agentpad13-configurator-catalog-v1",
   "generated_from": {
     "manifest": "release/MANIFEST.md",
-    "sha256": "bc36a8fda7a7a80c3c534e8152d4c3edf901e89d7c1be5d191fa163cbc32b369"
+    "sha256": "cd1128aa89263ae12452196f10e55169f36cd4c49ecf58d13a6916d64d493e1c"
   },
   "board": {
     "fabpacks": {

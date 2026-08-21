@@ -1,5 +1,12 @@
 # FIRMWARE-V4-NOTES — agentpad13 Rev A firmware wave (board v4_r27)
 
+> **Historical ledger.** This file preserves the v4/v5_6 verification record,
+> including names of private working-tree ledgers that were not published. For
+> the current public state use `firmware/BUILD.md`, the definitive table in
+> `firmware/check_pins_v4.py`, the v5_7 board at
+> `hardware/pcb/agentpad13/agentpad13.kicad_pcb`, and the self-contained host
+> oracle at `firmware/tests/conformance/protocol_oracle.py`.
+
 Ledger for the firmware wave that brought `firmware/` from the pre-v4 scaffold
 pin map to the shipped Rev A board. Every change below cites its authority.
 Pin authority throughout: **`hardware/pcb/v4/ORDER-READINESS.md` Layer 4** —

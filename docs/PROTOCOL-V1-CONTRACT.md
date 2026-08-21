@@ -1,8 +1,9 @@
 # Protocol v1 — joystick calibration commands (CONTRACT, 2026-08-15)
 
-This file is the **single source of truth** both implementations are written against:
-`firmware/loudest_micro/loudest_micro.c` (device) and `daemon/loudestd/protocol.py`
-(host oracle). `firmware/tests/conformance/run_conformance.py` asserts the two agree.
+This file is the **single source of truth** both public implementations are written
+against: `firmware/loudest_micro/loudest_micro.c` (device) and
+`firmware/tests/conformance/protocol_oracle.py` (dependency-free host oracle).
+`firmware/tests/conformance/run_conformance.py` asserts the two agree.
 If an implementation and this file disagree, STOP — do not "fix" one side silently.
 
 ## Why v1 exists

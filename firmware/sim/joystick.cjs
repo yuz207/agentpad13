@@ -4,8 +4,8 @@
 //
 // Sibling of behavior.cjs, which referees the user-visible behavior of the same
 // binaries and is deliberately never edited to accommodate this file. Contract
-// under test: docs/PROTOCOL-V1-CONTRACT.md. Host counterpart:
-// daemon/loudestd/protocol.py (agreement between the two is proven separately by
+// under test: docs/PROTOCOL-V1-CONTRACT.md. Public host counterpart:
+// firmware/tests/conformance/protocol_oracle.py (agreement is proven separately by
 // firmware/tests/conformance/run_conformance.py, on the host, without hardware).
 //
 // WHY THIS EXISTS. The v1 redesign replaced a whole separate bring-up firmware

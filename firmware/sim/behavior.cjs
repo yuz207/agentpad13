@@ -61,23 +61,21 @@ const PIO0_TXF0 = 0x50200010;
 const LED_COUNT = 24;
 
 // --- TOUCH POLARITY MODEL -------------------------------------------------
-// This is the single most important knob in this harness, because the board
-// and the firmware disagree about it.
+// This is the single most important knob in this harness. The default models
+// the board and must pass; the counterfactual recreates the pre-fix assumption
+// and must fail only the touch checks.
 //
-//   'board'    (DEFAULT — what the fabricated PCB actually does)
-//              R10 (0R) ties TOUCH_AHLB -> GND on v5_6.kicad_pcb. On a TTP223,
+//   'board'    (DEFAULT — what the v5 PCB actually does)
+//              R10 (0R) ties TOUCH_AHLB -> GND. On a TTP223,
 //              AHLB low selects ACTIVE-HIGH output: Q idles LOW and drives HIGH
 //              while touched. So GP16 rests LOW.
 //
-//   'firmware' (what firmware/loudest_micro/config.h:21 assumes)
-//              "idle high, touched low" — GP16 rests HIGH.
+//   'firmware' (legacy flag name — the old, wrong firmware assumption)
+//              "idle high, touched low" — GP16 rests HIGH. Current firmware
+//              does not make this assumption; this is the negative-control arm.
 //
-// QMK reads direct pins with an internal pull-up and, with
-// MATRIX_INPUT_PRESSED_STATE undefined (it is nowhere in this keyboard tree),
-// treats LOW as pressed. Under the board model GP16 therefore rests in the
-// PRESSED state, so matrix [3,2] — the layer-cycle key — is held from power-on.
-// Running in 'board' mode is expected to FAIL on the current firmware. That
-// failure is the point; see README "The defect this harness catches".
+// GP16 is intentionally outside QMK's direct matrix and is polled active-high
+// by loudest_micro.c, so 'board' passes and 'firmware' fails four checks.
 const TOUCH_MODEL = (args.find((a) => a.startsWith('--touch=')) ?? '--touch=board').split('=')[1];
 if (!['board', 'firmware'].includes(TOUCH_MODEL)) {
   console.error(`unknown --touch=${TOUCH_MODEL} (expected 'board' or 'firmware')`);
@@ -93,9 +91,9 @@ const touchUp = () => mcu.gpio[16].setInputValue(TOUCH_IDLE_LEVEL);
 // walk is a PHYSICALLY CLOCKWISE detent depends on which EC11 terminal landed on
 // ENC_A and which on ENC_B — a board fact, exactly like the AHLB strap. This
 // harness used to hard-code one answer (the seq[] order below == clockwise),
-// which is an ASSUMPTION about v5_6, not a measurement of it.
+// which was an assumption about the v5 board, not a measurement of it.
 //
-//   'board'    (DEFAULT — what the assembled v5_6 actually does)
+//   'board'    (DEFAULT — measured on fabricated v5_6; unchanged in v5_7)
 //              Measured on the owner's populated board, 2026-08-15: turning the
 //              knob clockwise on the PRE-FLIP firmware produced volume-DOWN. So
 //              on this board a physically-clockwise detent is the REVERSED walk,

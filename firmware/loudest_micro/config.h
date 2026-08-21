@@ -1,16 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // agentpad13 Rev A - keyboard-level configuration.
 //
-// THE SHIPPED BOARD IS v5/hardware/pcb/v5_6.kicad_pcb (md5
-// 221ebb98fcf44f860ed65f7ed8d1bc45) -- check this tree against THAT file. The
-// pin map is UNCHANGED from v4 and was re-verified 20/20 GPIO directly against
-// v5_6 on 2026-08-13 (v5/V5-NOTES.md, firmware-verification pass, Task 3), so
-// the Layer 4 per-GPIO table in hardware/pcb/v4/ORDER-READINESS.md is where the
-// map came from and still describes v5_6 correctly.
-// (CORRECTED 2026-08-13: these two lines used to read "Pin map source of truth:
-// hardware/pcb/v4/ORDER-READINESS.md (Layer 4 per-GPIO table, board v4_r27)",
-// naming a superseded board file as the thing to verify firmware against. The
-// values were correct; the citation was not.)
+// THE CURRENT PUBLIC BOARD IS hardware/pcb/agentpad13/agentpad13.kicad_pcb
+// (v5_7, md5 08cf68dae979ab28aadd5e0dda34de01). The pin map was re-verified
+// 20/20 GPIO against v5_6; v5_7 changes only the rotations of underglow LEDs 20
+// and 21, with zero net or pin-map changes. The definitive table is embedded in
+// firmware/check_pins_v4.py. See hardware/pcb/README.md for the revision delta.
 #pragma once
 
 // --- Joystick (analog 2-axis tilt gimbal on ADC) ---
@@ -18,17 +13,17 @@
 // (Corrected 2026-07-19; this used to read "analog PSP-slider on ADC, planar"
 // for the dropped Adafruit 3103 hand-solder part. Electrically identical from
 // firmware's side: dual pot, wiper -> ADC. Axis DIRECTION may need inverting --
-// see firmware/POLARITY-NOTE.md in the release; one-line flip, no rebuild.)
+// see firmware/POLARITY-NOTE.md; it is a one-line edit followed by a rebuild.)
 // Axes + placeholder calibration (512 center, 0..1023) live in keyboard.json
 // ("joystick": {"driver": "analog", "axes": ...}) which auto-generates
 // joystick_axes[]. JOYSTICK_AXIS_COUNT (=2) and JOYSTICK_BUTTON_COUNT (=0) are
-// emitted from that block. Real low/rest/high values are CALIBRATION-PENDING
-// (bring-up ADC sweep on the real module). Native QMK output is HID gamepad
-// only; the arrow (8-way) and scroll modes are custom code in loudest_micro.c
-// reading analogReadPin(GP26/GP27) (JS_MODE keycode).
+// emitted from that block. Those values are only the uncalibrated fallback;
+// the SW14 routine measures the real module and stores its values in EEPROM.
+// Native QMK output is HID gamepad; the arrow (8-way) and scroll modes are
+// custom code in loudest_micro.c reading GP26/GP27 (JS_MODE keycode).
 
 // --- Touch (TTP223 U6 on GP16, injected at matrix [3,2]) ---
-// BOARD TRUTH, read off v5_6.kicad_pcb: R10 (0R) straps TOUCH_AHLB -> GND. On a
+// BOARD TRUTH, read off the v5 board: R10 (0R) straps TOUCH_AHLB -> GND. On a
 // TTP223, AHLB low selects the ACTIVE-HIGH output, so GP16 idles LOW and drives
 // HIGH while the pad is touched -- the OPPOSITE sense of the 13 switch-to-GND
 // keys. (CORRECTED 2026-08-13: this comment used to read "the PCB straps the
@@ -46,21 +41,21 @@
 // and the rgb_matrix layout are unchanged. TP_TOG (custom keycode) still gates
 // this key on/off.
 
-// --- Raw HID status protocol v1 (device side of loudestd) ---
-// LOCKED wire format - counterpart: daemon/loudestd/protocol.py, contract:
-// docs/PROTOCOL-V1-CONTRACT.md. Handled in
+// --- Raw HID status protocol v1 ---
+// LOCKED wire format - public contract: docs/PROTOCOL-V1-CONTRACT.md; vendored
+// host oracle: firmware/tests/conformance/protocol_oracle.py. Handled in
 // loudest_micro.c: 0x01 SET_KEY {chain_idx,r,g,b,effect} | 0x02 SET_LAYER {n} |
 // 0x03 CLEAR | 0x04 PING {token} -> CAPS {token,'L','D',ver,led_count,layers,feat}.
 // v1 (2026-08-15) ADDS, without touching any v0 frame: 0x50 GET_JOYSTICK |
 // 0x51 SET_CALIBRATION | 0x52 RESET_CALIBRATION.
-// Pin the QMK Raw HID descriptor to the values the daemon opens (already the QMK
+// Pin the QMK Raw HID descriptor to the values a host application opens (already the QMK
 // defaults; declared here so the contract is explicit and cannot silently drift).
 #define RAW_USAGE_PAGE 0xFF60
 #define RAW_USAGE_ID 0x61
 
 // --- SW14: two roles, and why they can never collide ---
 // SW14 is the button in the back that connects net BOOTSEL to GND, with R6 (1k)
-// tying BOOTSEL to QSPI_CS (v5/hardware/pcb/v5_6.kicad_pcb) - the stock Pico
+// tying BOOTSEL to QSPI_CS on the public v5_7 board - the stock Pico
 // topology. It does two entirely different jobs:
 //   * HELD AT POWER-UP -> the RP2040 MASK ROM samples this line before one
 //     instruction of our firmware has run, and enters the UF2 bootloader. This
