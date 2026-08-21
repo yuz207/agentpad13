@@ -9,6 +9,8 @@ legacy helper/Vial route.
 from __future__ import annotations
 
 import re
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -31,7 +33,6 @@ class KeymapContractTest(unittest.TestCase):
         self.rules_text = (KEYMAP / "rules.mk").read_text()
         self.keymap = (KEYMAP / "keymap.c").read_text()
         self.common = (REPO / "firmware" / "loudest_micro" / "loudest_micro.c").read_text()
-        self.runbook = (REPO / "docs" / "codex-oai-physical-runbook.md").read_text()
         self.rules = dict(
             re.findall(r"^([A-Z][A-Z0-9_]*)\s*=\s*([^\s#]+)", self.rules_text, re.MULTILINE)
         )
@@ -191,6 +192,37 @@ class KeymapContractTest(unittest.TestCase):
         self.assertNotIn("select_codex_layer", handler)
         self.assertNotIn("eeconfig_update_user", handler)
 
+    def test_physical_encoder_direction_matches_target_flip(self) -> None:
+        """The flipped driver callback reports physical clockwise as true."""
+        keyboard_config = (REPO / "firmware" / "loudest_micro" / "config.h").read_text()
+        self.assertIn("#define ENCODER_DIRECTION_FLIP", keyboard_config)
+
+        encoder = re.search(
+            r"bool encoder_update_user\(uint8_t index, bool clockwise\) \{(.*?)\n\}",
+            self.keymap,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(encoder)
+        assert encoder is not None
+        body = encoder.group(1)
+
+        expected_mappings = {
+            "FN scroll": "tap_code16(clockwise ? KC_WH_D : KC_WH_U);",
+            "NAV paging": "tap_code16(clockwise ? KC_PGDN : KC_PGUP);",
+            "MEDIA volume": "tap_code16(clockwise ? KC_VOLU : KC_VOLD);",
+            "OAI notification": (
+                "codex_oai_notify(clockwise ? OAI_CONTROL_ENCODER_CW : "
+                "OAI_CONTROL_ENCODER_CCW, true)"
+            ),
+            "native fallback": (
+                "native_action(clockwise ? CX_ACTION_REASONING_UP : "
+                "CX_ACTION_REASONING_DOWN);"
+            ),
+        }
+        for mapping, source in expected_mappings.items():
+            with self.subTest(mapping=mapping):
+                self.assertIn(source, body)
+
     def test_native_fallback_and_safety_contract(self) -> None:
         for token in (
             "static bool notify_or_native",
@@ -263,6 +295,35 @@ class KeymapContractTest(unittest.TestCase):
         self.assertIn("defined(LOUDEST_CUSTOM_RGB_STATUS)", self.common)
         self.assertIn("return rgb_matrix_indicators_advanced_user(led_min, led_max);", self.common)
 
+    def test_custom_rgb_runs_user_renderer_before_calibration_overlay(self) -> None:
+        """Custom RGB must retain the shared SW14 calibration display."""
+        harness = HERE / "calibration_rgb_harness.c"
+        with tempfile.TemporaryDirectory(prefix="agentpad13_calibration_rgb_") as directory:
+            binary = Path(directory) / "calibration_rgb_harness"
+            subprocess.run(
+                [
+                    "cc",
+                    "-std=c11",
+                    "-Wall",
+                    "-Wextra",
+                    "-Werror",
+                    "-DRAW_ENABLE",
+                    "-DRGB_MATRIX_ENABLE",
+                    "-DLOUDEST_CUSTOM_RAW_HID",
+                    "-DLOUDEST_CUSTOM_RGB_STATUS",
+                    "-I",
+                    str(REPO / "firmware" / "tests" / "conformance" / "stubs"),
+                    "-I",
+                    str(REPO / "firmware" / "loudest_micro"),
+                    str(harness),
+                    "-o",
+                    str(binary),
+                ],
+                check=True,
+            )
+            completed = subprocess.run([str(binary)], check=False)
+            self.assertEqual(completed.returncode, 0)
+
     def test_raw_and_rgb_opt_out_guards_are_independent(self) -> None:
         raw_handler = self.common.index("static void loudest_status_handle")
         raw_guard = self.common.rfind(
@@ -281,7 +342,8 @@ class KeymapContractTest(unittest.TestCase):
         self.assertNotIn("LOUDEST_CUSTOM_RAW_HID", self.common[rgb_guard:rgb_handler])
 
     def test_runbook_matches_press_only_agent_release_contract(self) -> None:
-        ag_row = next(line for line in self.runbook.splitlines() if line.startswith("| AG00..AG05 |"))
+        runbook = (REPO / "docs" / "codex-oai-physical-runbook.md").read_text()
+        ag_row = next(line for line in runbook.splitlines() if line.startswith("| AG00..AG05 |"))
         self.assertIn("press notification", ag_row)
         self.assertIn("release remains intentionally silent", ag_row)
         self.assertNotIn("press/release notification", ag_row)

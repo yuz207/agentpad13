@@ -466,11 +466,11 @@ CODEX_OAI_KEEP bool encoder_update_user(uint8_t index, bool clockwise) {
             tap_code16(clockwise ? KC_PGDN : KC_PGUP);
             break;
         case L_USER3:
-            tap_code16(clockwise ? KC_VOLD : KC_VOLU);
+            tap_code16(clockwise ? KC_VOLU : KC_VOLD);
             break;
         default:
             if (codex_oai_ready()) {
-                (void)codex_oai_notify(clockwise ? OAI_CONTROL_ENCODER_CCW : OAI_CONTROL_ENCODER_CW, true);
+                (void)codex_oai_notify(clockwise ? OAI_CONTROL_ENCODER_CW : OAI_CONTROL_ENCODER_CCW, true);
             } else {
                 native_action(clockwise ? CX_ACTION_REASONING_UP : CX_ACTION_REASONING_DOWN);
             }

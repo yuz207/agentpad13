@@ -981,11 +981,8 @@ void housekeeping_task_kb(void) {
 // RGB matrix: draw host status colors over per-key LEDs, and color the layer
 // indicator LED (chain index 13) by the active layer.
 // ---------------------------------------------------------------------------
-#if defined(RGB_MATRIX_ENABLE) && defined(LOUDEST_CUSTOM_RGB_STATUS)
-bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
-    return rgb_matrix_indicators_advanced_user(led_min, led_max);
-}
-#elif defined(RGB_MATRIX_ENABLE)
+#if defined(RGB_MATRIX_ENABLE)
+#    if !defined(LOUDEST_CUSTOM_RGB_STATUS)
 static void loudest_apply_effect(const loudest_status_t *s, uint8_t *r, uint8_t *g, uint8_t *b) {
     switch (s->effect) {
         case LOUDEST_FX_PULSE: {
@@ -1012,6 +1009,7 @@ static void loudest_apply_effect(const loudest_status_t *s, uint8_t *r, uint8_t 
             break;
     }
 }
+#    endif
 
 // --- the on-board calibration routine's entire user interface ---------------
 // Per-key LEDs 0..12 ONLY, deliberately:
@@ -1074,6 +1072,32 @@ static HSV selfcal_led_hsv(uint8_t index) {
     }
 }
 
+static void selfcal_rgb_overlay(uint8_t led_min, uint8_t led_max) {
+    if (selfcal_state == SELFCAL_IDLE) {
+        return;
+    }
+    for (uint8_t i = 0; i < SELFCAL_UI_LEDS; i++) {
+#    if !defined(LOUDEST_CUSTOM_RGB_STATUS)
+        // Shared host status keeps precedence in the default and Vial paths.
+        if (loudest_status[i].active) {
+            continue;
+        }
+#    endif
+        if (i < led_min || i >= led_max) {
+            continue;
+        }
+        const RGB rgb = hsv_to_rgb(selfcal_led_hsv(i));
+        rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+    }
+}
+
+#    if defined(LOUDEST_CUSTOM_RGB_STATUS)
+bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
+    const bool user_result = rgb_matrix_indicators_advanced_user(led_min, led_max);
+    selfcal_rgb_overlay(led_min, led_max);
+    return user_result;
+}
+#    else
 bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
     // Host-driven status colors take over any addressed LED across the chain.
     for (uint8_t i = 0; i < LOUDEST_LED_COUNT; i++) {
@@ -1088,18 +1112,8 @@ bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
         rgb_matrix_set_color(i, r, g, b);
     }
 
-    // On-board calibration paints the per-key LEDs while it runs. It does NOT
-    // fight the host: an LED the host has claimed above keeps the host's color,
-    // which is the same precedence rule that loop already establishes.
-    if (selfcal_state != SELFCAL_IDLE) {
-        for (uint8_t i = 0; i < SELFCAL_UI_LEDS; i++) {
-            if (loudest_status[i].active || i < led_min || i >= led_max) {
-                continue;
-            }
-            const RGB rgb = hsv_to_rgb(selfcal_led_hsv(i));
-            rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
-        }
-    }
+    // On-board calibration paints unclaimed per-key LEDs after host status.
+    selfcal_rgb_overlay(led_min, led_max);
 
     // Layer indicator: hue by active layer - only when the host hasn't claimed it.
     if (!loudest_status[LOUDEST_LED_INDICATOR].active && LOUDEST_LED_INDICATOR >= led_min && LOUDEST_LED_INDICATOR < led_max) {
@@ -1111,4 +1125,5 @@ bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
 
     return rgb_matrix_indicators_advanced_user(led_min, led_max);
 }
+#    endif // LOUDEST_CUSTOM_RGB_STATUS
 #endif // RGB_MATRIX_ENABLE
