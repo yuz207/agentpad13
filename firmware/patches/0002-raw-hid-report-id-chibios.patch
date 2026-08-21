@@ -1,0 +1,55 @@
+diff --git a/tmk_core/protocol/usb_descriptor.c b/tmk_core/protocol/usb_descriptor.c
+--- a/tmk_core/protocol/usb_descriptor.c
++++ b/tmk_core/protocol/usb_descriptor.c
+@@ -455,10 +455,13 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM RawReport[] = {
+     HID_RI_USAGE_PAGE(16, RAW_USAGE_PAGE), // Vendor Defined
+     HID_RI_USAGE(8, RAW_USAGE_ID),         // Vendor Defined
+     HID_RI_COLLECTION(8, 0x01),    // Application
++#    ifdef RAW_REPORT_ID
++        HID_RI_REPORT_ID(8, RAW_REPORT_ID),
++#    endif
+         // Data to host
+         HID_RI_USAGE(8, 0x62),     // Vendor Defined
+         HID_RI_LOGICAL_MINIMUM(8, 0x00),
+         HID_RI_LOGICAL_MAXIMUM(16, 0x00FF),
+-        HID_RI_REPORT_COUNT(8, RAW_EPSIZE),
++        HID_RI_REPORT_COUNT(8, RAW_REPORT_PAYLOAD_SIZE),
+         HID_RI_REPORT_SIZE(8, 0x08),
+         HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
+@@ -468,7 +471,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM RawReport[] = {
+         HID_RI_USAGE(8, 0x63),     // Vendor Defined
+         HID_RI_LOGICAL_MINIMUM(8, 0x00),
+         HID_RI_LOGICAL_MAXIMUM(16, 0x00FF),
+-        HID_RI_REPORT_COUNT(8, RAW_EPSIZE),
++        HID_RI_REPORT_COUNT(8, RAW_REPORT_PAYLOAD_SIZE),
+         HID_RI_REPORT_SIZE(8, 0x08),
+         HID_RI_OUTPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE),
+     HID_RI_END_COLLECTION(0),
+diff --git a/tmk_core/protocol/usb_descriptor.h b/tmk_core/protocol/usb_descriptor.h
+--- a/tmk_core/protocol/usb_descriptor.h
++++ b/tmk_core/protocol/usb_descriptor.h
+@@ -303,7 +303,23 @@ enum usb_endpoints {
+ #define KEYBOARD_EPSIZE 8
+ #define SHARED_EPSIZE 32
+ #define MOUSE_EPSIZE 16
+-#define RAW_EPSIZE 32
++#ifndef RAW_EPSIZE
++#    define RAW_EPSIZE 32
++#endif
++#ifdef RAW_REPORT_ID
++#    if RAW_REPORT_ID < 1 || RAW_REPORT_ID > 255
++#        error "RAW_REPORT_ID must be in the range 1..255"
++#    endif
++#    if RAW_EPSIZE < 2
++#        error "RAW_REPORT_ID requires room for an ID and payload"
++#    endif
++#    define RAW_REPORT_PAYLOAD_SIZE (RAW_EPSIZE - 1)
++#else
++#    define RAW_REPORT_PAYLOAD_SIZE RAW_EPSIZE
++#endif
++#if RAW_REPORT_PAYLOAD_SIZE < 1
++#    error "Raw HID report payload must contain at least one byte"
++#endif
+ #define CONSOLE_EPSIZE 32
+ #define MIDI_STREAM_EPSIZE 64
+ #define CDC_NOTIFICATION_EPSIZE 8

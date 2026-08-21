@@ -34,7 +34,7 @@
 #include "hardware/structs/ioqspi.h"
 #include "hardware/structs/sio.h"
 
-#ifdef RAW_ENABLE
+#if defined(RAW_ENABLE) && !defined(LOUDEST_CUSTOM_RAW_HID)
 #    include "raw_hid.h"
 #endif
 
@@ -63,6 +63,7 @@
 //   0x51 SET_CALIBRATION   {rest_x,rest_y,min_x,max_x,min_y,max_y} -> {status}
 //   0x52 RESET_CALIBRATION -> {0x00}
 // ---------------------------------------------------------------------------
+#if (defined(RAW_ENABLE) && !defined(LOUDEST_CUSTOM_RAW_HID)) || (defined(RGB_MATRIX_ENABLE) && !defined(LOUDEST_CUSTOM_RGB_STATUS))
 enum loudest_cmd {
     LOUDEST_CMD_SET_KEY   = 0x01,
     LOUDEST_CMD_SET_LAYER = 0x02,
@@ -99,6 +100,7 @@ typedef struct {
 // state, not incidental globals: this is the live agent-status display the
 // product is built around. SET_KEY.index indexes this array == rgb_matrix LED.
 static loudest_status_t loudest_status[LOUDEST_LED_COUNT];
+#endif
 
 // ---------------------------------------------------------------------------
 // Joystick calibration store (protocol v1). Contract:
@@ -257,7 +259,7 @@ static bool js_cal_store(const loudest_js_cal_t *cal) {
     return true;
 }
 
-#ifdef RAW_ENABLE
+#if defined(RAW_ENABLE) && !defined(LOUDEST_CUSTOM_RAW_HID)
 // Little-endian uint16 accessors for the v1 frames. Defined inside RAW_ENABLE
 // because the three v1 handlers are their only callers - at file scope they
 // would be an unused-static -Werror trip in a hypothetical no-raw build.
@@ -462,7 +464,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     loudest_status_handle(data, length);
 }
 #    endif
-#endif // RAW_ENABLE
+#endif // RAW_ENABLE && !LOUDEST_CUSTOM_RAW_HID
 
 // ---------------------------------------------------------------------------
 // Joystick modes. Native QMK exposes GP26/GP27 as a HID gamepad; the arrow
@@ -881,7 +883,7 @@ void matrix_scan_kb(void) {
 
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     // Swallow the touch key entirely (press and release) while touch is disabled.
-    if (record->event.key.row == TOUCH_MATRIX_ROW && record->event.key.col == TOUCH_MATRIX_COL && !touch_enabled) {
+    if (record->event.key.row == TOUCH_MATRIX_ROW && record->event.key.col == TOUCH_MATRIX_COL && !touch_enabled && keycode != TP_TOG) {
         return false;
     }
 
@@ -979,7 +981,11 @@ void housekeeping_task_kb(void) {
 // RGB matrix: draw host status colors over per-key LEDs, and color the layer
 // indicator LED (chain index 13) by the active layer.
 // ---------------------------------------------------------------------------
-#ifdef RGB_MATRIX_ENABLE
+#if defined(RGB_MATRIX_ENABLE) && defined(LOUDEST_CUSTOM_RGB_STATUS)
+bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
+    return rgb_matrix_indicators_advanced_user(led_min, led_max);
+}
+#elif defined(RGB_MATRIX_ENABLE)
 static void loudest_apply_effect(const loudest_status_t *s, uint8_t *r, uint8_t *g, uint8_t *b) {
     switch (s->effect) {
         case LOUDEST_FX_PULSE: {
