@@ -109,8 +109,7 @@ export function buildSheet(state, data, derived = derive(state, data)) {
     { kind: 'file', id: 'tray', text: base(catalog.tray.stl), path: catalog.tray.stl },
   ];
   if (!fr4Plate) {
-    print.push({ kind: 'file', id: 'plate_step', text: base(catalog.plate.step), path: catalog.plate.step });
-    print.push({ kind: 'file', id: 'plate_dxf', text: base(catalog.plate.dxf), path: catalog.plate.dxf });
+    print.push({ kind: 'file', id: 'plate_stl', text: base(catalog.plate.stl), path: catalog.plate.stl });
   }
   /* Bases: the fit is MEASURED, never chosen. Print the gauge, keep the rung
      that holds — so the manifest carries the gauge and all four rungs, and

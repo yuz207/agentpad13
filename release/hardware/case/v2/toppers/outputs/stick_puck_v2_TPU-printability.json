@@ -1,44 +1,83 @@
 {
-  "schema_version": "0.2",
-  "kind": "printability",
-  "status": "assertion_failed",
-  "name": "stick_puck_v2_TPU",
-  "method": "FDM",
-  "bbox": {
-    "min": [
-      -4.705928953939671,
-      -4.705928953939671,
-      11.939480943456582
-    ],
-    "max": [
-      4.705928953939671,
-      4.705928953939671,
-      19.600000100000003
-    ]
-  },
-  "volume_mm3": 319.807956652002,
-  "surface_area_mm2": 375.8470903023358,
-  "center_of_mass_mm": [
-    -5.778790334714231e-11,
-    1.1607122604586657e-10,
-    16.520474641048004
-  ],
-  "is_valid": true,
-  "min_wall_mm": 0.4173045255778743,
-  "overhang": {
-    "area_mm2": 44.76892449489374,
-    "max_angle_deg": 90.0
-  },
-  "assertions": [
-    {
-      "name": "wall_min:1.2",
-      "passed": false,
-      "detail": "min wall 0.4173mm below min 1.2mm"
+  "part": "stick_puck_v2_TPU",
+  "method": "part-specific geometry and exported-mesh gates",
+  "verdict": "PASS",
+  "orientation": "bottom-down",
+  "minimum_socket_wall_mm": 1.4021,
+  "socket_roof_mm": 0.8,
+  "flat_bottom_except_rectangular_socket": true,
+  "mesh_low": {
+    "triangles": 7254,
+    "degenerate_triangles": 0,
+    "non_two_manifold_edges": 0,
+    "finite": true,
+    "trailing_bytes": 0,
+    "degenerate_facets_removed_before_audit": 0,
+    "socket_slice": {
+      "z": 15.0,
+      "loops": 2,
+      "bad_degree_vertices": 0,
+      "bounds": [
+        {
+          "span_x": 2.1,
+          "span_y": 1.3,
+          "area_proxy": 2.7300000000000004
+        },
+        {
+          "span_x": 5.682270000000001,
+          "span_y": 5.682840000000001,
+          "area_proxy": 32.29143124680001
+        }
+      ]
     },
-    {
-      "name": "overhang_max:45.0",
-      "passed": false,
-      "detail": "overhang 90.0000\u00b0 exceeds max 45.0\u00b0"
+    "above_roof_slice": {
+      "z": 18.5,
+      "loops": 1,
+      "bad_degree_vertices": 0,
+      "bounds": [
+        {
+          "span_x": 6.3461300000000005,
+          "span_y": 6.3481000000000005,
+          "area_proxy": 40.285867853000006
+        }
+      ]
     }
-  ]
+  },
+  "mesh_high": {
+    "triangles": 7254,
+    "degenerate_triangles": 0,
+    "non_two_manifold_edges": 0,
+    "finite": true,
+    "trailing_bytes": 0,
+    "degenerate_facets_removed_before_audit": 0,
+    "socket_slice": {
+      "z": 15.0,
+      "loops": 2,
+      "bad_degree_vertices": 0,
+      "bounds": [
+        {
+          "span_x": 2.3000000000000003,
+          "span_y": 1.5000000000000002,
+          "area_proxy": 3.450000000000001
+        },
+        {
+          "span_x": 5.682270000000001,
+          "span_y": 5.682840000000001,
+          "area_proxy": 32.29143124680001
+        }
+      ]
+    },
+    "above_roof_slice": {
+      "z": 18.5,
+      "loops": 1,
+      "bad_degree_vertices": 0,
+      "bounds": [
+        {
+          "span_x": 6.3461300000000005,
+          "span_y": 6.3481000000000005,
+          "area_proxy": 40.285867853000006
+        }
+      ]
+    }
+  }
 }

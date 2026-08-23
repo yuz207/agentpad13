@@ -18,7 +18,7 @@ artifact names, and file names from it. The public Raw HID contract is
 Pin map source of truth: the definitive table embedded in
 `firmware/check_pins_v4.py`, extracted twice from the final copper and
 re-verified against v5_6. The public v5_7 board changes only LED20/LED21
-orientation, so the GPIO map is identical; see `hardware/pcb/README.md`.
+orientation, so the GPIO map is identical; see `release/hardware/pcb/V5-NOTES.md`.
 
 Make example for this keyboard (after setting up your build environment):
 

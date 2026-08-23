@@ -13,7 +13,7 @@
     },
     "mating_plane": {
       "z": -9.5,
-      "what": "tray bottom = band bottom, coplanar and flat",
+      "what": "flat tray bottom; 2.0 mm below band bottom",
       "rule": "all base material at or below this plane"
     },
     "orientation": {
@@ -288,7 +288,7 @@
       },
       {
         "part": "knob",
-        "volume_cm3": 2.417,
+        "volume_cm3": 4.57,
         "mass_g": 2.4,
         "centroid_xy": [
           13.525,
@@ -298,7 +298,7 @@
       },
       {
         "part": "stick_cap",
-        "volume_cm3": 0.281,
+        "volume_cm3": 0.156,
         "mass_g": 0.81,
         "centroid_xy": [
           69.71,

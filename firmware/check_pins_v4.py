@@ -68,7 +68,7 @@ TABLE = {
 # [3,2] = touch (NOT a scanned matrix pin - see below), [3,3] unused.
 #
 # [3,2] is None ON PURPOSE (2026-08-13). The board straps the TTP223 ACTIVE-HIGH
-# (R10 0R: TOUCH_AHLB -> GND on v5_6.kicad_pcb), the opposite sense of the 13
+# (R10 0R: TOUCH_AHLB -> GND on the current v5_7 board), the opposite sense of the 13
 # switch-to-GND keys, and QMK's MATRIX_INPUT_PRESSED_STATE is global. So GP16 is
 # removed from matrix_pins.direct and polled with its own sense in
 # loudest_micro.c, which injects the key event at logical [3,2]. The check that

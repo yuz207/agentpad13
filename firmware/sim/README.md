@@ -163,14 +163,10 @@ each isolates its own fault. Measured on both current builds:
 > quotes are not (both comments were corrected). Kept verbatim so the failure and
 > its evidence stay legible. See [After the fix](#after-the-fix).
 
-**Board truth**, confirmed in four independent places:
+**Board truth**, confirmed directly in the released board:
 
-* `hardware/pcb/agentpad13/agentpad13.kicad_pcb` (public v5_7) — footprint `R10`, value `0R`, pads
+* `release/hardware/pcb/v5_7.kicad_pcb` — footprint `R10`, value `0R`, pads
   `1 → TOUCH_AHLB`, `2 → GND`
-* `hardware/pcb/SCHEMATIC-REVIEW.md:156` — *"R10 0 Ω strap AHLB→GND
-  (active-high); move to +3V3 for active-low"*
-* `hardware/pcb/BOM-FINAL.csv:25` — *"AHLB strap (GND=active-high)"*
-* the `R10` symbol's own Description property in `loudest-micro.kicad_sch`
 
 On a TTP223, **AHLB tied low selects active-high output**: `Q` idles LOW and
 goes HIGH while the pad is touched.

@@ -128,7 +128,7 @@ re-cut. Everything the band mates to (plate recess, 1.2 rabbet ledge, Ø10 boss
 sockets, Ø8.6 caps, Ø4.4 screw pass, USB aperture x/z, tray nesting) is derived
 from INNER_*/PCB/const and is provably unmoved: band(2.4) ⊂ band(3.0) with ZERO
 volume removed, and ZERO volume added inside the mating envelope. Proven three
-ways this session (scratch v26_prove.py, verbatim in CASE-V2-NOTES §16):
+ways this session (scratchpad v26_prove.py, verbatim in CASE-V2-NOTES §16):
   P1  the v2.6 code AT WALL=2.4 re-exports md5 36980cc2ff011dc32d923fb04f7429f7
       — the retired band, byte for byte. WALL is the only value that moved.
   P2  vol(band_2.4 - band_3.0)                = 0.000000 mm^3 (nothing removed)
@@ -174,7 +174,7 @@ SUPPORTED VARIANTS — all three are khana-gated (101/101, the same 8 documented
 interferences) and exported under their own _w{WALL} names. The wall is read
 once, from AGENTPAD13_WALL (default 5.4), so a variant needs no file edit:
 `AGENTPAD13_WALL=7.4 khana build agentpad13_case_v2.py`.
-Measured consequences at 5.4 (all re-proven this session, scratch
+Measured consequences at 5.4 (all re-proven this session, scratchpad
 v27_prove.py, verbatim in CASE-V2-NOTES §18):
   P1  the v2.7 code at WALL=3.0 re-exports md5 887b2538619db46d63b07cf044762bab
       and at WALL=2.4 md5 36980cc2ff011dc32d923fb04f7429f7 — the v2.6 band and
@@ -201,24 +201,25 @@ v2.17 (2026-08-20): TOPPERS v2 RE-POINT. This module's topper consumption
 moves off the v1 params (stick_cap_params / encoder_knob_params, now RETIRED
 to archive/toppers-v1/) onto the shipped v2 families
 (stick_topper_v2_params / encoder_knob_v2_params, toppers commit 74a4b07).
-Three envelope changes follow: (a) the encoder knob is Ø19 to +27.0, not Ø18
-to +17.5 — so knob_sweep and knob() both grow, and the +x opening sliver the
-v2.12 ruling accepted is CLOSED (+0.190 concealment); (b) the shipped default
+Three envelope changes follow: (a) the encoder knob is a straight Ø17.5 body
+with no skirt or cover flange and rises to +27.0; (b) the shipped default
 stick topper is the nub_C2, a plain Ø6.189 cylinder +14.4..+19.6, replacing
 the v2.5 taper cone; (c) NEW PART js_sweep_puck — the v2 family ships TWO
-stick toppers with DIFFERENT throws (nub 30° unrestricted, TPU puck 22.5°
-enforced by its own integral cone land), and modelling only the default would
-leave the case blind to the larger of the two. Gate moves 101 -> 104
+stick toppers, and modelling only the default would leave the case blind to
+the second profile. Both are solid except for their rectangular shaft socket,
+neither acts as a restrictor, and both sweep through the YA13's full 30°
+travel. The puck remains round and is sized to Ø6.350 by that clearance gate.
+Gate moves 101 -> 104
 assertions and 8 -> 10 reported interference pairs, every delta ledgered with
 its closed-form cause in CASE-V2-NOTES §27 — which SUPERSEDES the frozen
 "101/101/8" strings in §22.5, §26.6 and §23. Also fixed: the SW4-clearance
 advisory now reports the TRUE 3-D distance instead of a bbox-corner proxy
 that had started printing a false negative. pivot_z / tilt_deg are not in the
 v2 params, so they are stated here from the YA13 drawing and cross-checked at
-import against deck_low_z and cone_z_at_bore. Two OCCT boolean traps were hit
-and are documented at _revolve_rz; _tilt_sweep now carries a containment gate
-because both failed silently toward a SMALLER envelope. No case geometry
-changed: the band, tray and plate STLs are byte-identical across this pass.
+import against deck_low_z. _tilt_sweep carries a containment gate because an
+OCCT union may otherwise fail silently toward a SMALLER envelope. No case
+geometry changed: the band, tray and plate STLs are byte-identical across this
+pass.
 """
 
 import hashlib
@@ -263,10 +264,10 @@ import pcb_components_data_v2 as PCB  # noqa: E402  [S]
 # 0. CONTRACT COORDINATES  (single source: contract_v4.json read at runtime)
 # =========================================================================
 
-# AGENTPAD13_CONTRACT overrides the board contract (v5+ overlays); the
-# default remains the frozen v4 contract.
+# AGENTPAD13_CONTRACT may override the bundled product contract; the default
+# is the released v5_7 contract beside the public board source.
 _CONTRACT_PATH = os.environ.get("AGENTPAD13_CONTRACT") or os.path.normpath(
-    os.path.join(HERE, "..", "pcb", "harness", "contract_v4.json"))
+    os.path.join(HERE, "..", "..", "pcb", "harness", "contract_v4.json"))
 with open(_CONTRACT_PATH) as _f:
     _CONTRACT = json.load(_f)
 _REFS = {k: (v["x"], v["y"]) for k, v in _CONTRACT["refs"].items()}
@@ -284,25 +285,28 @@ with open(os.path.join(_TOPPER_DIR, "stick_topper_v2_params.json")) as _f:
     _STICK = json.load(_f)
 with open(os.path.join(_TOPPER_DIR, "encoder_knob_v2_params.json")) as _f:
     _KNOB = json.load(_f)
-_SV = _STICK["nub_C2"]        # shipped DEFAULT stick topper (Ø6.189 -> +19.6)
-_PV = _STICK["puck_TPU"]      # the OTHER shipped stick topper (Ø9.412, 22.5°)
+_SV = _STICK["nub"]           # shipped DEFAULT stick topper
+_PV = _STICK["puck"]          # the OTHER shipped stick topper
 _KV = _KNOB                   # v2 knob envelope lives at the top level
 # The case models ONE knob envelope for all three v2 textures (A/B2/C). That
 # is only legitimate while the three agree — assert it rather than assume it.
 for _kn, _kb in _KNOB["variants"].items():
     assert (_kb["od"], _kb["bottom_z"], _kb["top_z"]) == (
-        _KV["od"], _KV["bottom_z"], _KV["top_z"]), (
+        _KV["body_od"], _KV["bottom_z"], _KV["top_z"]), (
         f"KNOB ENVELOPE FAIL: variant {_kn} is "
         f"({_kb['od']}, {_kb['bottom_z']}, {_kb['top_z']}) but the top-level "
-        f"envelope is ({_KV['od']}, {_KV['bottom_z']}, {_KV['top_z']}) — the "
+        f"envelope is ({_KV['body_od']}, {_KV['bottom_z']}, "
+        f"{_KV['top_z']}) — the "
         "case's single knob envelope is no longer valid for every texture; "
         "model them separately before trusting any knob gate")
 
-# --- Banked board (v2.4: DERIVE the YA13 THT pin tails from the board pads,
-#     never retype). md5 MUST match the frozen v5_6 or the parse is stale. ---
+# --- Released board (v2.4: DERIVE the YA13 THT pin tails from the board pads,
+#     never retype). v5_7 changes only LED20/LED21 orientation, so the YA13
+#     geometry remains the frozen v5_6 geometry; the hash pins the actual file
+#     shipped in this public bundle. ---------------------------------------
 BANKED_BOARD = os.path.normpath(
-    os.path.join(HERE, "..", "pcb", "v5_6.kicad_pcb"))
-BANKED_BOARD_MD5 = "221ebb98fcf44f860ed65f7ed8d1bc45"
+    os.path.join(HERE, "..", "..", "pcb", "v5_7.kicad_pcb"))
+BANKED_BOARD_MD5 = "08cf68dae979ab28aadd5e0dda34de01"
 
 
 def _parse_js1_pads(path=BANKED_BOARD):
@@ -310,11 +314,11 @@ def _parse_js1_pads(path=BANKED_BOARD):
     world-frame keep-outs: [(x, y, drill, pad_d)]. The footprint pose is at
     (69.71, 13.37, rot 180); a rot-180 pad at local (lx, ly) lands at world
     (fx - lx, fy - ly). Guards: board md5, footprint pose vs contract JS1,
-    pad count == 10. [v5_6 parse]"""
+    pad count == 10. [v5_7 public-bundle parse]"""
     txt = open(path).read()
     got = hashlib.md5(txt.encode()).hexdigest()
     assert got == BANKED_BOARD_MD5, (
-        f"v5_6 board md5 {got} != frozen {BANKED_BOARD_MD5} — the board "
+        f"v5_7 board md5 {got} != released {BANKED_BOARD_MD5} — the board "
         "changed; re-verify JS1 pads before trusting js_pins()")
     i0 = txt.index('(footprint "Joystick:YA13')
     i1 = txt.index("\n\t(footprint", i0 + 16)
@@ -524,7 +528,7 @@ if _WALL_ENV:                                     # variant build, no file edit
 # THIS ONE NUMBER and re-export — the generator IS the loose variant. 0.3
 # reproduces the legacy pocket on X and the corner R (with 0.4 on Y it
 # reproduces the ordered band exactly; that equivalence is proven by a
-# scratch-only byte-identity check each time this constant is refactored).
+# scratchpad byte-identity check each time this constant is refactored).
 PLATE_FIT = 0.1            # THE fit. Uniform per side on x, y and corner R.
 #                            -> pocket 84.6 x 100.2 R5.5 around the shipped
 #                            84.4 x 100.0 R5.4 plate. Reveal 0.1 all round.
@@ -653,24 +657,6 @@ ENC_BODY_SQ = 11.7         # [§5] EC11E body square [D]. This is the khana
 #                            the proxy stays 11.7 and the OPENING was sized
 #                            from the owner's measured fit instead.
 ENC_BODY_H = 7.5           # [§5] EC11E body height above F.Cu [D]
-KNOB_D = _KNOB["od"]       # [§5][v2.17] Ø19, params-consumed. LEDGER — this
-#                            constant carried an owner ruling that is now
-#                            SUPERSEDED, recorded here rather than deleted:
-#                            v2.12 (2026-08-19) froze Ø18 as "the floor" after
-#                            the plate opening was widened +1.0 to the right,
-#                            leaving a 0.310 mm sliver of opening visible at
-#                            each of the two +x corners — OWNER-ACCEPTED on the
-#                            grounds that "the measured body fit outranks
-#                            concealment", with the Ø19 knob logged as an
-#                            escape hatch that was "PARKED, not shipped".
-#                            SUPERSEDED 2026-08-20: the owner reviewed the v2
-#                            knob candidate set with full Ø19 concealment
-#                            stated and ordered "Execute final changes to the
-#                            toppers". The v2 catalog (A/B2/C) is Ø19, so the
-#                            sliver is CLOSED (+0.190 concealment, matching the
-#                            params' hide_floor 0.1897) and Ø18 is no longer
-#                            the floor — it is retired geometry. The v2.12
-#                            record itself stands in CASE-V2-NOTES §23.
 KNOB_H = _KNOB["top_z"] - _KNOB["deck_z"]   # [§5][v2.17] 22.0 above the deck
 #                            (top +27.0 - deck +5.0); v1 was 12.5 to top +17.5
 # Derived from the SHAFT (design datum — the plate is an ORDERED artifact;
@@ -722,31 +708,21 @@ JS_PIN_Z_BOT = -3.71       # THT tail bottom = -1.51 (board underside) - 2.2
 #                            Pin xy + Ø are PARSED from v5_6 (JS1_PADS above).
 LYR_HOLE_D = 3.0           # [§6] LYR light hole Ø3 over LED14 [C]
 
-# --- v2.17 Stick toppers — BOTH shipped parts are modelled ------------------
-#     CONSUMED from stick_topper_v2_params (do not modify). The v2 family
-#     ships TWO stick toppers, and they have DIFFERENT throws, so one envelope
-#     cannot represent both:
-#       nub_C2   — the shipped DEFAULT. Ø6.189 straight cylinder +14.4..+19.6,
-#                  NO restrictor: sized by bisection so the FULL 30° mechanical
-#                  throw stays 0.25 off SW4. Drives js_sweep / stick_cap.
-#       puck_TPU — the one-piece TPU puck. Ø9.412, and its 22.5° cone land IS
-#                  the restrictor (integral), so it swings the pot's electrical
-#                  half-angle, not the mechanical one. Drives js_sweep_puck.
-#     Modelling only the default would leave the case BLIND to the larger of
-#     the two shipped envelopes (coordinator ruling 2026-08-20).
-#
-#     pivot_z / tilt angles are NOT in the v2 params file, so they are stated
-#     here from the YA13 drawing [D] and then CROSS-CHECKED below against
-#     numbers the params DO publish. The cross-checks are load-bearing, not
-#     decorative: they re-derive deck_low_z / cone_z_at_bore from these three
-#     constants, so a wrong pivot, a wrong tilt or a wrong fillet all fail at
-#     import instead of silently shrinking a swept envelope.
+# --- Stick toppers — BOTH shipped parts are modelled at full travel --------
+#     CONSUMED from stick_topper_v2_params (do not modify). The nub and the
+#     round TPU puck are both solid except for the rectangular shaft
+#     socket. Neither is a restrictor; both sweep through the YA13's full 30°
+#     mechanical cone. Separate envelopes are required because their plan
+#     profiles differ substantially.
 STICK_PIVOT_Z = 6.1        # [D YA13 front elev, dim "6.1"] gimbal pivot
 STICK_TILT_DEG = 30.0      # [D YA13 "60 deg" mechanical fan / 2] full throw
-STICK_TILT_RESTRICTED_DEG = 22.5   # [D YA13 spec 1.1] pot electrical 45°/2 —
-#                            the angle the puck's own cone land enforces
+assert _STICK["joystick_throw_deg"] == STICK_TILT_DEG, (
+    f"STICK THROW FAIL: params publish {_STICK['joystick_throw_deg']}°, "
+    f"case expects {STICK_TILT_DEG}°")
+assert _STICK["restrictor"] is None, (
+    "STICK CONTRACT FAIL: corrected toppers must not contain a restrictor")
 STICK_TOP_STYLE = "nub"    # shipped default; dome/taper below are v1 ALTERNATES
-STICK_CAP_R = _SV["od"] / 2.0              # 3.0945 (nub Ø6.189 / 2)
+STICK_CAP_R = _SV["span_x"] / 2.0          # 3.0945 (nub Ø6.189 / 2)
 STICK_CAP_Z0 = _STICK["socket_mouth_z"]    # +14.4 cap bottom (socket mouth)
 STICK_CAP_Z1 = _STICK["cap_top_z"]         # +19.6 cap top
 NUB_FILLET_R = 0.3         # [TOPPER stick_topper_v2.nub_profile] bottom radius
@@ -763,43 +739,15 @@ assert abs(_nub_low_z - _SV["deck_low_z"]) < 1e-3, (
     f"fillet {NUB_FILLET_R} re-derive the nub's swept floor as "
     f"{_nub_low_z:.4f}, but stick_topper_v2_params publishes deck_low_z "
     f"{_SV['deck_low_z']} — one of the three is wrong; do NOT trust js_sweep")
-# --- v2 TPU puck: params-consumed outer silhouette (the SW4 gate's own) -----
-PUCK_R = _PV["od"] / 2.0                   # 4.706 max radius
-PUCK_TOP_Z = _PV["top_z"]                  # +19.6
-PUCK_RIM_R = _PV["rim_roll_r"]             # 0.6 top edge roll
-PUCK_WALL_BOT_Z = _PV["wall_bot_z"]        # +18.0 bottom of the max-OD wall
-PUCK_SHOULDER_BOT_Z = _PV["shoulder_bot_z"]  # +16.4 bottom of the inward taper
-PUCK_BODY_R = _PV["body_od"] / 2.0         # 3.8 lower straight cylinder
-PUCK_LAND_R_IN, PUCK_LAND_R_OUT = _PV["land_r"]          # 2.6 / 3.6
-PUCK_SEAT_Z = _PV["deck_low_z"]            # +10.5 where the cone lands flat
-PUCK_DASH_OUT_R = _PV["dashes"]["r1"] + _PV["dashes"]["width"] / 2.0   # 3.25
-PUCK_RIM_SEGMENTS = 8      # chords across the 90° rim roll. A BOOLEAN-
-#                            ROBUSTNESS setting, NOT a fidelity knob: at 24 the
-#                            sweep's 25-way fuse silently loses 59.44 mm^3, at
-#                            8 it is exact. 8 also puts a sample exactly on the
-#                            22.5° governing point (90°·(1 - 6/8) = 22.5°),
-#                            which _puck_cap asserts. See _revolve_rz.
-_PUCK_SEAT = _PV["seat_ladder"][_PV["default_rung"]]
-# Cross-check 2 — the puck. Its 22.5° cone land is defined so the WHOLE radial
-# generator lands flat at PUCK_SEAT_Z: z(r) = piv + (seat - piv)/cos t + r*tan t.
-# Re-derive the bore-edge height and match the published cone_z_at_bore.
-_th_res = math.radians(STICK_TILT_RESTRICTED_DEG)
-
-
-def _puck_land_z(rho):
-    """Underside-cone height at plan radius `rho` [TOPPER land_z]."""
-    return (STICK_PIVOT_Z + (PUCK_SEAT_Z - STICK_PIVOT_Z) / math.cos(_th_res)
-            + rho * math.tan(_th_res))
-
-
-assert abs(_puck_land_z(PUCK_LAND_R_IN) - _PUCK_SEAT["cone_z_at_bore"]) < 1e-3, (
-    f"PUCK PIVOT/TILT FAIL: pivot {STICK_PIVOT_Z} + restricted tilt "
-    f"{STICK_TILT_RESTRICTED_DEG}° re-derive the cone at the bore edge as "
-    f"{_puck_land_z(PUCK_LAND_R_IN):.4f}, but the params publish "
-    f"{_PUCK_SEAT['cone_z_at_bore']} — do NOT trust js_sweep_puck")
-assert _PUCK_SEAT["safe"], (
-    f"PUCK SEAT FAIL: default rung {_PV['default_rung']} is not marked safe "
-    "in the params seat_ladder")
+# Corrected puck: round, solved against the adjacent 17.5 mm key at full throw.
+# The case uses a conservative cylinder over the published z extents; it
+# contains the actual rolled/tapered exterior.
+PUCK_D = _PV["diameter"]                     # 6.350 round
+assert _PV["shape"] == "round" and _PV["span_x"] == _PV["span_y"] == PUCK_D
+PUCK_BOT_Z = _PV["bottom_z"]                # +14.4
+PUCK_TOP_Z = _PV["top_z"]                   # +19.6
+assert _PV["solid_except_rectangular_socket"] is True
+assert _PV["cone_land"] is None and _PV["cylindrical_bore"] is None
 # --- v1 ALTERNATE cap envelopes (dome / taper) ------------------------------
 # RETIRED with the v1 topper family (archive/toppers-v1/) and unreachable while
 # STICK_TOP_STYLE == "nub". Kept, not deleted, so the v2.4/v2.5 envelopes stay
@@ -811,35 +759,15 @@ STICK_TAPER_BOT_D = _SV.get("taper_bottom_d", 2 * STICK_CAP_R)      # v1 only
 STICK_TAPER_SPRING_D = _SV.get("taper_spring_d", 2 * STICK_CAP_R)   # v1 only
 STICK_TAPER_SPRING_Z = _SV.get("taper_spring_z", STICK_CAP_Z1)      # v1 only
 
-# --- v2.17 Encoder knob (the v2 catalog: A_helical_knurl / B2_scoop /
-#     C_cross_hatch, all Ø19) — CONSUMED from encoder_knob_v2_params (do not
+# --- Encoder knob (the v2 catalog: A_helical_knurl / B2_scoop /
+#     C_cross_hatch, all straight Ø17.5 bodies) — CONSUMED from
+#     encoder_knob_v2_params (do not
 #     modify). Static envelope on the shaft. The three textures share one
 #     envelope; the loop at the loader asserts that they still do. ----------
-KNOB_OD = _KV["od"]                        # 19.0 outer Ø  (v1 was 18.0)
-KNOB_SKIRT_Z0 = _KV["bottom_z"]            # +8.0 skirt bottom (clears body top)
+KNOB_OD = _KV["body_od"]                    # 17.5 straight body Ø
+assert _KV["has_cover_flange"] is False
+KNOB_SKIRT_Z0 = _KV["bottom_z"]             # +8.0 bottom (clears body top)
 KNOB_TOP_Z_ABS = _KV["top_z"]              # +27.0 knob top (v1 was +17.5)
-# [v2.12] MAX corner reach from the SHAFT. Now ASYMMETRIC because the opening
-# is: the two -x arc centres sit at (-5.0, +-5.0) from the shaft -> reach
-# 7.071 + 1.5 = 8.571 (UNCHANGED — the left edge is frozen); the two +x arc
-# centres moved to (+6.0, +-5.0) -> reach sqrt(61) + 1.5 = 9.310. Consumers
-# want the worst case, so this is the MAX. Both are re-derived and asserted
-# against the params file at import.
-# [v2.17] the v2 params publish these as ONE dict keyed by side, replacing the
-# v1 scalar + _min pair. Same two numbers, same meaning.
-ENC_OPENING_CORNER_REACH = _KNOB["opening_corner_reach"]["plus_x"]    # 9.3102
-ENC_OPENING_CORNER_REACH_MIN = _KNOB["opening_corner_reach"]["minus_x"]  # 8.5711
-_ecr = [math.hypot(ENC_OPENING_C[0] + sx * (ENC_OPENING_W / 2.0 - ENC_OPENING_R)
-                   - RE1_SHAFT_DESIGN[0],
-                   ENC_OPENING_H / 2.0 - ENC_OPENING_R) + ENC_OPENING_R
-        for sx in (-1.0, 1.0)]
-assert abs(max(_ecr) - ENC_OPENING_CORNER_REACH) < 5e-4, (
-    f"ENC REACH FAIL: geometry says max {max(_ecr):.4f}, encoder_knob_v2_params "
-    f"says {ENC_OPENING_CORNER_REACH} — regenerate the params or fix the "
-    "opening")
-assert abs(min(_ecr) - ENC_OPENING_CORNER_REACH_MIN) < 5e-4, (
-    f"ENC REACH FAIL: geometry says min {min(_ecr):.4f}, encoder_knob_v2_params "
-    f"says {ENC_OPENING_CORNER_REACH_MIN}")
-
 # --- v2.4 MX switch body envelope (Cherry MX seated in the plate). [MX]/[D] --
 SW_FLANGE = 15.8           # top flange square, rests on the deck [MX]
 SW_FLANGE_Z0, SW_FLANGE_Z1 = 5.0, 5.9      # flange z band (on the plate top)
@@ -1150,7 +1078,7 @@ _OVER = 1.0                # subtractive over-cut
 # =========================================================================
 
 Z_PLATE_TOP = PLATE_TOP_TO_PCB                    # +5.0
-Z_PLATE_BOT = Z_PLATE_TOP - PLATE_T               # +3.5
+Z_PLATE_BOT = Z_PLATE_TOP - PLATE_T               # +3.4
 Z_PCB_BOT = -PCB_T_DESIGN                         # -1.6 (design)
 REAL_PCB_BOT = PCB.BOARD[5]                       # -1.51 [S]
 Z_SOCKET_BOT = Z_PCB_BOT - SOCKET_DROP            # -3.45
@@ -1387,7 +1315,7 @@ def _corner_margins():
 
     Everything here is PRINTED, never asserted — no khana gate reads it. v2.7
     corrects TWO reporting defects that only bite once WALL is a live knob;
-    both are proven against the built solids in scratch v27_prove.py (P6),
+    both are proven against the built solids in scratchpad v27_prove.py (P6),
     which bisects the true boss-center -> surface breakout radius:
 
     (1) band_crescent_wall is now BRANCH-CORRECT across the arc/flat
@@ -1580,40 +1508,22 @@ def usb_receptacle():
 
 
 def knob_sweep():
-    """v2 swept-occupancy proxy: Ø19 from the deck up to the knob top (carries
-    the coaxial knob-on-shaft assert vs ec11_body). [v2.17] Ø18 -> Ø19 and top
-    +17.5 -> +27.0 with the v2 knob catalog. The accurate static knob() is
-    below; the sweep CONTAINS it by construction, so their reported
-    interference volume is exactly the knob's own volume."""
-    return _z_cyl(KNOB_D, Z_PLATE_TOP, Z_PLATE_TOP + KNOB_H, *RE1_SHAFT)
+    """Swept occupancy of the axisymmetric corrected knob envelope.
+
+    The straight Ø17.5 body has no skirt or cover flange. The sweep starts at
+    the deck to retain the established coaxial knob-on-shaft witness against
+    ec11_body and contains the accurate static knob() below."""
+    return _z_cyl(KNOB_OD, Z_PLATE_TOP, Z_PLATE_TOP + KNOB_H, *RE1_SHAFT)
 
 
 def _revolve_rz(pts, cx, cy):
     """ONE solid of revolution about the vertical axis at (cx, cy), from a list
     of (r, z) silhouette points closed along the axis.
 
-    ⚠ TWO OCCT traps were hit building this, both recorded because both fail
-    SILENTLY and in the OPTIMISTIC direction — a swept envelope that loses
-    material simply stops interfering, and no assertion in this file would
-    notice:
-
-      1. Union-of-lofted-frusta. Tried first, so no new import was needed.
-         A rolled edge chopped into many arc segments yields near-degenerate
-         conical slivers (some 0.001 mm tall); fusing those, then fusing the
-         result 24 more times for the tilt sweep, made OCCT drop 64.76 mm^3
-         and under-report the puck's reach by 0.146 mm. `revolve` on one
-         closed profile fixes it — no slivers, true conical faces.
-
-      2. Over-discretised arcs. Even with `revolve`, chopping the R0.6 rim
-         roll into 24 chords still lost 59.44 mm^3 in the 25-way sweep fuse
-         (and a balanced-tree fuse of the same operands collapsed the solid
-         to nothing at all — bbox 0). At 8 chords the fuse is EXACT: zero
-         lost, reach 9.3301 = the params' own governing value. So arc
-         resolution here is a BOOLEAN-ROBUSTNESS parameter, not a fidelity
-         knob — see PUCK_RIM_SEGMENTS.
-
-    _tilt_sweep asserts containment so a regression of this class cannot
-    ship silently."""
+    `_tilt_sweep` asserts containment because OCCT unions can fail silently in
+    the optimistic direction: a swept envelope that loses material simply
+    stops interfering. This helper remains for the retired v1 alternate
+    profiles below; the corrected round puck does not use it."""
     # Drop consecutive duplicates before building edges: an arc that starts at
     # a=90° lands on the point the caller already listed as the rim land, and
     # a zero-length Edge makes OCCT raise "BRep_API: command not done".
@@ -1645,43 +1555,14 @@ def _nub_cap(cx, cy):
 
 
 def _puck_cap(cx, cy):
-    """v2.17 the OTHER shipped stick topper at (cx, cy): the puck_TPU OUTER
-    silhouette, revolved.
+    """Conservative envelope for the shipped round Ø6.350 mm TPU puck.
 
-    Mirrors toppers/stick_topper_v2.py puck_outer_profile — the same silhouette
-    the topper's own SW4 gate consumes: the cup only REMOVES material so it
-    cannot widen the envelope, while the four raised dashes ADD material and
-    are folded in as a conservative full ring of revolution at their own
-    radius. Two further deliberate conservatisms here: the 45° land->body
-    relief is dropped (the body cylinder runs straight down to the land OD
-    height, adding material), and the Ø5.2 bore is filled solid. All three
-    push the envelope OUTWARD, never inward. [stick_topper_v2_params puck_TPU]
-    """
-    z_in, z_out = _puck_land_z(PUCK_LAND_R_IN), _puck_land_z(PUCK_LAND_R_OUT)
-    pts = [(0.0, PUCK_TOP_Z), (PUCK_DASH_OUT_R, PUCK_TOP_Z),
-           (PUCK_R - PUCK_RIM_R, PUCK_TOP_Z)]
-    pts += _arc_rz(PUCK_R - PUCK_RIM_R, PUCK_TOP_Z - PUCK_RIM_R, PUCK_RIM_R,
-                   math.pi / 2, 0.0, PUCK_RIM_SEGMENTS)   # rim roll
-    pts += [(PUCK_R, PUCK_WALL_BOT_Z),                    # straight max-OD wall
-            (PUCK_BODY_R, PUCK_SHOULDER_BOT_Z),           # inward shoulder
-            (PUCK_BODY_R, z_out),                         # body (relief dropped)
-            (PUCK_LAND_R_OUT, z_out),
-            (PUCK_LAND_R_IN, z_in),                       # the 22.5° land
-            (0.0, z_in)]                                  # bore filled solid
-    # The rim roll is CHORDED, so between samples the profile runs up to
-    # ~0.003 mm inside the true arc. That is only acceptable because the one
-    # point that decides the SW4 answer — the params' published governing
-    # point, where the outward normal is exactly the 22.5° tilt direction — is
-    # itself a sample. Assert that rather than trust the arithmetic: it ties
-    # PUCK_RIM_SEGMENTS to the toppers' own gate, so changing the segment
-    # count to a value that skips the governing point fails loudly here.
-    _gr, _gz = _PV["governing_point_rh"]
-    assert any(math.hypot(r - _gr, z - _gz) < 5e-3 for (r, z) in pts), (
-        f"PUCK PROFILE FAIL: the params' governing point ({_gr}, {_gz}) is not "
-        f"a sample of the chorded rim roll at PUCK_RIM_SEGMENTS="
-        f"{PUCK_RIM_SEGMENTS} — the swept envelope would under-reach toward "
-        "SW4. Use a segment count for which 22.5° lands on a sample")
-    return _revolve_rz(pts, cx, cy)
+    The source part has rolled edges, a shallow top cup and a blind rectangular
+    shaft socket. A full-height cylinder contains all exterior details while
+    deliberately filling the cup and socket; it can only overstate case-side
+    interference.
+    [stick_topper_v2_params puck]."""
+    return _z_cyl(PUCK_D, PUCK_BOT_Z, PUCK_TOP_Z, cx, cy)
 
 
 def _dome_cap(cx, cy):
@@ -1778,19 +1659,16 @@ def js_sweep(naz=24):
 
 
 def js_sweep_puck(naz=24):
-    """[v2.17] Swept envelope of the OTHER shipped stick topper, the TPU puck,
-    over ITS OWN throw — 22.5°, not 30°, because the puck's 22.5° cone land IS
-    an integral mechanical restrictor (that is the whole point of the part).
-    Sweeping it to 30° would model a stop that physically cannot be reached and
-    would invent interferences; sweeping the NUB to 22.5° would understate the
-    default. Hence two parts, two angles. [stick_topper_v2_params puck_TPU]."""
-    return _tilt_sweep(_puck_cap(0.0, 0.0), STICK_TILT_RESTRICTED_DEG, naz)
+    """Swept envelope of the other shipped topper, the TPU puck, over the
+    joystick's full 30° mechanical tilt cone. Neither topper restricts throw.
+    [stick_topper_v2_params puck]."""
+    return _tilt_sweep(_puck_cap(0.0, 0.0), STICK_TILT_DEG, naz)
 
 
 def knob():
-    """Encoder knob — accurate static envelope of the v2 catalog (A/B2/C all
-    share it): Ø19 cylinder z 8.0..27.0 on the EC11 shaft (skirt bottom +8.0
-    clears the body top +7.5 by 0.5). [v2.17] was Ø18 z 8.0..17.5.
+    """Accurate static envelope shared by the three corrected knob textures.
+
+    The straight Ø17.5 body runs from +8.0 to +27.0 with no skirt or flange.
     [encoder_knob_v2_params]."""
     return _z_cyl(KNOB_OD, KNOB_SKIRT_Z0, KNOB_TOP_Z_ABS, *RE1_SHAFT)
 
@@ -2371,8 +2249,8 @@ def build_assembly():
         .with_part("usb_recept", usb_receptacle())
         .with_part("knob_sweep", knob_sweep())
         .with_part("js_sweep", js_sweep())
-        # [v2.17] the SECOND shipped stick topper, at its own 22.5° restricted
-        # throw. js_sweep (nub, 30°) and js_sweep_puck are ALTERNATES — never
+        # [v2.17] the SECOND shipped stick topper, at the same full 30° throw.
+        # js_sweep and js_sweep_puck are ALTERNATES — never
         # fitted together — so their mutual overlap, and each one's overlap
         # with the other's rest pose, are modelling artifacts, not defects.
         # They are reported (never asserted) and ledgered in §27.
@@ -2410,8 +2288,8 @@ def build_assembly():
         .assert_no_interference("js_sweep", "band")
         .assert_no_interference("js_sweep", "screws")
         # [v2.17] the puck alternate gets the SAME case-side gate set as the
-        # nub. It is the LARGER envelope (Ø9.412 vs Ø6.189) and reaches
-        # 1.24 mm lower, so these three are the ones that could newly bind.
+        # nub. Its round Ø6.350 profile differs from the Ø6.189 nub,
+        # so both full-throw envelopes must be checked independently.
         .assert_no_interference("js_sweep_puck", "fr4_plate")
         .assert_no_interference("js_sweep_puck", "band")
         .assert_no_interference("js_sweep_puck", "screws")
@@ -2593,30 +2471,16 @@ if __name__ == "__main__":
     print(f"[v2.4-JS] js_pins->tray floor clr = {_jp.distance_to(tray()):.3f} "
           f"(gate >=0.5); js_pins->pcb_rail clr = {_jp.distance_to(pcb_rail()):.3f} "
           "(gate >=0.5, after the v2.4 rail skip)")
-    # knob covers-the-opening arithmetic. [v2.12] the opening is asymmetric,
-    # so report BOTH corner families and the TRUE SIGNED margin — the Ø18
-    # default no longer hides the +x corners and saying "hides by" would be a
-    # lie. The shortfall is owner-accepted, not a defect.
-    _hide_max = KNOB_OD / 2.0 - ENC_OPENING_CORNER_REACH
-    _hide_min = KNOB_OD / 2.0 - ENC_OPENING_CORNER_REACH_MIN
-    _verdict = ("HIDES all four corners" if _hide_max >= 0 else
-                f"LEAVES a {-_hide_max:.3f} mm sliver at the two +x corners "
-                "(OWNER-ACCEPTED, v2.12)")
-    print(f"[v2.4-KNOB] knob Ø{KNOB_OD}/2 = {KNOB_OD/2:.3f} vs encoder-opening "
-          f"corner reach -x {ENC_OPENING_CORNER_REACH_MIN} (margin "
-          f"{_hide_min:+.3f}) / +x {ENC_OPENING_CORNER_REACH} (margin "
-          f"{_hide_max:+.3f}) -> {_verdict}")
     print(f"[v2.12-ENC] plate opening {ENC_OPENING_W} x {ENC_OPENING_H} "
           f"R{ENC_OPENING_R} centred {ENC_OPENING_C} = shaft "
           f"{RE1_SHAFT_DESIGN} + ({ENC_OPENING_DX}, 0); x "
           f"{ENC_OPENING_X0:.3f}..{ENC_OPENING_X1:.3f} y "
           f"{ENC_OPENING_Y0:.3f}..{ENC_OPENING_Y1:.3f} (left edge FROZEN by "
           "owner directive; +1.000 all on the owner's RIGHT = board +x)")
-    print(f"[v2.17-ENC] SUPERSEDED v2.12's 'Ø19 is PARKED' note: the v2 knob "
-          f"catalog IS Ø19 and ships, so the +x sliver is CLOSED by "
-          f"{KNOB_OD / 2.0 - ENC_OPENING_CORNER_REACH:+.3f} (params hide_floor "
-          f"{_KNOB['hide_floor']}). Owner ordered the v2 toppers 2026-08-20.")
-    # ---- v2.17 STICK TOPPERS: both shipped parts, each at its own throw ----
+    print(f"[KNOB] straight body Ø{KNOB_OD}, no skirt or cover flange; primary "
+          f"17.5 mm key horizontal gap "
+          f"{_KNOB['key_clearance']['grip_horizontal_gap']:+.3f}.")
+    # ---- v2.17 STICK TOPPERS: both shipped parts at full 30° travel -------
     _js = js_sweep()
     _jsb = _js.bounding_box()
     _jpk = js_sweep_puck()
@@ -2625,11 +2489,11 @@ if __name__ == "__main__":
           f"reach {_jsb.max.Y - JS1[1]:.3f}, floor z {_jsb.min.Z:.3f} "
           f"(part 11.851 — envelope drops the 0.3 fillet). "
           f"v2.5 taper was 9.037 / 10.467; v2.4 dome 11.279 / 10.038")
-    print(f"[v2.17-SWEEP] puck_TPU @ {STICK_TILT_RESTRICTED_DEG}° (its cone "
-          f"land IS the stop): south reach {_jpkb.max.Y - JS1[1]:.3f}, floor z "
-          f"{_jpkb.min.Z:.3f} (seat {PUCK_SEAT_Z}); LARGER Ø ({2 * PUCK_R} vs "
-          f"{2 * STICK_CAP_R:.3f}) and lower floor — the envelope the case "
-          "would have been blind to if only the default were modelled")
+    print(f"[v2.17-SWEEP] puck_TPU @ {STICK_TILT_DEG}° (no restrictor): "
+          f"south reach {_jpkb.max.Y - JS1[1]:.3f}, floor z "
+          f"{_jpkb.min.Z:.3f}; round Ø{PUCK_D:.3f} — the envelope the case "
+          "would have been "
+          "blind to if only the default were modelled")
     # THE joystick-clearance finding the v2.4 directive named: the swept
     # toppers vs the neighbouring keycaps. MEASURED, loud, NOT gated (see the
     # build_assembly note). [v2.17] the reported number is now the TRUE 3-D
@@ -2641,7 +2505,7 @@ if __name__ == "__main__":
     # solids are 0.736 mm apart. A reporting gate that cries wolf is a defect.
     _kc = keycaps()
     _sw4_edge_y = _REFS["SW4"][1] - KEYCAP_1U / 2.0        # 22.7 (case proxy)
-    for _nm, _sw in (("nub_C2 @30°", _js), ("puck_TPU @22.5°", _jpk)):
+    for _nm, _sw in (("nub_C2 @30°", _js), ("puck_TPU @30°", _jpk)):
         print(f"[v2.17-JS-KEYCAP] {_nm}: x keycaps overlap = "
               f"{(_sw & _kc).volume:.2f} mm^3 ; TRUE 3-D min distance = "
               f"{_sw.distance_to(_kc):+.3f} mm (bbox-corner proxy would say "
@@ -2771,7 +2635,9 @@ if __name__ == "__main__":
     export_stl(tray_print, os.path.join(stl_dir, "agentpad13_v2_tray_v5.stl"))
     export_step(tray_print,
                 os.path.join(step_dir, "agentpad13_v2_tray_v5.step"))
-    # Plate is ORDERED (FR4), not printed: STEP for records; the fab files
+    # The same plate geometry serves both routes: STEP for editable CAD / the
+    # FR4 record, STL for people printing the plate at home. The fab files
     # (.kicad_pcb + DXF) come from gen_plate_fab.py.
+    export_stl(plate_part, os.path.join(stl_dir, "agentpad13_v2_plate.stl"))
     export_step(plate_part, os.path.join(step_dir, "agentpad13_v2_plate.step"))
     print(f"exported band ({_band_name}), tray(+pins), plate to stl/ and step/")

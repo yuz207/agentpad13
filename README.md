@@ -14,12 +14,10 @@ the exact file you upload to a fab or drop into a slicer. That is the way in. Pr
 [`release/HOW-TO-ORDER.md`](release/HOW-TO-ORDER.md) is the same thing, static.
 
 <p align="center">
-  <img src="hardware/case/renders/agentpad13-v2-hero.png" alt="agentpad13 product render" width="48%">
-  <img src="release/renders/v27_hero.png" alt="agentpad13 v5 board in the v2 case, from CAD" width="48%">
+  <img src="release/renders/v27_hero.png" alt="agentpad13 v5 board in the v2 case, from CAD" width="72%">
 </p>
 
-<p align="center"><sub>Left: product concept, drawn against an earlier and thinner band.
-Right: the shipping v5 board in the v2 case, straight from the CAD.</sub></p>
+<p align="center"><sub>The shipping v5 board in the v2 case, straight from the CAD.</sub></p>
 
 ## What is where
 
@@ -31,7 +29,6 @@ release/            The bundle — everything you order, print or flash.
   hardware/           Board fab package, case, plate, bases, keycaps, toppers, gasket.
   firmware/           Flashable UF2s, BRING-UP.md, POLARITY-NOTE.md.
 configurator/       The site above, plus the pipeline that generates its data.
-hardware/pcb/       KiCad 9 project, vendored footprint libs, BOM, renders.
 firmware/           vial-qmk tree, simulations, conformance tests, BUILD.md.
 docs/               The Raw HID protocol contract, and the design reviews.
 ```
@@ -69,11 +66,8 @@ byte-reproducible build is [`agentpad13_reference.uf2`](release/firmware/prebuil
 
 ## Licensing
 
-- `hardware/` and `release/hardware/` — **CERN-OHL-W-2.0** (schematic, PCB, case CAD).
+- `release/hardware/` — **CERN-OHL-W-2.0** (PCB and case CAD).
 - `firmware/` and `release/firmware/` — **GPL-2.0-or-later** (QMK/vial-qmk
   derivative), except `firmware/tests/conformance/protocol_oracle.py`, which is
   **MIT**. Corresponding source for the prebuilt UF2s = this tree built against
   [vial-qmk](https://github.com/vial-kb/vial-qmk) per `firmware/BUILD.md`.
-
-Vendored footprint libraries under `hardware/pcb/lib/` keep their upstream
-licenses (marbastlib: CERN-OHL-P v2; MX_V2: MIT) — see `hardware/pcb/lib/LIBS.md`.

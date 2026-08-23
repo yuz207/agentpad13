@@ -13,147 +13,157 @@ ENCODER KNOB v2 — A (helical) / B2 (scoop, REVISED) / C (cross-hatch)
   the WRONG stack (cap + switch, no insertion) = +21.20, i.e. 3.60 too high = exactly N
     [PASS] keycap chain vs the repo's emitted keycap_params.json: dish 17.6 / plateau 18.2 / engagement 3.6 / seats_on 'stem shoulder'
 
-2.  CONCEALMENT — does the barrel hide the plate opening?
-  opening 14.0 x 13.0 R1.5, centre = shaft + (0.5, 0)  [CASE:584-591]
-  corner reach from the SHAFT: +x 9.3102   -x 8.5711
-    o 18.00  hides by  -0.310   v1 shipped default — UNDER-covers, now retired
-    o 18.62  hides by  -0.000   exact-zero concealment
-    o 19.00  hides by  +0.190   SHIPPED — fully hides
-    [PASS] concealment (shipped o19.0): hides by +0.190 >= floor +0.190 (v1's owner-accepted -0.310 exception is OBSOLETE)
-    [PASS] NEG-CTRL concealment: v1's o18 default, which under-covers by -0.310 -> REJECTED as required
-    [PASS] SW1 keycap clearance: knob edge y 22.00 vs SW1 near edge y 22.95 -> +0.950 (height-independent: the barrel is a straight cylinder)
+2.  KEY CLEARANCE — straight body, no skirt or cover flange
+    [PASS] straight knob body vs SW1 across the full keycap z-overlap: centres 19.20 apart; o17.5 knob vs o17.5 key -> +1.700 horizontal gap through z +11.6..+18.2
     [PASS] counterbore vs the bushing: o9.0 cbore clears a o7.0 bushing by 1.00 radial and the pessimistic o7.5 by 0.75; it swallows 4.0 mm of it
 
 3.  Z-STACK — does the bore swallow the board's own shaft, UNCUT?
    top z above deck    H/D over dish over plat   roof  max tip   Alps  B-L15  B-L20 flat eng
-    22.0       17.0  0.895       4.4       3.8   20.5     19.5     no     no     no     6.00
-    24.0       19.0  1.000       6.4       5.8   22.5     21.5     no    YES     no     8.00
-    26.0       21.0  1.105       8.4       7.8   24.5     23.5     no    YES     no    10.00
-    27.0       22.0  1.158       9.4       8.8   25.5     24.5    YES    YES     no    10.00
-    28.0       23.0  1.211      10.4       9.8   26.5     25.5    YES    YES     no    10.00
+    22.0       17.0  0.971       4.4       3.8   20.5     19.5     no     no     no     6.00
+    24.0       19.0  1.086       6.4       5.8   22.5     21.5     no    YES     no     8.00
+    26.0       21.0  1.200       8.4       7.8   24.5     23.5     no    YES     no    10.00
+    27.0       22.0  1.257       9.4       8.8   25.5     24.5    YES    YES     no    10.00
+    28.0       23.0  1.314      10.4       9.8   26.5     25.5    YES    YES     no    10.00
   minimum top for the Alps H20 = tip 24.5 + headroom 1.0 + roof 1.5 = +27.0  ->  SHIPPED +27.0
     [PASS] z-stack headroom, shipped roof +25.5 vs the Alps H20 tip: roof +25.5 - tip +24.5 = +1.000 >= 1.0 required
     [PASS] NEG-CTRL z-stack headroom: the brief's +24.0 knob (roof +22.5, headroom -2.000) -> REJECTED as required
     [PASS] NEG-CTRL z-stack headroom: RETIRED Knob B1's roof +22.909 (headroom -1.591) -> REJECTED as required
 
-4.  KNOB B2 SCOOP TRADE — cove radius x ridge position
+4.  D-BORE CLEARANCE — LOW fit plus owner-capped HIGH fit
+    LOW   o6.0 / across-flat 4.5: 0.000 radial per side, 0.000 at the flat; D chord 5.196
+    HIGH  o6.3 / across-flat 4.8: 0.150 radial per side, 0.150 at the flat; D chord 5.367
+    [PASS] LOW follows the nominal push-on D-shaft convention: o6.0/4.5 matches the measured and published shaft size
+    [PASS] HIGH clearance does not exceed the owner's 0.15 mm maximum: o6.3/4.8 gives 0.150 mm radial and flat clearance
+    [PASS] LOW and HIGH are materially separated: HIGH adds 0.150 mm radial and flat clearance over nominal LOW
+    [PASS] both choices retain a positive D-flat torque face: flat chords LOW 5.196, HIGH 5.367; working D-bore length remains 11.0 mm
+    Both D-bores are straight at the listed dimensions; no lead-in.
+
+5.  KNOB B2 SCOOP TRADE — cove radius x ridge position
     Owner: 'not concave enough ... the notch is too high ... as far
     down as the knurling goes'.  Target LOW RIM = +18.2 = the knurl
     line.  HARD CONSTRAINT: bore roof >= +25.5.
-    bore +y reach: nom 1.500, LOOSE rung 1.550 (the worst); the D-flat is clocked TOWARD the
-    scoop, so the bore reaches 1.50 in +y instead of 3.00.
+    bore +y reach: LOW 1.500, HIGH 1.650 (the worst); the D-flat is clocked TOWARD the
+    scoop, so even the HIGH bore reaches 1.65 in +y instead of 3.15.
 
    ridge y  ridge/R  cove R     yc   rim z  %face   chord   ridge  rim sl    sag  z@bore    roof    ok
-     0.000   0.0000  10.772   10.6  18.200  50.0%   42.81   79.76    5.86  2.163  23.074  21.874    no
-     0.000   0.0000  11.248   11.0  18.200  50.0%   42.81   77.95    7.66  2.050  23.247  22.047    no
-     0.000   0.0000  12.480   12.0  18.200  50.0%   42.81   74.06   11.56  1.811  23.605  22.405    no
-     0.000   0.0000  13.759   13.0  18.200  50.0%   42.81   70.88   14.74  1.619  23.877  22.677    no
-     0.000   0.0000  15.073   14.0  18.200  50.0%   42.81   68.25   17.37  1.462  24.089  22.889    no
-     0.000   0.0000  17.776   16.0  18.200  50.0%   42.81   64.17   21.45  1.221  24.392  23.192    no
-     0.000   0.0000  23.356   20.0  18.200  50.0%   42.81   58.90   26.72  0.915  24.741  23.541    no
-     0.000   0.0000  37.716   30.0  18.200  50.0%   42.81   52.69   32.92  0.560  25.098  23.898    no
-     0.950   0.1000   9.685   10.6  18.200  43.6%   45.83   85.13    6.52  2.191  24.373  23.173    no
-     0.950   0.1000  10.123   11.0  18.200  43.6%   45.83   83.13    8.52  2.071  24.582  23.382    no
-     0.950   0.1000  11.264   12.0  18.200  43.6%   45.83   78.83   12.82  1.817  24.980  23.780    no
-     0.950   0.1000  12.456   13.0  18.200  43.6%   45.83   75.33   16.32  1.615  25.250  24.050    no
-     0.950   0.1000  13.687   14.0  18.200  43.6%   45.83   72.46   19.20  1.452  25.441  24.241    no
-     0.950   0.1000  16.228   16.0  18.200  43.6%   45.83   68.04   23.61  1.204  25.684  24.484    no
-     0.950   0.1000  21.494   20.0  18.200  43.6%   45.83   62.41   29.24  0.894  25.928  24.728    no
-     0.950   0.1000  35.084   30.0  18.200  43.6%   45.83   55.90   35.75  0.540  26.142  24.942    no
-     1.425   0.1500   9.180   10.6  18.200  40.5%   47.46   88.04    6.88  2.208  25.773  24.573    no
-     1.425   0.1500   9.599   11.0  18.200  40.5%   47.46   85.93    8.99  2.084  25.995  24.795    no
-     1.425   0.1500  10.695   12.0  18.200  40.5%   47.46   81.40   13.52  1.822  26.322  25.122    no
-     1.425   0.1500  11.845   13.0  18.200  40.5%   47.46   77.73   17.19  1.615  26.482  25.282    no
-     1.425   0.1500  13.036   14.0  18.200  40.5%   47.46   74.73   20.19  1.448  26.571  25.371    no
-     1.425   0.1500  15.498   16.0  18.200  40.5%   47.46   70.12   24.80  1.197  26.666  25.466    no
-     1.425   0.1500  20.614   20.0  18.200  40.5%   47.46   64.30   30.62  0.884  26.745  25.500   YES
-     1.425   0.1500  33.834   30.0  18.200  40.5%   47.46   57.63   37.29  0.531  26.804  25.500   YES
-     1.500   0.1579   9.103   10.6  18.200  40.0%   47.73   88.51    6.94  2.211  26.255  25.055    no
-     1.500   0.1579   9.519   11.0  18.200  40.0%   47.73   86.39    9.07  2.086  26.456  25.256    no
-     1.500   0.1579  10.608   12.0  18.200  40.0%   47.73   81.82   13.63  1.823  26.686  25.486    no
-     1.500   0.1579  11.752   13.0  18.200  40.0%   47.73   78.13   17.33  1.615  26.773  25.500   YES
-     1.500   0.1579  12.935   14.0  18.200  40.0%   47.73   75.09   20.36  1.448  26.817  25.500   YES
-     1.500   0.1579  15.386   16.0  18.200  40.0%   47.73   70.46   24.99  1.196  26.861  25.500   YES
-     1.500   0.1579  20.479   20.0  18.200  40.0%   47.73   64.61   30.85  0.882  26.895  25.500   YES
-     1.500   0.1579  33.641   30.0  18.200  40.0%   47.73   57.91   37.54  0.530  26.921  25.500   YES
-     1.650   0.1737   8.950   10.6  18.200  39.0%   48.27   89.47    7.06  2.217  27.000  25.500   YES
-     1.650   0.1737   9.360   11.0  18.200  39.0%   48.27   87.31    9.22  2.091  27.000  25.500   YES
-     1.650   0.1737  10.435   12.0  18.200  39.0%   48.27   82.67   13.86  1.825  27.000  25.500   YES
-     1.650   0.1737  11.566   13.0  18.200  39.0%   48.27   78.92   17.61  1.616  27.000  25.500   YES
-     1.650   0.1737  12.737   14.0  18.200  39.0%   48.27   75.84   20.69  1.447  27.000  25.500   YES
-     1.650   0.1737  15.163   16.0  18.200  39.0%   48.27   71.15   25.38  1.193  27.000  25.500   YES
-     1.650   0.1737  20.209   20.0  18.200  39.0%   48.27   65.23   31.30  0.879  27.000  25.500   YES
-     1.650   0.1737  33.258   30.0  18.200  39.0%   48.27   58.48   38.05  0.527  27.000  25.500   YES
-     2.500   0.2632       -   10.6       -      -       -       -       -      -       -       - UNDER
-     2.500   0.2632       -   11.0       -      -       -       -       -      -       -       - UNDER
-     2.500   0.2632   9.507   12.0  18.200  33.4%   51.50   87.75   15.25  1.841  27.000  25.500   YES
-     2.500   0.2632  10.565   13.0  18.200  33.4%   51.50   83.65   19.35  1.620  27.000  25.500   YES
-     2.500   0.2632  11.666   14.0  18.200  33.4%   51.50   80.31   22.69  1.444  27.000  25.500   YES
-     2.500   0.2632  13.960   16.0  18.200  33.4%   51.50   75.25   27.75  1.182  27.000  25.500   YES
-     2.500   0.2632  18.752   20.0  18.200  33.4%   51.50   68.95   34.05  0.863  27.000  25.500   YES
-     2.500   0.2632  31.178   30.0  18.200  33.4%   51.50   61.89   41.11  0.511  27.000  25.500   YES
+     0.000   0.0000  10.750   10.6  18.200  50.0%   45.16   80.42    9.91  1.972  22.835  21.635    no
+     0.000   0.0000  11.215   11.0  18.200  50.0%   45.16   78.75   11.57  1.873  22.994  21.794    no
+     0.000   0.0000  12.415   12.0  18.200  50.0%   45.16   75.15   15.18  1.662  23.326  22.126    no
+     0.000   0.0000  13.654   13.0  18.200  50.0%   45.16   72.19   18.14  1.491  23.585  22.385    no
+     0.000   0.0000  14.924   14.0  18.200  50.0%   45.16   69.73   20.60  1.351  23.791  22.591    no
+     0.000   0.0000  17.529   16.0  18.200  50.0%   45.16   65.89   24.43  1.135  24.093  22.893    no
+     0.000   0.0000  22.891   20.0  18.200  50.0%   45.16   60.89   29.44  0.857  24.451  23.251    no
+     0.000   0.0000  36.665   30.0  18.200  50.0%   45.16   54.91   35.42  0.529  24.828  23.628    no
+     0.950   0.1086   9.675   10.6  18.200  43.1%   48.45   85.87   11.02  1.992  24.022  22.822    no
+     0.950   0.1086  10.105   11.0  18.200  43.1%   48.45   84.03   12.87  1.887  24.219  23.019    no
+     0.950   0.1086  11.219   12.0  18.200  43.1%   48.45   80.05   16.84  1.664  24.609  23.409    no
+     0.950   0.1086  12.377   13.0  18.200  43.1%   48.45   76.81   20.08  1.486  24.889  23.689    no
+     0.950   0.1086  13.567   14.0  18.200  43.1%   48.45   74.13   22.77  1.340  25.094  23.894    no
+     0.950   0.1086  16.018   16.0  18.200  43.1%   48.45   69.98   26.91  1.118  25.367  24.167    no
+     0.950   0.1086  21.081   20.0  18.200  43.1%   48.45   64.64   32.25  0.837  25.651  24.451    no
+     0.950   0.1086  34.118   30.0  18.200  43.1%   48.45   58.37   38.52  0.510  25.910  24.710    no
+     1.425   0.1629   9.177   10.6  18.200  39.7%   50.23   88.82   11.63  2.005  25.160  23.960    no
+     1.425   0.1629   9.589   11.0  18.200  39.7%   50.23   86.88   13.57  1.896  25.393  24.193    no
+     1.425   0.1629  10.661   12.0  18.200  39.7%   50.23   82.70   17.75  1.667  25.796  24.596    no
+     1.425   0.1629  11.780   13.0  18.200  39.7%   50.23   79.30   21.15  1.485  26.034  24.834    no
+     1.425   0.1629  12.932   14.0  18.200  39.7%   50.23   76.50   23.95  1.336  26.182  24.982    no
+     1.425   0.1629  15.309   16.0  18.200  39.7%   50.23   72.19   28.27  1.111  26.350  25.150    no
+     1.425   0.1629  20.230   20.0  18.200  39.7%   50.23   66.67   33.79  0.827  26.497  25.297    no
+     1.425   0.1629  32.915   30.0  18.200  39.7%   50.23   60.24   40.21  0.502  26.613  25.413    no
+     1.650   0.1886       -   10.6       -      -       -       -       -      -       -       - UNDER
+     1.650   0.1886   9.354   11.0  18.200  38.1%   51.10   88.29   13.92  1.902  27.000  25.500   YES
+     1.650   0.1886  10.407   12.0  18.200  38.1%   51.10   84.01   18.20  1.670  27.000  25.500   YES
+     1.650   0.1886  11.507   13.0  18.200  38.1%   51.10   80.53   21.68  1.485  27.000  25.500   YES
+     1.650   0.1886  12.642   14.0  18.200  38.1%   51.10   77.67   24.54  1.335  27.000  25.500   YES
+     1.650   0.1886  14.984   16.0  18.200  38.1%   51.10   73.27   28.94  1.107  27.000  25.500   YES
+     1.650   0.1886  19.839   20.0  18.200  38.1%   51.10   67.66   34.55  0.823  27.000  25.500   YES
+     1.650   0.1886  32.363   30.0  18.200  38.1%   51.10   61.16   41.04  0.498  27.000  25.500   YES
+     1.800   0.2057       -   10.6       -      -       -       -       -      -       -       - UNDER
+     1.800   0.2057   9.201   11.0  18.200  37.0%   51.70   89.24   14.15  1.906  27.000  25.500   YES
+     1.800   0.2057  10.241   12.0  18.200  37.0%   51.70   84.90   18.50  1.671  27.000  25.500   YES
+     1.800   0.2057  11.328   13.0  18.200  37.0%   51.70   81.36   22.03  1.485  27.000  25.500   YES
+     1.800   0.2057  12.452   14.0  18.200  37.0%   51.70   78.46   24.94  1.334  27.000  25.500   YES
+     1.800   0.2057  14.772   16.0  18.200  37.0%   51.70   74.01   29.39  1.105  27.000  25.500   YES
+     1.800   0.2057  19.583   20.0  18.200  37.0%   51.70   68.34   35.06  0.820  27.000  25.500   YES
+     1.800   0.2057  32.001   30.0  18.200  37.0%   51.70   61.79   41.61  0.495  27.000  25.500   YES
+     1.950   0.2229       -   10.6       -      -       -       -       -      -       -       - UNDER
+     1.950   0.2229       -   11.0       -      -       -       -       -      -       -       - UNDER
+     1.950   0.2229  10.077   12.0  18.200  35.9%   52.31   85.80   18.81  1.673  27.000  25.500   YES
+     1.950   0.2229  11.153   13.0  18.200  35.9%   52.31   82.21   22.40  1.485  27.000  25.500   YES
+     1.950   0.2229  12.265   14.0  18.200  35.9%   52.31   79.27   25.34  1.333  27.000  25.500   YES
+     1.950   0.2229  14.563   16.0  18.200  35.9%   52.31   74.75   29.86  1.103  27.000  25.500   YES
+     1.950   0.2229  19.331   20.0  18.200  35.9%   52.31   69.02   35.59  0.817  27.000  25.500   YES
+     1.950   0.2229  31.644   30.0  18.200  35.9%   52.31   62.43   42.19  0.492  27.000  25.500   YES
+     2.500   0.2857       -   10.6       -      -       -       -       -      -       -       - UNDER
+     2.500   0.2857       -   11.0       -      -       -       -       -      -       -       - UNDER
+     2.500   0.2857   9.501   12.0  18.200  32.1%   54.62   89.23   20.00  1.682  27.000  25.500   YES
+     2.500   0.2857  10.533   13.0  18.200  32.1%   54.62   85.44   23.80  1.488  27.000  25.500   YES
+     2.500   0.2857  11.604   14.0  18.200  32.1%   54.62   82.33   26.90  1.331  27.000  25.500   YES
+     2.500   0.2857  13.822   16.0  18.200  32.1%   54.62   77.60   31.63  1.097  27.000  25.500   YES
+     2.500   0.2857  18.439   20.0  18.200  32.1%   54.62   71.64   37.60  0.807  27.000  25.500   YES
+     2.500   0.2857  30.380   30.0  18.200  32.1%   54.62   64.85   44.38  0.483  27.000  25.500   YES
 
   READING THE TABLE.  Every row targets the SAME rim +18.2, so the
   trade is not depth-vs-roof at all: the roof is +25.500 for EVERY
-  row whose ridge sits outboard of the loose rung's bore reach
-  (1.550) and short of it for every row inboard.  Depth
+  row whose ridge sits outboard of the HIGH bore's reach
+  (1.650) and short of it for every row inboard.  Depth
   is bought from the RIDGE, not from the roof.  What the cove radius
   buys is the SHAPE: small yc = tight R = a deep dish behind a steep
   ridge wall; large yc = big R = a near-flat chamfer (both slopes
   converge on the chord).  'UNDER' = the cove would have to undercut
   (B < 0, a vertical tangent at the ridge) to reach +18.2.
-  SHIPPED: ridge 1.65 (39.0% of the face), cove R 12.7369, rim +18.2, roof +25.5, sagitta 1.4469
-  vs the v2 study's B2 (ridge 1.425, depth 4.0): rim +23.061, chord 26.00 deg -> the notch drops 4.861 mm and the chord steepens to 48.27 deg.
-    [PASS] B2 scoop keeps the +25.5 roof at the LOOSE bore rung: ridge 1.65 is +0.100 outboard of the loose rung's bore reach, so the material over the bore is the untouched flat top
+  SHIPPED: ridge 1.95 (35.9% of the face), cove R 12.2646, rim +18.2, roof +25.5, sagitta 1.333
+  vs the v2 study's B2 (ridge 1.425, depth 4.0): rim +23.061, chord 26.00 deg -> the notch drops 4.861 mm and the chord steepens to 52.31 deg.
+    [PASS] B2 scoop keeps the +25.5 roof at HIGH clearance: ridge 1.95 is +0.300 outboard of the HIGH bore's reach, so the material over the bore is the untouched flat top
     [PASS] NEG-CTRL B2 scoop roof: a centred ridge, which puts the cove over the bore -> REJECTED as required
     [PASS] NEG-CTRL B2 scoop roof: a cove radius too tight to reach +18.2 without an undercut -> REJECTED as required
     [PASS] B2 low rim hits the owner's target: rim +18.2 vs the knurl line +18.2 (= 8.8 mm down, 40% of the 22 mm above-deck stack)
 
-5.  THE THREE KNOBS
-  --- Knob A  (A_helical_knurl)  o19.0, +8.0 .. +27.0 ---
+6.  THE THREE KNOBS
+  --- Knob A  (A_helical_knurl)  o17.5, +8.0 .. +27.0 ---
       bore: o9.0 cbore -> +12.0 | o6.2 journal +12.0..+14.5 | D-bore +14.5..+25.5 (11.00 long, flat face 1.5 off the axis)
       Alps EC11E-Switch-Vertical H20 (the board's  tip +24.5  headroom  +1.000  flat engagement 10.00  SEATS
       Bourns PEC11R-42xxF (L15)                    tip +21.5  headroom  +4.000  flat engagement  7.00  SEATS
       Bourns PEC11R-40/42-20F (L20)                tip +26.5  headroom  -1.000  flat engagement  9.00  *** RIDES PROUD ***
     [PASS] Knob A z-stack vs the Alps H20: headroom +1.000 >= 1.0
     [PASS] Knob A flat engagement: 10.00 mm of D-bore actually overlaps the Alps flat (>= the 6.0 house floor)
-      texture: N=34/family, helix 30.0 deg from vertical, groove 0.85 wide x 0.4 deep (cutter R 0.4258)
-               circumferential pitch 1.7556; WORST horizontal slice: notches every 1.7556 -> CREST LAND 0.9056
-    [PASS] Knob A worst-slice crest land: 0.9056 mm = 2.2 beads at a 0.42 line width (>= 2 beads)
-    [PASS] Knob A minimum real wall: 5.000 (OD/2 - cbore/2) >= 1.2
-      bbox 19.00 x 19.00 x 19.00  (z 8.00 .. 27.00)
+      texture: N=32/family, helix 30.0 deg from vertical, groove 0.85 wide x 0.4 deep (cutter R 0.4258)
+               circumferential pitch 1.7181; WORST horizontal slice: notches every 1.7181 -> CREST LAND 0.8681
+    [PASS] Knob A worst-slice crest land: 0.8681 mm = 2.1 beads at a 0.42 line width (>= 2 beads)
+    [PASS] Knob A minimum real wall: 4.250 (OD/2 - cbore/2) >= 1.2
+      bbox 17.50 x 17.50 x 19.00  (z 8.00 .. 27.00)
 
-  --- Knob B2  (B2_scoop)  o19.0, +8.0 .. +27.0 ---
+  --- Knob B2  (B2_scoop)  o17.5, +8.0 .. +27.0 ---
       bore: o9.0 cbore -> +12.0 | o6.2 journal +12.0..+14.5 | D-bore +14.5..+25.5 (11.00 long, flat face 1.5 off the axis)
       Alps EC11E-Switch-Vertical H20 (the board's  tip +24.5  headroom  +1.000  flat engagement 10.00  SEATS
       Bourns PEC11R-42xxF (L15)                    tip +21.5  headroom  +4.000  flat engagement  7.00  SEATS
       Bourns PEC11R-40/42-20F (L20)                tip +26.5  headroom  -1.000  flat engagement  9.00  *** RIDES PROUD ***
     [PASS] Knob B2 z-stack vs the Alps H20: headroom +1.000 >= 1.0
     [PASS] Knob B2 flat engagement: 10.00 mm of D-bore actually overlaps the Alps flat (>= the 6.0 house floor)
-      scoop: ridge y 1.65 (+0.1737 R, covers 39.0% of the face)
-             cove R 12.7369 at (y 14.0, z 30.1155); ridge 75.84 deg, rim 20.69 deg, chord 48.27 deg
-             sagitta below the chord 1.4469 mm = the concavity the owner asked for
+      scoop: ridge y 1.95 (+0.2229 R, covers 35.9% of the face)
+             cove R 12.2646 at (y 14.0, z 29.2841); ridge 79.27 deg, rim 25.34 deg, chord 52.31 deg
+             sagitta below the chord 1.333 mm = the concavity the owner asked for
              LOW RIM z 18.2 -> +0.000 vs the knurl line +18.2, +0.600 vs the dish caps
              surface over the bore's +y edge (y=1.5): z 27.0  ->  SCOOP COST vs a flat top +0.000 mm of roof
-    [PASS] Knob B2 minimum real wall: 5.000 (OD/2 - cbore/2) >= 1.2
-      bbox 19.00 x 19.00 x 19.00  (z 8.00 .. 27.00)
+    [PASS] Knob B2 minimum real wall: 4.250 (OD/2 - cbore/2) >= 1.2
+      bbox 17.50 x 17.50 x 19.00  (z 8.00 .. 27.00)
 
-  --- Knob C  (C_cross_hatch)  o19.0, +8.0 .. +27.0 ---
+  --- Knob C  (C_cross_hatch)  o17.5, +8.0 .. +27.0 ---
       bore: o9.0 cbore -> +12.0 | o6.2 journal +12.0..+14.5 | D-bore +14.5..+25.5 (11.00 long, flat face 1.5 off the axis)
       Alps EC11E-Switch-Vertical H20 (the board's  tip +24.5  headroom  +1.000  flat engagement 10.00  SEATS
       Bourns PEC11R-42xxF (L15)                    tip +21.5  headroom  +4.000  flat engagement  7.00  SEATS
       Bourns PEC11R-40/42-20F (L20)                tip +26.5  headroom  -1.000  flat engagement  9.00  *** RIDES PROUD ***
     [PASS] Knob C z-stack vs the Alps H20: headroom +1.000 >= 1.0
     [PASS] Knob C flat engagement: 10.00 mm of D-bore actually overlaps the Alps flat (>= the 6.0 house floor)
-      texture: N=17/family, helix 45.0 deg from vertical, groove 0.85 wide x 0.4 deep (cutter R 0.4258)
-               circumferential pitch 3.5112; WORST horizontal slice: notches every 1.7556 -> CREST LAND 0.9056
-    [PASS] Knob C worst-slice crest land: 0.9056 mm = 2.2 beads at a 0.42 line width (>= 2 beads)
-               diamond 2.6612 circ x 2.6612 axial, perp width 1.8817, rows every 1.7556 -> 4.16 rows x 17 = ~71 diamonds
-               resin / 0.25-nozzle alternative: N=26/family, groove 0.55, land 0.5979, diamond 1.7458 x 1.7458, 6.36 rows
-    [PASS] Knob C minimum real wall: 5.000 (OD/2 - cbore/2) >= 1.2
-      bbox 19.00 x 19.00 x 19.00  (z 8.00 .. 27.00)
+      texture: N=16/family, helix 45.0 deg from vertical, groove 0.85 wide x 0.4 deep (cutter R 0.4258)
+               circumferential pitch 3.4361; WORST horizontal slice: notches every 1.7181 -> CREST LAND 0.8681
+    [PASS] Knob C worst-slice crest land: 0.8681 mm = 2.1 beads at a 0.42 line width (>= 2 beads)
+               diamond 2.5861 circ x 2.5861 axial, perp width 1.8287, rows every 1.7181 -> 4.25 rows x 16 = ~68 diamonds
+               resin / 0.25-nozzle alternative: N=26/family, groove 0.55, land 0.5073, diamond 1.5645 x 1.5645, 6.9 rows
+    [PASS] Knob C minimum real wall: 4.250 (OD/2 - cbore/2) >= 1.2
+      bbox 17.50 x 17.50 x 19.00  (z 8.00 .. 27.00)
 
-6.  EXPORT INTO THE PRINT FRAME
+7.  EXPORT INTO THE PRINT FRAME
     [CASE:1074-1118] the design frame is LEFT-handed while STL is
     right-handed, so every solid built here is the ENANTIOMORPH of
     the intended part.  v1 toppers exported un-mirrored, which was
@@ -161,17 +171,14 @@ ENCODER KNOB v2 — A (helical) / B2 (scoop, REVISED) / C (cross-hatch)
     correct-by-argument.  Knob A is a HELIX.  v2 mirrors every knob:
     uniform application is what stops a future chiral feature
     shipping the wrong hand by omission.
-    wrote knob_v2_A_bore_tight.stl     bore o5.9 / across-flat 4.4 (flat 1.45 off axis)
-    wrote knob_v2_A_bore_nom.stl       bore o6.0 / across-flat 4.5 (flat 1.5 off axis)
-    wrote knob_v2_A_bore_loose.stl     bore o6.1 / across-flat 4.6 (flat 1.55 off axis)
-    wrote knob_v2_B2_bore_tight.stl    bore o5.9 / across-flat 4.4 (flat 1.45 off axis)
-    wrote knob_v2_B2_bore_nom.stl      bore o6.0 / across-flat 4.5 (flat 1.5 off axis)
-    wrote knob_v2_B2_bore_loose.stl    bore o6.1 / across-flat 4.6 (flat 1.55 off axis)
-    wrote knob_v2_C_bore_tight.stl     bore o5.9 / across-flat 4.4 (flat 1.45 off axis)
-    wrote knob_v2_C_bore_nom.stl       bore o6.0 / across-flat 4.5 (flat 1.5 off axis)
-    wrote knob_v2_C_bore_loose.stl     bore o6.1 / across-flat 4.6 (flat 1.55 off axis)
+    wrote knob_v2_A_clearance_low.stl  bore o6.0 / across-flat 4.5 (flat 1.5 off axis)
+    wrote knob_v2_A_clearance_high.stl bore o6.3 / across-flat 4.8 (flat 1.65 off axis)
+    wrote knob_v2_B2_clearance_low.stl bore o6.0 / across-flat 4.5 (flat 1.5 off axis)
+    wrote knob_v2_B2_clearance_high.stl bore o6.3 / across-flat 4.8 (flat 1.65 off axis)
+    wrote knob_v2_C_clearance_low.stl  bore o6.0 / across-flat 4.5 (flat 1.5 off axis)
+    wrote knob_v2_C_clearance_high.stl bore o6.3 / across-flat 4.8 (flat 1.65 off axis)
 
-7.  HANDEDNESS GATE — measured from the EXPORTED STL BYTES
+8.  HANDEDNESS GATE — measured from the EXPORTED STL BYTES
     NOT with (part - mirror(part)).volume.  That boolean FAILS
     SILENTLY on any solid from extrude_linear_with_rotation: on Knob
     A's bare band, band & mirror(band) = 0.155 mm^3 of 2005.193, and
@@ -182,44 +189,34 @@ ENCODER KNOB v2 — A (helical) / B2 (scoop, REVISED) / C (cross-hatch)
     Phase clustering on groove-bottom vertices, band z 18.599999999999998..25.1:
     fold theta - s*k*z into one pitch, s = +1/-1, and measure |mean
     exp(i w)|.  The true hand clusters; the wrong hand smears.
-    design-frame solid, exported UN-MIRRORED (neg control): 65071 verts  R+ 0.8872  R- 0.0556  -> RIGHT-handed
-    SHIPPED knob_v2_A_bore_nom.stl                    : 64181 verts  R+ 0.0566  R- 0.8872  -> LEFT-handed
-    [PASS] the phase-clustering measure actually discriminates: winner 0.8872 vs loser 0.0566 — an order of magnitude apart, so the read is not noise
+    design-frame solid, exported UN-MIRRORED (neg control): 63538 verts  R+ 0.8788  R- 0.0597  -> RIGHT-handed
+    DEFAULT knob_v2_A_clearance_low.stl                : 63441 verts  R+ 0.0601  R- 0.8783  -> LEFT-handed
+    [PASS] the phase-clustering measure actually discriminates: winner 0.8783 vs loser 0.0601 — an order of magnitude apart, so the read is not noise
     [PASS] the export mirror actually flipped the hand IN THE FILE: un-mirrored RIGHT vs shipped LEFT
     [PASS] the SHIPPED file is the print-frame (LEFT-handed) helix: the design-frame solid is right-handed by construction (extrude_linear_with_rotation, +twist = CCW about +z), so the physical part is its enantiomorph: grooves rotate CLOCKWISE as they rise, seen from above.  Cosmetic on a rotary knob, and pinned here so it can never drift silently.
 
-    Knob C carries no single-family helix, so it is gated the other
-    way: measure its chirality with the boolean AND cross-check the
-    number analytically.  Under the XZ reflection the cross-hatch's
-    two families map ONTO EACH OTHER exactly (the base groove set
-    {2*pi*i/N} is closed under negation), so the texture must
-    contribute ZERO and the whole XZ difference must be the D-flat
-    segment alone.
-    D-flat segment area = r^2*acos(d/r) - d*sqrt(r^2-d^2) with r 3.0, d 1.5 = 5.5277 mm^2
-    x D-bore length 11.00 = PREDICTED 60.8043 mm^3
-    MEASURED Knob C vs mirror about XZ: 60.8043 / 60.8043 mm^3
-    [PASS] Knob C's cross-hatch texture is achiral about XZ: measured 60.8043 vs predicted 60.8043 — the difference is the D-FLAT alone, so the texture contributes -0.0000
-    MEASURED Knob C vs mirror about YZ: 44.5680 / 44.5525 mm^3
-    Non-zero, and the reason is ODD N: the D-flat survives x -> -x,
-    but theta -> pi - theta maps {2*pi*i/17} onto itself only
-    for EVEN N.  So the whole knob is chiral, and its enantiomorph is
-    the same knob with the texture re-clocked half a pitch (10.588 deg)
-    against the flat — cosmetically null on a part that rotates.
+    Knob C carries no single-family helix.  Its two 16-groove
+    families and +y D-flat must preserve the YZ mirror plane:
+    x -> -x swaps the +/-45-degree texture families while leaving
+    the bore flat unchanged.  This also catches a missing family or
+    unintended texture clocking.
+    MEASURED Knob C vs mirror about YZ: 0.0000 / 0.0000 mm^3
+    [PASS] Knob C owns the YZ mirror plane (cross-hatch + D-flat): 0.000000 / 0.000000 mm^3
     [PASS] Knob B2 owns the YZ mirror plane (scoop + flat both on +y): 0.000000 / 0.000000 mm^3
 
-8.  FDM PRINTABILITY (khana inspect, ADVISORY)
+9.  FDM PRINTABILITY (khana inspect, ADVISORY)
     Calibration: every v1 topper scores 0.13-0.38 and assertion_failed.
     The mesh min_wall metric scores sharp exterior edges and texture
-    crests as 'thin'; the REAL minimum wall is OD/2 - cbore/2 = 5.000 on all three.
-    knob_v2_A      ADVISORY  min_wall=0.8192476293571149  overhang_area=8.801147837518482  (print TOP-down)
-    knob_v2_B2     ADVISORY  min_wall=1.5  overhang_area=63.38022369141818  (print BOTTOM-down)
-    knob_v2_C      ADVISORY  min_wall=0.9131721643164534  overhang_area=9.541342811456216  (print TOP-down)
+    crests as 'thin'; the REAL minimum wall is OD/2 - cbore/2 = 4.250 on all three.
+    knob_v2_A      ADVISORY  min_wall=0.7852778032855106  overhang_area=8.274476474124818  (print TOP-down)
+    knob_v2_B2     ADVISORY  min_wall=1.355185402556356  overhang_area=63.38022369141818  (print BOTTOM-down)
+    knob_v2_C      ADVISORY  min_wall=0.9146224992470915  overhang_area=9.416946172257846  (print TOP-down)
     A and C print TOP-FACE-DOWN: the bore and counterbore open upward
     and the only overhang is the internal journal -> counterbore
     ledge, an invisible internal bridge.  B2 prints BOTTOM-DOWN so
     the cove faces up; the cove is a single-valued height field
     (B > 0 in scoop_cove), so it needs no support either.
 
-wrote params/encoder_knob_v2_params.json  (3 knobs x 3 rungs = 9 STL)
+wrote params/encoder_knob_v2_params.json  (3 knobs x 2 clearances = 6 STL; default LOW)
 ==============================================================================
 GATE RUN CLEAN — every gate passed and every negative control rejected its bad input.

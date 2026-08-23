@@ -95,7 +95,7 @@ console.log(`loaded ${blocks} UF2 blocks from ${uf2Path}`);
 const INPUT_PINS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 for (const p of INPUT_PINS) mcu.gpio[p].setInputValue(true);
 // GP16 is the TTP223 output, and it is the OPPOSITE sense: R10 (0R) straps
-// TOUCH_AHLB -> GND on v5_6.kicad_pcb, and AHLB low selects the TTP223's
+// TOUCH_AHLB -> GND on v5_7.kicad_pcb, and AHLB low selects the TTP223's
 // ACTIVE-HIGH output, so Q idles LOW and drives HIGH while touched. (Corrected
 // 2026-08-13; this line used to drive GP16 high with the switch lines, which
 // modelled the polarity the firmware wrongly assumed. firmware/sim/behavior.cjs

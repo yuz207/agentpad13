@@ -227,20 +227,18 @@ def keycap(x, y, top_z=F.KEYCAP_TOP_DISH_Z):
 
 
 def js_blade():
-    """The 1.85 x 1.15 blade the topper presses onto, +11.0 .. +18.4 [YA13].
+    """The measured 1.70 x 1.00 blade the topper presses onto, +11.0..+18.4.
     Built in LOCAL coords so it can be tilted with the gimbal exactly like
     the topper it carries — a vertical blade under a tilted cap would be a
     lie, and this renderer exists to catch that class of thing."""
     from build123d import Box, Pos
     return tess(Pos(0, 0, (F.FRAME_TOP_Z + F.BLADE_TIP_Z) / 2)
-                * Box(F.BLADE_X, F.BLADE_Y,
+                * Box(S.SHAFT_LONG, S.SHAFT_SHORT,
                       F.BLADE_TIP_Z - F.FRAME_TOP_Z))
 
 
-def js_module(seat_z=S.SEAT_DEFAULT):
-    """The joystick can, drawn with its top face at the seat height under
-    test — the v2 study's third render defect was drawing the can at its
-    nominal +11.0 while quoting a stop angle that belongs to +10.5."""
+def js_module(seat_z=F.FRAME_TOP_Z):
+    """The joystick can, drawn with its top face at the measured frame top."""
     from build123d import Box, Pos
     return tess(Pos(F.JS1_X, F.JS1_Y, seat_z - 3.0) * Box(13.0, 13.0, 6.0))
 
@@ -320,11 +318,11 @@ def elev_panel(tris, col, label, span=26.0, cz=17.5, zlines=(), w=760,
 # ==========================================================================
 if __name__ == "__main__":
     stl = os.path.join(HERE, "stl")
-    kA = load_stl(os.path.join(stl, "knob_v2_A_bore_nom.stl"))
-    kB2 = load_stl(os.path.join(stl, "knob_v2_B2_bore_nom.stl"))
-    kC = load_stl(os.path.join(stl, "knob_v2_C_bore_nom.stl"))
-    nub = load_stl(os.path.join(stl, "stick_nub_v2_C2_sock_nom.stl"))
-    puck = load_stl(os.path.join(stl, "stick_puck_v2_TPU_sock_nom.stl"))
+    kA = load_stl(os.path.join(stl, "knob_v2_A_clearance_low.stl"))
+    kB2 = load_stl(os.path.join(stl, "knob_v2_B2_clearance_low.stl"))
+    kC = load_stl(os.path.join(stl, "knob_v2_C_clearance_low.stl"))
+    nub = load_stl(os.path.join(stl, "stick_nub_v2_C2_clearance_low.stl"))
+    puck = load_stl(os.path.join(stl, "stick_puck_v2_TPU_clearance_low.stl"))
     for nm, t in (("knobA", kA), ("knobB2", kB2), ("knobC", kC),
                   ("nub", nub), ("puck", puck)):
         print(f"  read {nm:6s} {len(t):7d} triangles from the STL bytes")
@@ -332,13 +330,14 @@ if __name__ == "__main__":
     # ---------------------------------------------------------- knob sheet
     ims = []
     ZL = [(K.TEX_START_Z, "+18.2", BLU), (K.KNOB_TOP, "+27.0", GRN)]
-    for t, tag, note in ((kA, "A", "helical knurl  N=34 @ 30 deg"),
-                         (kB2, "B2", "scoop  rim +18.200, cove R12.737"),
-                         (kC, "C", "cross-hatch  17+17 @ +/-45 deg")):
+    for t, tag, note in ((kA, "A", "helical knurl  N=32 @ 30 deg"),
+                         (kB2, "B2", "scoop  rim +18.200, cove R12.265"),
+                         (kC, "C", "cross-hatch  16+16 @ +/-45 deg")):
         ims.append(part_panel(
             t, COL_KNOB,
             [(f"Knob {tag} — {note}", None),
-             ("AS EXPORTED (print frame). o19.0, +8.0..+27.0", (90, 92, 98))]))
+             ("AS EXPORTED. straight o17.5 body, no skirt, +8.0..+27.0",
+              (90, 92, 98))]))
         hand = ([("HANDEDNESS: grooves run UP-TO-THE-LEFT on the near face",
                   RED),
                  ("= a LEFT-handed helix, which is what the STL phase gate "
@@ -355,7 +354,7 @@ if __name__ == "__main__":
             + hand,
             span=23.0, cz=17.5, zlines=ZL))
     sheet(ims, 2, "toppers_v2_knobs.png",
-          "agentpad13 v5 — ENCODER KNOBS v2  (o19.0, top +27.0, "
+          "agentpad13 v5 — ENCODER KNOBS v2  (straight o17.5 body, top +27.0, "
           "texture/scoop above +18.2)  — rendered FROM THE EXPORTED STL BYTES")
 
     # -------------------------------------------------- B2 before / after
@@ -429,50 +428,48 @@ if __name__ == "__main__":
                          [("Nub C2 — top down, the seven-dot micro-grip",
                            None)], span=9.0, cz=19.6))
     ims.append(part_panel(puck, COL_TPU,
-                          [("TPU puck — o9.412, one piece, cup + RAISED "
-                            "X-dashes", None),
-                           ("AS EXPORTED. dash tops FLUSH with the rim land "
-                            "at +19.6", (90, 92, 98))],
+                          [("TPU puck — round o6.350, one piece, cup + "
+                            "RAISED X-dashes", None),
+                           ("AS EXPORTED. dash tops are "
+                            "proud of the cup at +19.6", (90, 92, 98))],
                           span=15.0, cz=17.0))
     ims.append(part_panel(puck, COL_TPU,
                           [("TPU puck — near-top view of the cup and the "
                             "four RAISED dashes", None),
-                           ("a true 90 deg top-down washes a 0.55 mm cup "
+                           ("a true 90 deg top-down washes a 0.40 mm cup "
                             "out; 68 deg shades it", (90, 92, 98)),
-                           ("pad 0.35 deep over the socket (roof 0.850), "
-                            "floor 0.55 outside it", (90, 92, 98))],
+                           ("pad 0.30 deep; deepest floor 0.40 "
+                            "(minimum roof 0.800)", (90, 92, 98))],
                           elev=68.0, azim=-58.0, span=12.0, cz=18.6))
     sheet(ims, 2, "toppers_v2_stick.png",
           "agentpad13 v5 — JOYSTICK TOPPERS v2  (nub C2 + one-piece TPU "
           "puck)  — rendered FROM THE EXPORTED STL BYTES")
 
-    # ------------------------------------- puck at rest and at the 22.5 stop
+    # ----------------------------- both joystick toppers at rest and full throw
     deck2 = deck_patch(F.JS1_X - 4, F.JS1_Y + 9)
     caps2 = np.vstack([keycap(F.SW4_X, F.SW4_Y),
                        keycap(F.SW4_X - 19.05, F.SW4_Y)])
     p_des = mirror_y(puck)
     p_at = move(p_des, F.JS1_X, F.JS1_Y, 0.0)
-    p_tilt = move(tilt(p_des, S.TILT_RESTRICTED), F.JS1_X, F.JS1_Y, 0.0)
+    p_tilt = move(tilt(p_des, F.TILT_FULL), F.JS1_X, F.JS1_Y, 0.0)
     n_at = move(mirror_y(nub), F.JS1_X, F.JS1_Y, 0.0)
     n_tilt = move(tilt(mirror_y(nub), F.TILT_FULL), F.JS1_X, F.JS1_Y, 0.0)
-    can = js_module(S.SEAT_DEFAULT)
+    can = js_module()
     bl = js_blade()
     blade = move(bl, F.JS1_X, F.JS1_Y, 0.0)
-    blade_22 = move(tilt(bl, S.TILT_RESTRICTED), F.JS1_X, F.JS1_Y, 0.0)
+    blade_puck_30 = move(tilt(bl, F.TILT_FULL), F.JS1_X, F.JS1_Y, 0.0)
     blade_30 = move(tilt(bl, F.TILT_FULL), F.JS1_X, F.JS1_Y, 0.0)
     tgt = (F.JS1_X - 2, F.JS1_Y + 9, 14.0)
     ims = [
         deck_panel([(deck2, COL_PLATE), (caps2, COL_KEY), (can, COL_MOD), (blade, COL_SHAFT),
                     (p_at, COL_TPU)],
                    [("TPU puck AT REST", None),
-                    ("land sits +0.939 over the +11.0 frame top", GRN)], tgt),
-        deck_panel([(deck2, COL_PLATE), (caps2, COL_KEY), (can, COL_MOD), (blade_22, COL_SHAFT),
+                    ("bottom +14.4 clears the +11.0 frame top by 3.4 mm", GRN)], tgt),
+        deck_panel([(deck2, COL_PLATE), (caps2, COL_KEY), (can, COL_MOD), (blade_puck_30, COL_SHAFT),
                     (p_tilt, COL_TPU)],
-                   [("TPU puck AT THE 22.5 deg STOP, toward SW4", None),
-                    ("cone land flat on a seat at +10.5 — the can is drawn "
-                     "at the seat", (90, 92, 98)),
-                    ("SW4 clearance +0.2500 (governing point r 4.660 @ "
-                     "h 19.230)", GRN)], tgt),
+                   [("TPU puck at the FULL 30 deg, toward SW4", None),
+                    ("no restrictor; solid body except for the blade socket",
+                     (90, 92, 98))], tgt),
         deck_panel([(deck2, COL_PLATE), (caps2, COL_KEY), (can, COL_MOD), (blade, COL_SHAFT),
                     (n_at, COL_NUB)],
                    [("Nub C2 at rest", None)], tgt),
@@ -480,13 +477,12 @@ if __name__ == "__main__":
                     (n_tilt, COL_NUB)],
                    [("Nub C2 at the FULL 30 deg, toward SW4 — no restrictor",
                      None),
-                    ("SW4 clearance +0.2500; contact would be on the cap's "
+                    ("SW4 clearance +0.2508; contact would be on the cap's "
                      "side wall", GRN),
                     ("at z' 16.071, INSIDE the inserted band 11.6..17.6",
                      (90, 92, 98))], tgt)]
     sheet(ims, 2, "toppers_v2_stick_on_deck.png",
-          "agentpad13 v5 — JOYSTICK TOPPERS v2 ON THE DECK, at rest and at "
-          "the stop  (keycaps at their TRUE inserted height)")
+          "JOYSTICK TOPPERS v2 — REST / FULL 30 deg, beside inserted keycaps")
 
     # ------------------------------------------------------------- hero
     deck3 = deck_patch(42.0, 22.0, half=50.0)

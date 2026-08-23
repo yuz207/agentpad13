@@ -32,8 +32,9 @@ anything you omitted.
 
 ## 3. Plate — FR4 from a fab, or printed
 
-**Printed:** print `hardware/case/v2/step/agentpad13_v2_plate.step` in PETG or resin at 100 % infill
-and skip the rest of this card. No copper, so the touch key senses through the panel.
+**Printed:** print `hardware/case/v2/stl/agentpad13_v2_plate.stl` in PETG or resin at 100 % infill
+and skip the rest of this card. The matching STEP remains in `hardware/case/v2/step/` for CAD
+edits. No copper, so the touch key senses through the panel.
 
 **FR4:** order ONE of these as a bare board, from `hardware/case/v2/fab/`.
 
@@ -110,12 +111,17 @@ a 2U plate-mount stabilizer? Print `2u_stab` instead.
 
 From `hardware/case/v2/toppers/stl/`; renders of all of them in `../toppers/renders/`.
 
-- **ONE encoder knob** — `knob_v2_A` (helical knurl), `_B2` (deep scoop) or `_C` (cross hatch), all
-  Ø19, each in three bores: `_bore_tight` 5.9 / `_bore_nom` 6.0 / `_bore_loose` 6.1. **Print `nom`
-  first**, size up or down if it binds or spins.
-- **ONE stick topper** — two different parts, not two styles. `stick_nub_v2_C2_sock_{nom,p05,p10}`
-  is the dot nub; start at `nom`. `stick_puck_v2_TPU_sock_{nom,m05}` is the puck, and **it must be
-  printed in TPU ~95A** — it works by a soft integral stop, so a rigid print is not the part.
+- **ONE encoder knob** — `knob_v2_A` (helical knurl), `_B2` (deep scoop) or `_C` (cross hatch).
+  Each comes as `_clearance_low` and `_clearance_high`. Start with `clearance_low`; use
+  `clearance_high` if your printer closes the small internal D-bore. Low is the nominal
+  Ø6.0 / 4.5 mm D-shaft size used by commercial push-on knobs; high is Ø6.3 / 4.8 mm
+  (0.15 mm clearance, the maximum) for printer/material hole error.
+- **ONE stick topper** — two different parts, not two styles. The dot nub and puck each come as
+  `_clearance_low` and `_clearance_high`. Start with `clearance_low`; use the deliberately generous
+  `clearance_high` if it will not seat. Low is 2.10 × 1.30 mm; high is 2.30 × 1.50 mm, against
+  the measured 1.70 × 1.00 mm blade. **Print the round Ø6.350 mm puck in TPU ~95A.**
+  Both toppers are solid except for the rectangular shaft socket and both retain the joystick's
+  full 30° travel.
 
 ## 9. Self-buy list
 

@@ -2,7 +2,7 @@
   "schema": "agentpad13-configurator-catalog-v1",
   "generated_from": {
     "manifest": "release/MANIFEST.md",
-    "sha256": "cd1128aa89263ae12452196f10e55169f36cd4c49ecf58d13a6916d64d493e1c"
+    "sha256": "5be4f0d63df012c428c53622e89ae43102bb7eece1b8c9a2046e848ef8d828d8"
   },
   "board": {
     "fabpacks": {
@@ -69,6 +69,7 @@
       },
       "note": "RGBA. WHITE and opaque where the plate is material, fully TRANSPARENT where the fab routes an opening. It carries NO ground colour on purpose -- tint it with the chosen mask or filament colour at runtime (as a base-colour map under a colour tint, or as an alpha map). Board frame: image row 0 is board y = 0, the FAR / USB edge away from the user; image column 0 is board x = -0.1. Shared by all three variants."
     },
+    "stl": "release/hardware/case/v2/stl/agentpad13_v2_plate.stl",
     "step": "release/hardware/case/v2/step/agentpad13_v2_plate.step",
     "dxf": "release/hardware/case/v2/fab/agentpad13_v2_plate_v5.dxf",
     "size_mm": [
@@ -164,14 +165,14 @@
       "1u": 12,
       "2u": 1,
       "2u_stab": 0,
-      "source": "release/HOW-TO-ORDER.md §7 'Caps and switches': 12x1U + 1x2U; positions from release/hardware/pcb/harness/contract_v4.json refs SW1..SW12 (1U grid) + SW13 (2U), split at release/hardware/case/v2/agentpad13_case_v2.py:310-311",
+      "source": "release/HOW-TO-ORDER.md:16 parts list 'keycaps (12x1U + 1x2U)'; positions from release/hardware/pcb/harness/contract_v4.json refs SW1..SW12 (1U grid) + SW13 (2U), split at release/hardware/case/v2/agentpad13_case_v2.py:310-311",
       "with_stabilizer": {
         "1u": 12,
         "2u": 0,
         "2u_stab": 1,
-        "source": "release/HOW-TO-ORDER.md §7: fitting a 2U plate-mount stabilizer means printing the shipped `2u_stab` cap; the slots are measured from all three public plate boards"
+        "source": "hardware/case/keycaps/KEYCAP-NOTES.md:1226-1232 -- the plate cuts stab slots for SW13 unconditionally (STAB1 is a live ref in contract_v4.json) and 'a 2U cap with no stab sockets cannot seat' if the stabiliser is installed"
       },
-      "note": "Use `with_stabilizer` when the build sheet includes the 2u plate-mount stabiliser; otherwise the plain `2u` cap. The plate is identical either way. The public CASE-V2-NOTES.md §8 item 6 keeps real-stabilizer coupon verification as an open fit check."
+      "note": "Use `with_stabilizer` when the build sheet includes the 2u plate-mount stabiliser; otherwise the plain `2u` cap. The plate is identical either way. KEYCAP-NOTES.md:1231-1233 flags the stab socket XY (+/-11.938, y=0) as UNVERIFIED against a real Cherry stab -- surface that caveat wherever `2u_stab` is offered."
     },
     "files": [
       {
@@ -277,33 +278,30 @@
       {
         "id": "A",
         "default": true,
-        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_nom.stl",
+        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_A_clearance_low.stl",
         "bores": {
-          "tight": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_tight.stl",
-          "nom": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_nom.stl",
-          "loose": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_loose.stl"
+          "low": "release/hardware/case/v2/toppers/stl/knob_v2_A_clearance_low.stl",
+          "high": "release/hardware/case/v2/toppers/stl/knob_v2_A_clearance_high.stl"
         },
         "mesh": "meshes/knob_A.glb"
       },
       {
         "id": "B2",
         "default": false,
-        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_nom.stl",
+        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_B2_clearance_low.stl",
         "bores": {
-          "tight": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_tight.stl",
-          "nom": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_nom.stl",
-          "loose": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_loose.stl"
+          "low": "release/hardware/case/v2/toppers/stl/knob_v2_B2_clearance_low.stl",
+          "high": "release/hardware/case/v2/toppers/stl/knob_v2_B2_clearance_high.stl"
         },
         "mesh": "meshes/knob_B2.glb"
       },
       {
         "id": "C",
         "default": false,
-        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_nom.stl",
+        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_C_clearance_low.stl",
         "bores": {
-          "tight": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_tight.stl",
-          "nom": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_nom.stl",
-          "loose": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_loose.stl"
+          "low": "release/hardware/case/v2/toppers/stl/knob_v2_C_clearance_low.stl",
+          "high": "release/hardware/case/v2/toppers/stl/knob_v2_C_clearance_high.stl"
         },
         "mesh": "meshes/knob_C.glb"
       }
@@ -312,27 +310,26 @@
       {
         "id": "nub_C2",
         "default": true,
-        "stl": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_nom.stl",
+        "stl": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_clearance_low.stl",
         "socks": {
-          "nom": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_nom.stl",
-          "p05": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_p05.stl",
-          "p10": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_p10.stl"
+          "low": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_clearance_low.stl",
+          "high": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_clearance_high.stl"
         },
         "mesh": "meshes/stick_cap_nub_C2.glb"
       },
       {
         "id": "puck_TPU",
         "default": false,
-        "stl": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_sock_nom.stl",
+        "stl": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_clearance_low.stl",
         "socks": {
-          "m05": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_sock_m05.stl",
-          "nom": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_sock_nom.stl"
+          "low": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_clearance_low.stl",
+          "high": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_clearance_high.stl"
         },
         "mesh": "meshes/stick_cap_puck_TPU.glb"
       }
     ],
-    "default_knob_bore": "nom",
-    "default_stick_sock": "nom",
+    "default_knob_bore": "low",
+    "default_stick_sock": "low",
     "renders": {
       "knobs": "release/hardware/case/v2/toppers/renders/toppers_v2_knobs.png",
       "stick_caps": "release/hardware/case/v2/toppers/renders/toppers_v2_stick.png"

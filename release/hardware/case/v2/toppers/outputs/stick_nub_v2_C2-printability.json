@@ -1,44 +1,83 @@
 {
-  "schema_version": "0.2",
-  "kind": "printability",
-  "status": "assertion_failed",
-  "name": "stick_nub_v2_C2",
-  "method": "FDM",
-  "bbox": {
-    "min": [
-      -3.0945974428563936,
-      -3.0945974428563936,
-      14.4
-    ],
-    "max": [
-      3.0945974428563936,
-      3.0945974428563936,
-      19.6
-    ]
-  },
-  "volume_mm3": 145.47710494569264,
-  "surface_area_mm2": 183.09265823279324,
-  "center_of_mass_mm": [
-    5.647383748317719e-17,
-    6.334227717707711e-17,
-    17.00587224238517
-  ],
-  "is_valid": true,
-  "min_wall_mm": 0.10445305250870765,
-  "overhang": {
-    "area_mm2": 6.413246485601524,
-    "max_angle_deg": 90.0
-  },
-  "assertions": [
-    {
-      "name": "wall_min:1.2",
-      "passed": false,
-      "detail": "min wall 0.1045mm below min 1.2mm"
+  "part": "stick_nub_v2_C2",
+  "method": "part-specific geometry and exported-mesh gates",
+  "verdict": "PASS",
+  "orientation": "bottom-down",
+  "minimum_socket_wall_mm": 1.9446,
+  "socket_roof_mm": 0.85,
+  "flat_bottom_except_rectangular_socket": true,
+  "mesh_low": {
+    "triangles": 7306,
+    "degenerate_triangles": 0,
+    "non_two_manifold_edges": 0,
+    "finite": true,
+    "trailing_bytes": 0,
+    "degenerate_facets_removed_before_audit": 7,
+    "socket_slice": {
+      "z": 15.0,
+      "loops": 2,
+      "bad_degree_vertices": 0,
+      "bounds": [
+        {
+          "span_x": 2.1,
+          "span_y": 1.3,
+          "area_proxy": 2.7300000000000004
+        },
+        {
+          "span_x": 6.185350000000001,
+          "span_y": 6.18728,
+          "area_proxy": 38.270492348000005
+        }
+      ]
     },
-    {
-      "name": "overhang_max:45.0",
-      "passed": false,
-      "detail": "overhang 90.0000\u00b0 exceeds max 45.0\u00b0"
+    "above_roof_slice": {
+      "z": 18.5,
+      "loops": 1,
+      "bad_degree_vertices": 0,
+      "bounds": [
+        {
+          "span_x": 6.185350000000001,
+          "span_y": 6.18728,
+          "area_proxy": 38.270492348000005
+        }
+      ]
     }
-  ]
+  },
+  "mesh_high": {
+    "triangles": 7306,
+    "degenerate_triangles": 0,
+    "non_two_manifold_edges": 0,
+    "finite": true,
+    "trailing_bytes": 0,
+    "degenerate_facets_removed_before_audit": 7,
+    "socket_slice": {
+      "z": 15.0,
+      "loops": 2,
+      "bad_degree_vertices": 0,
+      "bounds": [
+        {
+          "span_x": 2.3000000000000003,
+          "span_y": 1.5000000000000002,
+          "area_proxy": 3.450000000000001
+        },
+        {
+          "span_x": 6.185350000000001,
+          "span_y": 6.18728,
+          "area_proxy": 38.270492348000005
+        }
+      ]
+    },
+    "above_roof_slice": {
+      "z": 18.5,
+      "loops": 1,
+      "bad_degree_vertices": 0,
+      "bounds": [
+        {
+          "span_x": 6.185350000000001,
+          "span_y": 6.18728,
+          "area_proxy": 38.270492348000005
+        }
+      ]
+    }
+  }
 }

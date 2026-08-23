@@ -35,13 +35,13 @@ repo file that is read-only to this module; the tag is carried on the line.
              Update 2510, p.2 Drawing No.2 (vertical / flat actuator /
              actuator length 20 / with push-on switch).  The board is
              footprinted RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm
-             [hardware/pcb/v5_7.kicad_pcb:754].
+             [release/hardware/pcb/v5_7.kicad_pcb:754].
     [BOURNS] Bourns PEC11R datasheet REV 04/26 p.2 outline + p.3 Flatted Shaft
              L/LB/F table  (compatibility table only)
     [YA13]   YTL drawing CF-G04-J13-016  (joystick JS1)
-    [KEYCAP] hardware/case/keycaps/keycaps.py + params/keycap_params.json
-    [CASE]   hardware/case/agentpad13_case_v2.py  (line numbers given)
-    [TOPPER] hardware/case/toppers/stick_cap.py / encoder_knob.py  (v1, shipped)
+    [KEYCAP] shipped 17.5 mm dish/plateau keycap STL geometry
+    [CASE]   release/hardware/case/v2/agentpad13_case_v2.py
+    [TOPPER] archived v1 stick-cap / encoder-knob design record
     [CM-EST] ESTIMATE off Codex Micro imagery — NOT a published dimension
     [TPU-EST] engineering judgement about TPU — NOT a datasheet value
 """
@@ -100,7 +100,6 @@ PIVOT_Z = 6.1                   # [YA13 front elev, dim "6.1"]
 FRAME_TOP_Z = 11.0              # [YA13 front elev, dim "11"]
 FRAME_TOP_TOL = 0.5             # [YA13 tol block: 10..100 -> +/-0.5]
 BLADE_TIP_Z = 18.4              # [YA13 front elev, dim "18.4"]
-BLADE_X, BLADE_Y = 1.85, 1.15   # [YA13 section A-A]
 TILT_FULL = 30.0                # [YA13 "60 deg" mechanical fan / 2]
 TILT_RESTRICTED = 22.5          # pot electrical half-angle 45/2 [YA13 spec 1.1]
 JS_FRAME_HALF = 6.5             # [CASE:662] 13x13 frame half-extent
@@ -294,14 +293,6 @@ def capsule(length, width, h):
     return (Box(length, width, h)
             + Pos(length / 2, 0, 0) * Cylinder(width / 2, h)
             + Pos(-length / 2, 0, 0) * Cylinder(width / 2, h))
-
-
-def blade_socket(add):
-    """The SHIPPED blade socket, unchanged: blind rectangle, mouth +14.4,
-    roof +18.4  [TOPPER stick_cap.py:297-303]."""
-    z0 = SOCKET_MOUTH_Z - 1.0
-    return Pos(0, 0, (z0 + SOCKET_ROOF_Z) / 2.0) * Box(
-        BLADE_X + add, BLADE_Y + add, SOCKET_ROOF_Z - z0)
 
 
 def rung_name(add):

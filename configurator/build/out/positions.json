@@ -9,7 +9,7 @@
     "switches": "release/hardware/pcb/harness/contract_v4.json refs.SW1..SW13",
     "switch_size_split": "release/hardware/case/v2/agentpad13_case_v2.py:353 (SW_1U = SW1..SW12 (12 x 1U grid); SW_2U = SW13) / release/hardware/case/v2/agentpad13_case_v2.py:354",
     "encoder": "release/hardware/pcb/harness/contract_v4.json refs.RE1 = (6.025, 10.0) is the footprint ANCHOR (pin A), + release/hardware/case/v2/agentpad13_case_v2.py:367 offset (7.5, 2.5) = the SHAFT; cross-checks exactly against release/hardware/case/v2/agentpad13_case_v2.py:377. The plate opening is centred on the shaft, so this is the visible knob axis.",
-    "stick": "release/hardware/pcb/harness/contract_v4.json refs.JS1 (YTL YA13-FL7.4, v5_6 rev) / release/hardware/case/v2/agentpad13_case_v2.py:378",
+    "stick": "release/hardware/pcb/harness/contract_v4.json refs.JS1 (YTL YA13-FL7.4, current v5_7 board) / release/hardware/case/v2/agentpad13_case_v2.py:378",
     "deck_z": "release/hardware/case/v2/agentpad13_case_v2.py:391 (MX switch shoulder -> PCB = 5.0)",
     "plate_z": "release/hardware/case/v2/agentpad13_case_v2.py:1152 and release/hardware/case/v2/agentpad13_case_v2.py:1153 = Z_PLATE_TOP - release/hardware/case/v2/agentpad13_case_v2.py:392. NOTE the trailing comment on that line still reads '# +3.5' from when PLATE_T was 1.5; the EVALUATED value is 3.4 and the shipped step/agentpad13_v2_plate.step measures z 3.4..5.0, which is what is published here.",
     "pcb_z": "release/hardware/case/v2/agentpad13_case_v2.py:1154 = -release/hardware/case/v2/agentpad13_case_v2.py:396",

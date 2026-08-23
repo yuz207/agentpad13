@@ -34,11 +34,11 @@ the same arithmetic as (y_mm - y0) / h * 64 -- so only x moved, on 23 of the 24
 entries. LED13 was already 112 under both transforms, because 42.1 mm is the
 midpoint of the 0..84.2 span as well as the bbox center.)
 
-THE CURRENT PUBLIC BOARD IS `hardware/pcb/agentpad13/agentpad13.kicad_pcb`
+THE CURRENT PUBLIC BOARD IS `release/hardware/pcb/v5_7.kicad_pcb`
 (v5_7, md5 08cf68dae979ab28aadd5e0dda34de01) -- run this against that file.
 The layout was originally diffed against v5_6 at 24/24 entries and 0
 mismatches. v5_7 changes only the rotations of LED20 and LED21, not any LED
-centroid, net, or board-outline coordinate (`hardware/pcb/README.md`).
+centroid, net, or board-outline coordinate (`release/hardware/pcb/V5-NOTES.md`).
 
 Chain order (electrical, verified on the board: U5.B -> RGB_D00 -> LED1 ...
 LED14 -> RGB_D14 -> LED15 ... LED24):

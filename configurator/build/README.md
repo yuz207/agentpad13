@@ -221,7 +221,7 @@ The JSON contract is implemented as specified. Everything below is **additive**
 * `catalog.board`: `gerbers`, `assembly.*` (HOW-TO-ORDER §2 uploads the
   gerber zip and the BOM/CPL separately from the fabpack), `outline_mm`,
   `thickness_mm`, `mesh`, `texture`.
-* `catalog.plate`: `mesh`, `step`, `dxf`, `size_mm`, `thickness_mm`; each
+* `catalog.plate`: `mesh`, `stl`, `step`, `dxf`, `size_mm`, `thickness_mm`; each
   variant also carries `kicad_pcb`. One mesh serves all three variants — they
   share one Edge.Cuts profile (`CASE-V2-NOTES.md` §14, "ALL GATES PASS (3/3
   variants)").

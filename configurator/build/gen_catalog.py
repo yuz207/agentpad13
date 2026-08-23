@@ -38,10 +38,10 @@ from common import (  # noqa: E402
 
 # release/HOW-TO-ORDER.md §4 Band -- `_w5.4` is the default.
 BAND_DEFAULT = "w5.4"
-# release/HOW-TO-ORDER.md §8 Toppers -- bore ladder, print `nom` first.
-KNOB_DEFAULT_BORE = "nom"
-# release/HOW-TO-ORDER.md §8 Toppers -- start `nom` on either stick part.
-STICK_DEFAULT_SOCK = "nom"
+# release/HOW-TO-ORDER.md Card 4 -- two measured-clearance files, start low.
+KNOB_DEFAULT_BORE = "low"
+# release/HOW-TO-ORDER.md Card 4 -- two measured-clearance files, start low.
+STICK_DEFAULT_SOCK = "low"
 # release/hardware/case/v2/bases/INTERFACE.md:41 -- "start with 5.8 in rigid
 # filament, 5.9 in TPU". 5p8 is the rigid-filament start and is what the
 # viewer mesh is built from (the peg Ø is not visible at viewer scale).
@@ -49,8 +49,8 @@ BASE_DEFAULT_PEG = "5p8"
 # v2 toppers (2026-08-21): three knobs, no params default_variant -- A (helical
 # knurl) is the knurled_cup's successor and the catalog default.
 KNOB_DEFAULT_STYLE = "A"
-# v2 stick: two PARTS (release/HOW-TO-ORDER.md §8) -- the nub is the
-# full-throw-safe default; the puck needs TPU and its integral stop.
+# v2 stick: two PARTS (release/HOW-TO-ORDER.md Card 4) -- both are solid
+# except for the blade socket and both preserve the full 30-degree throw.
 STICK_DEFAULT_STYLE = "nub_C2"
 
 FABPACK = "hardware/pcb/fabpack_out_v5_7"
@@ -59,11 +59,13 @@ CAPS = "hardware/PCBWay_keycaps_boxfit_2026-07-24"
 
 BAND_WIDTHS = ["w3.0", "w5.4", "w7.4"]
 PEG_RUNGS = ["5p6", "5p7", "5p8", "5p9"]
-KNOB_BORES_V2 = ["tight", "nom", "loose"]
+KNOB_BORES_V2 = ["low", "high"]
 KNOB_STYLES = ["A", "B2", "C"]
-# per-part sock rungs (release/hardware/case/v2/toppers/params/stick_topper_v2_params.json)
-STICK_PARTS = {"nub_C2": ("stick_nub_v2_C2", ["nom", "p05", "p10"]),
-               "puck_TPU": ("stick_puck_v2_TPU", ["m05", "nom"])}
+# Both joystick toppers ship the same two explicitly named clearance levels.
+STICK_PARTS = {
+    "nub_C2": ("stick_nub_v2_C2", ["low", "high"]),
+    "puck_TPU": ("stick_puck_v2_TPU", ["low", "high"]),
+}
 BASE_ITEMS = ["riser", "wedge", "pedestal"]
 CAP_PROFILES = ["dish", "plateau"]
 CAP_SIZES = ["1u", "2u", "2u_stab"]
@@ -222,6 +224,7 @@ def build_catalog(manifest_sha: str, bringup: Path | None = None) -> dict:
                 "column 0 is board x = -0.1. Shared by all three variants."
             ),
         },
+        "stl": R(f"{CASE}/stl/agentpad13_v2_plate.stl"),
         "step": R(f"{CASE}/step/agentpad13_v2_plate.step"),
         "dxf": R(f"{CASE}/fab/agentpad13_v2_plate_v5.dxf"),
         "size_mm": [84.4, 100.0],
@@ -290,9 +293,9 @@ def build_catalog(manifest_sha: str, bringup: Path | None = None) -> dict:
             {
                 "id": style,
                 "default": style == KNOB_DEFAULT_STYLE,
-                "stl": R(f"{CASE}/toppers/stl/knob_v2_{style}_bore_{KNOB_DEFAULT_BORE}.stl"),
+                "stl": R(f"{CASE}/toppers/stl/knob_v2_{style}_clearance_{KNOB_DEFAULT_BORE}.stl"),
                 "bores": {
-                    b: R(f"{CASE}/toppers/stl/knob_v2_{style}_bore_{b}.stl")
+                    b: R(f"{CASE}/toppers/stl/knob_v2_{style}_clearance_{b}.stl")
                     for b in KNOB_BORES_V2
                 },
                 "mesh": f"meshes/knob_{style}.glb",
@@ -303,9 +306,9 @@ def build_catalog(manifest_sha: str, bringup: Path | None = None) -> dict:
             {
                 "id": part,
                 "default": part == STICK_DEFAULT_STYLE,
-                "stl": R(f"{CASE}/toppers/stl/{stem}_sock_{STICK_DEFAULT_SOCK}.stl"),
+                "stl": R(f"{CASE}/toppers/stl/{stem}_clearance_{STICK_DEFAULT_SOCK}.stl"),
                 "socks": {
-                    s: R(f"{CASE}/toppers/stl/{stem}_sock_{s}.stl")
+                    s: R(f"{CASE}/toppers/stl/{stem}_clearance_{s}.stl")
                     for s in socks
                 },
                 "mesh": f"meshes/stick_cap_{part}.glb",

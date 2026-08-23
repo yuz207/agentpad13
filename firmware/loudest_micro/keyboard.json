@@ -1,5 +1,5 @@
 {
-    "$comment": "agentpad13 Rev A - vial-qmk port. Current public board: hardware/pcb/agentpad13/agentpad13.kicad_pcb (v5_7, md5 08cf68dae979ab28aadd5e0dda34de01). The pin map was re-verified 20/20 GPIO against v5_6; v5_7 changes only the rotations of LED20 and LED21, with zero net, centroid, outline, or pin-map changes. firmware/check_pins_v4.py embeds the definitive GPIO table. firmware/gen_led_layout.py re-derives rgb_matrix.layout from the public board; chain positions 0-12 are SW1-SW13, 13 is the layer indicator, and 14-23 are underglow.",
+    "$comment": "agentpad13 Rev A - vial-qmk port. Current public board: release/hardware/pcb/v5_7.kicad_pcb (v5_7, md5 08cf68dae979ab28aadd5e0dda34de01). The pin map was re-verified 20/20 GPIO against v5_6; v5_7 changes only the rotations of LED20 and LED21, with zero net, centroid, outline, or pin-map changes. firmware/check_pins_v4.py embeds the definitive GPIO table. firmware/gen_led_layout.py re-derives rgb_matrix.layout from the public board; chain positions 0-12 are SW1-SW13, 13 is the layer indicator, and 14-23 are underglow.",
     "keyboard_name": "agentpad13",
     "manufacturer": "Open Hardware",
     "maintainer": "yuz207",

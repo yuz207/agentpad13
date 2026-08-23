@@ -810,7 +810,7 @@ static void selfcal_task(void) {
 // Capacitive touch (TTP223 U6 -> GP16), presented at matrix [3, 2].
 //
 // WHY THIS IS NOT A MATRIX PIN. The fabricated board straps the TTP223 for
-// ACTIVE-HIGH output: R10 (0R) ties TOUCH_AHLB -> GND on v5_6.kicad_pcb, and on
+// ACTIVE-HIGH output: R10 (0R) ties TOUCH_AHLB -> GND on v5_7.kicad_pcb, and on
 // a TTP223 an AHLB low selects active-high, so Q idles LOW and drives HIGH while
 // the pad is touched. The 13 mechanical switches are the opposite - plain
 // switch-to-GND, idle high, pressed low. QMK's direct-pin matrix has exactly one

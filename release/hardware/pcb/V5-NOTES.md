@@ -1,5 +1,9 @@
 # V5-NOTES — corrected board lineage (started fresh 2026-07-19, evening)
 
+> **Historical ledger.** Paths and order holds below record superseded work and
+> are not public build instructions. `v5_7` is the sole current public board and
+> order set; it supersedes v5_6 by correcting the LED20/LED21 underglow direction.
+
 Predecessor v5 attempt discarded in full → `v5-discarded/` (owner order; kept as evidence).
 This v5 = **v4_r27 + the RE1 block move**, executed per `hardware/pcb/v4/RE1-MOVE-CHARTER.md`
 and the owner's block-shift doctrine (poo3-1/2/3, poo4 — rigid cluster move, straight shears,
@@ -865,3 +869,34 @@ hand-solder). For the record, the arithmetic: §(d) common-SMD LCSC cost/board
 
 **ORDER HOLD STANDS.** Board artifacts untouched; `v5_6.kicad_pcb` still
 `221ebb98fcf44f860ed65f7ed8d1bc45`.
+
+## v5_7 — released wired board (2026-08-19; re-audited 2026-08-22)
+
+`v5_7` is the public-release and future-spin board. It is derived from the
+fabricated `v5_6` board and changes the orientation of exactly two footprints:
+`LED20` and `LED21` remain at the same coordinates and on B.Cu, but rotate from
+0 to 180 degrees so the bottom underglow pair fires inward. `LED15` and `LED16`
+remain outward by owner choice. The orientation gate reports 8 inward and 2
+outward, compared with 6 inward and 4 outward on `v5_6`.
+
+The banked board is `v5_7.kicad_pcb`, MD5
+`08cf68dae979ab28aadd5e0dda34de01`, SHA-256
+`45f1b4b9632c3a42f85a4dd2350bc1ae9b9e65e33300be7a8eb36dc57b967e8a`.
+Its fabpack source board is byte-identical. The 2026-08-22 release audit passed:
+
+- board harness: DRC 0, unconnected 0, contract 45/45, outline
+  84.200 x 100.000 mm, +5V minimum 0.5000 mm, USB pair clean, TP5 pour
+  177.0 mm2;
+- orientation: 8 inward / 2 outward;
+- fabpack: 31/31 checks, 289 holes including 186 vias, 90/110 CPL rows,
+  23/3 BOM DNP designators, and zero Gerber-analyzer findings;
+- v5_6-to-v5_7 delta: 126/126 footprint refs unchanged, only LED20/LED21
+  geometry differs, 414/414 unique pad identities retain their nets, and no
+  component value, footprint ID, population attribute, or pad-net assignment
+  changes;
+- assembly delta: both BOMs, the opaque CPL, and the hand-solder afterlist are
+  byte-identical to v5_6; the translucent CPL changes only LED20/LED21 rotation
+  from 0 to 180 degrees.
+
+`v5_6` remains the fabricated board in hand. `v5_7` is the corrected file to
+order for the next wired spin.

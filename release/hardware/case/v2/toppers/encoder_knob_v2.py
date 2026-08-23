@@ -6,17 +6,18 @@ study; run with the khana python (has build123d):
     cad-khana-python encoder_knob_v2.py
 
 Emits, into ./stl, ./params, ./outputs:
-  - 3 knobs x 3 D-bore rungs = 9 STL, MIRRORED into the print frame
+  - 3 knobs x 2 D-bore clearances = 6 STL, MIRRORED into the print frame
   - per-part FDM printability JSON (advisory)
   - params/encoder_knob_v2_params.json
   - outputs/encoder_knob_v2_gate.txt   (the full gate transcript)
 
 ------------------------------------------------------------------------------
 WHAT SHIPS
-    Knob A   helical knurl     N = 34, 30 deg helix, band +18.2 .. +25.5
+    Knob A   helical knurl     N = 32, 30 deg helix, band +18.2 .. +25.5
     Knob B2  scoop  (REVISED)  cove low rim driven DOWN to the knurl line
-    Knob C   cross-hatch       17 + 17 grooves at +/-45 deg
-  All three: o19.0, bottom +8.0, TOP +27.0, plain wall below +18.2.
+    Knob C   cross-hatch       16 + 16 grooves at +/-45 deg
+  All three: straight o17.5 body, bottom +8.0, TOP +27.0, plain wall below
+  +18.2. There is no skirt or plate-cover flange.
   B1 (the CM-faithful deep cove) is RETIRED: its roof lands at +22.909, so it
   cannot seat the Alps EC11E H20 the board is footprinted for (-1.591).
 
@@ -37,8 +38,20 @@ a D-bore whose flat face is only 1.5 mm off the axis.  So:
     D-bore              +14.5 .. +25.5     keys on the flat (11.00 long,
                                            10.00 of it overlapping the flat)
 
-Unit-to-unit spread is absorbed by the FIT LADDER (tight / nom / loose =
--0.1 / 0 / +0.1 on BOTH the round o and the across-flat), not by measurement.
+The measured shaft is o6.0 / 4.5 across-flat.  Conventional push-on knobs are
+specified at that nominal shaft size and obtain retention from compliance, not
+from an oversized bore.  LOW therefore stays nominal at o6.0/4.5.  HIGH is the
+bounded FDM-compensation choice: o6.3/4.8, 0.15 mm radial and flat clearance,
+the owner-set maximum.  Both retain the full 10 mm D-flat engagement. The D
+section is straight at the selected size; there is no additional lead-in.
+
+FIT CONVENTION EVIDENCE.  Alps Alpine's EC11E Drawing No.2 publishes the shaft
+as o6 with 4.5 +/-0.1 across the flat.  Selco's production 2/08DR200-006
+push-on knob specifies a 6.0 x 4.5 mm D-shaft and uses a compression ring.
+This one-piece printed knob has no invented spring, slit, insert, or set screw.
+FDM hole error is printer/material specific and belongs in a same-process fit
+test or slicer hole compensation; HIGH is only the owner's bounded fallback,
+not a claim that 0.15 mm is a universal manufacturing allowance.
 
 HANDEDNESS.  Knob A's helix is CHIRAL and the design frame is left-handed, so
 every knob is mirrored at export (topper_frame_v2.export_print_frame).  The
@@ -88,29 +101,17 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # =========================================================================
 
 KNOB_BOT_Z = 8.0            # [CASE:698 precedent] knob underside
-KNOB_OD = 19.0              # fully hides the widened plate opening (+0.190)
-#                             and is 0.997 of the 19.05 key pitch
+KNOB_OD = 17.5              # full body OD; leaves a visible gap to the key
 KNOB_TOP = 27.0             # owner-final; the SHORTEST top that swallows the
 #                             Alps H20 shaft UNCUT with 1.0 mm of headroom
-KNOB_OD_LADDER = [18.0, 18.62, 19.0]                 # concealment table only
 KNOB_TOP_LADDER = [22.0, 24.0, 26.0, 27.0, 28.0]     # height table only
-
-# The gate floor for concealment.  v1's encoder_knob.py carried an
-# OWNER-ACCEPTED HIDE_FLOOR of -0.310 because its shipped o18 default
-# under-covered the widened opening.  That exception is OBSOLETE: the shipped
-# o19 default covers it, so THAT is the new floor and any regression —
-# including back to o18 — fails loudly.  The exact shipped value is
-# 9.5 - (hypot(6.0, 5.0) + 1.5) = 0.18975, not the 0.190 the study rounded to;
-# the floor is set a hair under it so the gate cannot reject its own shipped
-# state while still catching a regression of more than 0.0005 mm.
-HIDE_FLOOR = 0.1897
 
 TEX_START_Z = F.KEYCAP_TOP_PLATEAU_Z        # +18.2, the TALLEST cap we ship
 TOP_RING = 1.5              # smooth ring between the texture and the top rim
 TOP_CHAMFER = 0.6           # crisp machined top rim
 
 # --- Knob A, helical knurl (v2 geometry, unchanged) ----------------------
-KNURL_N = 34                # -> circumferential pitch 1.7556 at o19
+KNURL_N = 32                # -> crest land 0.868 at the smaller o17.5 grip
 KNURL_DEPTH = 0.40          # one full bead at a 0.4 nozzle
 KNURL_WIDTH = 0.85          # a 0.4 nozzle enters the valley
 KNURL_HELIX_DEG = 30.0      # from vertical
@@ -143,15 +144,18 @@ CROSS_WIDTH_RESIN = 0.55
 # this as "40.5 % of the face is the free ridge", never as "depth is then
 # free".
 #
-#   bore +y reach = across_flat - round_d/2 = 1.500 (nom), 1.550 (LOOSE rung)
-#   RIDGE parked at 1.650  ->  0.100 mm outboard of the WORST rung
-SCOOP_RIDGE_Y = 1.65        # ridge chord, mm off the axis toward the scoop
+#   bore +y reach = across_flat - round_d/2 = 1.500 (LOW), 1.650 (HIGH)
+#   RIDGE parked at 1.950  ->  0.300 mm outboard of the HIGH-clearance bore
+SCOOP_RIDGE_Y = 1.95        # 0.30 outboard of HIGH bore's +y reach (1.65)
 SCOOP_RIM_Z = 18.20         # LOW RIM = the knurl line  (owner target)
 SCOOP_YC = 14.0             # cove axis offset -> cove R 12.737, ridge 75.8 deg
 SCOOP_TRADE_YC = [10.6, 11.0, 12.0, 13.0, 14.0, 16.0, 20.0, 30.0]
-SCOOP_TRADE_RIDGE = [0.00, 0.95, 1.425, 1.50, 1.65, 2.50]
+SCOOP_TRADE_RIDGE = [0.00, 0.95, 1.425, 1.65, 1.80, 1.95, 2.50]
 
-BORE_LADDER = {"tight": (-0.1, -0.1), "nom": (0.0, 0.0), "loose": (0.1, 0.1)}
+BORE_LADDER = {"low": (0.0, 0.0), "high": (0.3, 0.3)}
+DEFAULT_CLEARANCE = "low"
+DEFAULT_BORE_ROUND_D = SHAFT_ROUND_D + BORE_LADDER[DEFAULT_CLEARANCE][0]
+DEFAULT_BORE_ACROSS = SHAFT_FLAT_ACROSS + BORE_LADDER[DEFAULT_CLEARANCE][1]
 
 
 # =========================================================================
@@ -168,21 +172,12 @@ def d_bore(round_d, across_flat, z0, z1, flat_toward=+1):
         flat_off = across_flat - round_d/2
     off the axis.  For o6.0 / 4.5 that is 1.50 mm."""
     flat_off = across_flat - round_d / 2.0
-    c = Pos(0, 0, z0) * extrude(Plane.XY * Circle(round_d / 2.0),
-                                amount=z1 - z0)
+    cylinder = Pos(0, 0, z0) * extrude(
+        Plane.XY * Circle(round_d / 2.0), amount=z1 - z0)
     cut_h = round_d / 2.0 + 1.0 - flat_off
     yc = flat_toward * (flat_off + cut_h / 2.0)
-    return c - Pos(0, yc, (z0 + z1) / 2.0) * Box(
+    return cylinder - Pos(0, yc, (z0 + z1) / 2.0) * Box(
         round_d + 2, cut_h, z1 - z0 + 0.02)
-
-
-def d_flat_segment_area(round_d, across_flat):
-    """Area the flat removes from the round bore's cross-section:
-        r^2*acos(d/r) - d*sqrt(r^2 - d^2)   with r = round_d/2, d = flat_off.
-    Used as the ANALYTIC cross-check on Knob C's measured chirality."""
-    r = round_d / 2.0
-    d = across_flat - r
-    return r * r * math.acos(d / r) - d * math.sqrt(max(r * r - d * d, 0.0))
 
 
 def bore_reach_plus_y(round_d, across_flat, flat_toward=+1):
@@ -205,7 +200,8 @@ def knob_bore(round_d, across, roof_z):
     return cb + jr + db
 
 
-def bore_record(roof_z, round_d=SHAFT_ROUND_D, across=SHAFT_FLAT_ACROSS):
+def bore_record(roof_z, round_d=DEFAULT_BORE_ROUND_D,
+                across=DEFAULT_BORE_ACROSS):
     """Everything the z-stack gate consumes, for every shaft variant."""
     rec = {"bore_roof_z": round(roof_z, 3),
            "cbore_d": CBORE_D, "cbore_ceil_z": CBORE_CEIL_Z,
@@ -320,7 +316,8 @@ def scoop_cove(od, z_top, ridge_y=SCOOP_RIDGE_Y, rim_z=SCOOP_RIM_Z,
     height field — no undercut, and printable bottom-down with no support."""
     R = od / 2.0
     if bore_y is None:
-        bore_y = bore_reach_plus_y(SHAFT_ROUND_D, SHAFT_FLAT_ACROSS, +1)
+        bore_y = bore_reach_plus_y(DEFAULT_BORE_ROUND_D,
+                                   DEFAULT_BORE_ACROSS, +1)
     u, v, D = yc - ridge_y, yc - R, z_top - rim_z
     disc = u * u - v * v
     if D <= 0 or disc < D * D:
@@ -359,8 +356,8 @@ def scoop_cove(od, z_top, ridge_y=SCOOP_RIDGE_Y, rim_z=SCOOP_RIM_Z,
 
 
 # ---------------------------------------------------------------- the knobs
-def knobA(od=KNOB_OD, z_top=KNOB_TOP, round_d=SHAFT_ROUND_D,
-          across=SHAFT_FLAT_ACROSS):
+def knobA(od=KNOB_OD, z_top=KNOB_TOP, round_d=DEFAULT_BORE_ROUND_D,
+          across=DEFAULT_BORE_ACROSS):
     info = {}
 
     def band(z0, z1):
@@ -381,8 +378,8 @@ def knobA(od=KNOB_OD, z_top=KNOB_TOP, round_d=SHAFT_ROUND_D,
     return body, rec
 
 
-def knobC(od=KNOB_OD, z_top=KNOB_TOP, round_d=SHAFT_ROUND_D,
-          across=SHAFT_FLAT_ACROSS):
+def knobC(od=KNOB_OD, z_top=KNOB_TOP, round_d=DEFAULT_BORE_ROUND_D,
+          across=DEFAULT_BORE_ACROSS):
     info = {}
 
     def band(z0, z1):
@@ -407,8 +404,8 @@ def knobC(od=KNOB_OD, z_top=KNOB_TOP, round_d=SHAFT_ROUND_D,
     return body, rec
 
 
-def knobB2(od=KNOB_OD, z_top=KNOB_TOP, round_d=SHAFT_ROUND_D,
-           across=SHAFT_FLAT_ACROSS, ridge_y=SCOOP_RIDGE_Y,
+def knobB2(od=KNOB_OD, z_top=KNOB_TOP, round_d=DEFAULT_BORE_ROUND_D,
+           across=DEFAULT_BORE_ACROSS, ridge_y=SCOOP_RIDGE_Y,
            rim_z=SCOOP_RIM_Z, yc=SCOOP_YC):
     body = _plain_cyl(od, KNOB_BOT_Z, z_top)
     cut, prof = scoop_cove(od, z_top, ridge_y, rim_z, yc,
@@ -452,31 +449,15 @@ if __name__ == "__main__":
     P("")
 
     # ---------------------------------------------------------------- §2
-    P("2.  CONCEALMENT — does the barrel hide the plate opening?")
-    cmax, cmin = F.opening_corner_reach()
-    P(f"  opening {F.ENC_OPEN_W} x {F.ENC_OPEN_H} R{F.ENC_OPEN_R}, centre = "
-      f"shaft + ({F.ENC_OPEN_DX}, 0)  [CASE:584-591]")
-    P(f"  corner reach from the SHAFT: +x {cmax:.4f}   -x {cmin:.4f}")
-    for od in KNOB_OD_LADDER:
-        h = od / 2 - cmax
-        note = ("v1 shipped default — UNDER-covers, now retired" if od == 18.0
-                else "exact-zero concealment" if abs(h) < 5e-3
-                else "SHIPPED — fully hides")
-        P(f"    o{od:>6.2f}  hides by {h:>+7.3f}   {note}")
-
-    def _hide_gate(od):
-        return (od / 2 - cmax) >= HIDE_FLOOR - 1e-9
-
-    log.gate("concealment (shipped o19.0)", _hide_gate(KNOB_OD),
-             f"hides by {KNOB_OD / 2 - cmax:+.3f} >= floor {HIDE_FLOOR:+.3f} "
-             f"(v1's owner-accepted -0.310 exception is OBSOLETE)")
-    log.negative_control("concealment", _hide_gate, 18.0,
-                         "v1's o18 default, which under-covers by -0.310")
-    sw1_clear = (F.SW1_Y - F.KEYCAP_W / 2) - (F.RE1_Y + KNOB_OD / 2)
-    log.gate("SW1 keycap clearance", sw1_clear > 0,
-             f"knob edge y {F.RE1_Y + KNOB_OD / 2:.2f} vs SW1 near edge y "
-             f"{F.SW1_Y - F.KEYCAP_W / 2:.2f} -> {sw1_clear:+.3f} "
-             f"(height-independent: the barrel is a straight cylinder)")
+    P("2.  KEY CLEARANCE — straight body, no skirt or cover flange")
+    centre_pitch = F.SW1_Y - F.RE1_Y
+    grip_key_clear = centre_pitch - KNOB_OD / 2 - F.KEYCAP_W / 2
+    log.gate("straight knob body vs SW1 across the full keycap z-overlap",
+             grip_key_clear >= 1.5,
+             f"centres {centre_pitch:.2f} apart; o{KNOB_OD} knob vs "
+             f"o{F.KEYCAP_W} key -> {grip_key_clear:+.3f} horizontal gap "
+             f"through z +{F.KEYCAP_RIM_Z:.1f}..+"
+             f"{F.KEYCAP_TOP_PLATEAU_Z:.1f}")
     cb_rad = (CBORE_D - F.BUSHING_D) / 2
     cb_rad_w = (CBORE_D - F.BUSHING_D_WORST) / 2
     log.gate("counterbore vs the bushing", cb_rad_w > 0,
@@ -533,16 +514,63 @@ if __name__ == "__main__":
     P("")
 
     # ---------------------------------------------------------------- §4
-    P("4.  KNOB B2 SCOOP TRADE — cove radius x ridge position")
+    P("4.  D-BORE CLEARANCE — LOW fit plus owner-capped HIGH fit")
+    shaft_flat_off = SHAFT_FLAT_ACROSS - SHAFT_ROUND_D / 2.0
+    clearance_table = {}
+    for clearance, (dd, da) in BORE_LADDER.items():
+        rd = SHAFT_ROUND_D + dd
+        af = SHAFT_FLAT_ACROSS + da
+        radial = (rd - SHAFT_ROUND_D) / 2.0
+        flat = (af - rd / 2.0) - shaft_flat_off
+        chord = 2.0 * math.sqrt(max((rd / 2.0) ** 2
+                                    - (af - rd / 2.0) ** 2, 0.0))
+        clearance_table[clearance] = {
+            "round_d": round(rd, 3),
+            "across_flat": round(af, 3),
+            "radial_clearance_per_side": round(radial, 3),
+            "flat_clearance": round(flat, 3),
+            "flat_chord": round(chord, 3),
+        }
+        P(f"    {clearance.upper():<4}  o{rd:.1f} / across-flat {af:.1f}: "
+          f"{radial:.3f} radial per side, {flat:.3f} at the flat; "
+          f"D chord {chord:.3f}")
+    log.gate("LOW follows the nominal push-on D-shaft convention",
+             abs(clearance_table["low"]["radial_clearance_per_side"]) < 1e-9
+             and abs(clearance_table["low"]["flat_clearance"]) < 1e-9,
+             "o6.0/4.5 matches the measured and published shaft size")
+    log.gate("HIGH clearance does not exceed the owner's 0.15 mm maximum",
+             clearance_table["high"]["radial_clearance_per_side"] <= 0.15
+             and clearance_table["high"]["flat_clearance"] <= 0.15,
+             "o6.3/4.8 gives 0.150 mm radial and flat clearance")
+    log.gate("LOW and HIGH are materially separated",
+             (clearance_table["high"]["radial_clearance_per_side"]
+              - clearance_table["low"]["radial_clearance_per_side"] >= 0.15)
+             and (clearance_table["high"]["flat_clearance"]
+                  - clearance_table["low"]["flat_clearance"] >= 0.15),
+             "HIGH adds 0.150 mm radial and flat clearance over nominal LOW")
+    log.gate("both choices retain a positive D-flat torque face",
+             all(v["flat_chord"] >= 5.0 for v in clearance_table.values()),
+             f"flat chords LOW {clearance_table['low']['flat_chord']:.3f}, "
+             f"HIGH {clearance_table['high']['flat_chord']:.3f}; working "
+             f"D-bore length remains {KNOB_TOP - KNOB_ROOF_T - Z_FLAT_START:.1f} mm")
+    P("    Both D-bores are straight at the listed dimensions; no lead-in.")
+    P("")
+
+    # ---------------------------------------------------------------- §5
+    P("5.  KNOB B2 SCOOP TRADE — cove radius x ridge position")
     P("    Owner: 'not concave enough ... the notch is too high ... as far")
     P("    down as the knurling goes'.  Target LOW RIM = +18.2 = the knurl")
     P("    line.  HARD CONSTRAINT: bore roof >= +25.5.")
-    bore_y_nom = bore_reach_plus_y(SHAFT_ROUND_D, SHAFT_FLAT_ACROSS)
-    bore_y_loose = bore_reach_plus_y(SHAFT_ROUND_D + 0.1,
-                                     SHAFT_FLAT_ACROSS + 0.1)
-    P(f"    bore +y reach: nom {bore_y_nom:.3f}, LOOSE rung "
-      f"{bore_y_loose:.3f} (the worst); the D-flat is clocked TOWARD the")
-    P("    scoop, so the bore reaches 1.50 in +y instead of 3.00.")
+    bore_y_low = bore_reach_plus_y(
+        clearance_table["low"]["round_d"],
+        clearance_table["low"]["across_flat"])
+    bore_y_high = bore_reach_plus_y(
+        clearance_table["high"]["round_d"],
+        clearance_table["high"]["across_flat"])
+    P(f"    bore +y reach: LOW {bore_y_low:.3f}, HIGH {bore_y_high:.3f} "
+      f"(the worst); the D-flat is clocked TOWARD the")
+    P(f"    scoop, so even the HIGH bore reaches {bore_y_high:.2f} in +y "
+      f"instead of {clearance_table['high']['round_d'] / 2:.2f}.")
     P("")
     P(f"  {'ridge y':>8} {'ridge/R':>8} {'cove R':>7} {'yc':>6} {'rim z':>7}"
       f" {'%face':>6} {'chord':>7} {'ridge':>7} {'rim sl':>7} {'sag':>6}"
@@ -551,7 +579,7 @@ if __name__ == "__main__":
     for ridge in SCOOP_TRADE_RIDGE:
         for yc in SCOOP_TRADE_YC:
             _, pf = scoop_cove(KNOB_OD, KNOB_TOP, ridge, SCOOP_RIM_Z, yc,
-                               bore_y=bore_y_loose)
+                               bore_y=bore_y_high)
             if not pf["feasible"]:
                 P(f"  {ridge:>8.3f} {ridge / (KNOB_OD / 2):>8.4f} "
                   f"{'-':>7} {yc:>6.1f} {'-':>7} {'-':>6} {'-':>7} {'-':>7}"
@@ -572,8 +600,8 @@ if __name__ == "__main__":
     P("")
     P("  READING THE TABLE.  Every row targets the SAME rim +18.2, so the")
     P("  trade is not depth-vs-roof at all: the roof is +25.500 for EVERY")
-    P("  row whose ridge sits outboard of the loose rung's bore reach")
-    P(f"  ({bore_y_loose:.3f}) and short of it for every row inboard.  Depth")
+    P("  row whose ridge sits outboard of the HIGH bore's reach")
+    P(f"  ({bore_y_high:.3f}) and short of it for every row inboard.  Depth")
     P("  is bought from the RIDGE, not from the roof.  What the cove radius")
     P("  buys is the SHAPE: small yc = tight R = a deep dish behind a steep")
     P("  ridge wall; large yc = big R = a near-flat chamfer (both slopes")
@@ -592,16 +620,16 @@ if __name__ == "__main__":
     def _b2_roof_gate(params):
         ridge, yc = params
         _, pf = scoop_cove(KNOB_OD, KNOB_TOP, ridge, SCOOP_RIM_Z, yc,
-                           bore_y=bore_y_loose)
+                           bore_y=bore_y_high)
         if not pf["feasible"]:
             return False
         return min(KNOB_TOP - KNOB_ROOF_T,
                    pf["z_over_bore_edge"] - WALL_MIN) >= 25.5 - 1e-9
 
-    log.gate("B2 scoop keeps the +25.5 roof at the LOOSE bore rung",
+    log.gate("B2 scoop keeps the +25.5 roof at HIGH clearance",
              _b2_roof_gate((SCOOP_RIDGE_Y, SCOOP_YC)),
-             f"ridge {SCOOP_RIDGE_Y} is {SCOOP_RIDGE_Y - bore_y_loose:+.3f} "
-             f"outboard of the loose rung's bore reach, so the material over "
+             f"ridge {SCOOP_RIDGE_Y} is {SCOOP_RIDGE_Y - bore_y_high:+.3f} "
+             f"outboard of the HIGH bore's reach, so the material over "
              f"the bore is the untouched flat top")
     log.negative_control("B2 scoop roof", _b2_roof_gate, (0.0, SCOOP_YC),
                          "a centred ridge, which puts the cove over the bore")
@@ -617,7 +645,7 @@ if __name__ == "__main__":
     P("")
 
     # ---------------------------------------------------------------- §5
-    P("5.  THE THREE KNOBS")
+    P("6.  THE THREE KNOBS")
     knobs = {}
     solids = {}
     for name, tag, fn, up in KNOBS:
@@ -708,7 +736,7 @@ if __name__ == "__main__":
                     "over_dish_cap": round(KNOB_TOP - F.KEYCAP_TOP_DISH_Z, 3),
                     "over_plateau_cap": round(
                         KNOB_TOP - F.KEYCAP_TOP_PLATEAU_Z, 3),
-                    "hides_opening_by": round(KNOB_OD / 2 - cmax, 3),
+                    "key_horizontal_clearance": round(grip_key_clear, 3),
                     "texture_start_z": TEX_START_Z,
                     "print_orientation": ("top-down" if up[2] < 0
                                           else "bottom-down"),
@@ -717,7 +745,7 @@ if __name__ == "__main__":
         P("")
 
     # ---------------------------------------------------------------- §6
-    P("6.  EXPORT INTO THE PRINT FRAME")
+    P("7.  EXPORT INTO THE PRINT FRAME")
     P("    [CASE:1074-1118] the design frame is LEFT-handed while STL is")
     P("    right-handed, so every solid built here is the ENANTIOMORPH of")
     P("    the intended part.  v1 toppers exported un-mirrored, which was")
@@ -725,13 +753,24 @@ if __name__ == "__main__":
     P("    correct-by-argument.  Knob A is a HELIX.  v2 mirrors every knob:")
     P("    uniform application is what stops a future chiral feature")
     P("    shipping the wrong hand by omission.")
+    # The previous 3-rung ladder is retired, not merely hidden from a catalog.
+    # Remove its generated files so the live STL directory exposes exactly the
+    # two supported choices after every generator run.
+    for tag in ("A", "B2", "C"):
+        for stale in ("tight", "nom", "loose"):
+            stale_path = os.path.join(stl_dir,
+                                      f"knob_v2_{tag}_bore_{stale}.stl")
+            if os.path.exists(stale_path):
+                os.unlink(stale_path)
+                P(f"    retired {os.path.basename(stale_path)}")
     exports = {}
     for name, tag, fn, up in KNOBS:
         exports[tag] = {}
         for rung, (dd, da) in BORE_LADDER.items():
             part = fn(KNOB_OD, KNOB_TOP, SHAFT_ROUND_D + dd,
                       SHAFT_FLAT_ACROSS + da)[0]
-            fn_out = os.path.join(stl_dir, f"knob_v2_{tag}_bore_{rung}.stl")
+            fn_out = os.path.join(
+                stl_dir, f"knob_v2_{tag}_clearance_{rung}.stl")
             F.export_stl_house(F.export_print_frame(part), fn_out)
             exports[tag][rung] = {
                 "file": os.path.relpath(fn_out, F.REPO),
@@ -746,7 +785,7 @@ if __name__ == "__main__":
     P("")
 
     # ---------------------------------------------------------------- §7
-    P("7.  HANDEDNESS GATE — measured from the EXPORTED STL BYTES")
+    P("8.  HANDEDNESS GATE — measured from the EXPORTED STL BYTES")
     P("    NOT with (part - mirror(part)).volume.  That boolean FAILS")
     P("    SILENTLY on any solid from extrude_linear_with_rotation: on Knob")
     P("    A's bare band, band & mirror(band) = 0.155 mm^3 of 2005.193, and")
@@ -759,7 +798,7 @@ if __name__ == "__main__":
     P("    fold theta - s*k*z into one pitch, s = +1/-1, and measure |mean")
     P("    exp(i w)|.  The true hand clusters; the wrong hand smears.")
     tri_ship = F.read_stl_triangles(
-        os.path.join(stl_dir, "knob_v2_A_bore_nom.stl"))
+        os.path.join(stl_dir, "knob_v2_A_clearance_low.stl"))
     n_s, rp_s, rm_s = F.helix_hand(tri_ship, KNOB_OD, KNURL_N,
                                    KNURL_HELIX_DEG, zl, zh, KNURL_DEPTH)
     with tempfile.TemporaryDirectory() as td:
@@ -774,7 +813,7 @@ if __name__ == "__main__":
     hand_n = "RIGHT" if rp_n > rm_n else "LEFT"
     P(f"    design-frame solid, exported UN-MIRRORED (neg control): "
       f"{n_n} verts  R+ {rp_n:.4f}  R- {rm_n:.4f}  -> {hand_n}-handed")
-    P(f"    SHIPPED knob_v2_A_bore_nom.stl                    : "
+    P(f"    DEFAULT knob_v2_A_clearance_low.stl                : "
       f"{n_s} verts  R+ {rp_s:.4f}  R- {rm_s:.4f}  -> {hand_s}-handed")
     log.gate("the phase-clustering measure actually discriminates",
              max(rp_s, rm_s) > 0.5 and min(rp_s, rm_s) < 0.25,
@@ -791,35 +830,16 @@ if __name__ == "__main__":
              "they rise, seen from above.  Cosmetic on a rotary knob, and "
              "pinned here so it can never drift silently.")
     P("")
-    P("    Knob C carries no single-family helix, so it is gated the other")
-    P("    way: measure its chirality with the boolean AND cross-check the")
-    P("    number analytically.  Under the XZ reflection the cross-hatch's")
-    P("    two families map ONTO EACH OTHER exactly (the base groove set")
-    P("    {2*pi*i/N} is closed under negation), so the texture must")
-    P("    contribute ZERO and the whole XZ difference must be the D-flat")
-    P("    segment alone.")
-    seg = d_flat_segment_area(SHAFT_ROUND_D, SHAFT_FLAT_ACROSS)
-    dbore_len = (KNOB_TOP - KNOB_ROOF_T) - Z_FLAT_START
-    predicted = seg * dbore_len
-    a_xz, b_xz = F.chirality_mm3(solids["C"][0], Plane.XZ)
+    P("    Knob C carries no single-family helix.  Its two 16-groove")
+    P("    families and +y D-flat must preserve the YZ mirror plane:")
+    P("    x -> -x swaps the +/-45-degree texture families while leaving")
+    P("    the bore flat unchanged.  This also catches a missing family or")
+    P("    unintended texture clocking.")
     a_yz, b_yz = F.chirality_mm3(solids["C"][0], Plane.YZ)
-    P(f"    D-flat segment area = r^2*acos(d/r) - d*sqrt(r^2-d^2) with "
-      f"r {SHAFT_ROUND_D / 2}, d {SHAFT_FLAT_ACROSS - SHAFT_ROUND_D / 2} "
-      f"= {seg:.4f} mm^2")
-    P(f"    x D-bore length {dbore_len:.2f} = PREDICTED {predicted:.4f} mm^3")
-    P(f"    MEASURED Knob C vs mirror about XZ: {a_xz:.4f} / {b_xz:.4f} mm^3")
-    log.gate("Knob C's cross-hatch texture is achiral about XZ",
-             abs(a_xz - predicted) < 0.05 and abs(b_xz - predicted) < 0.05,
-             f"measured {a_xz:.4f} vs predicted {predicted:.4f} — the "
-             f"difference is the D-FLAT alone, so the texture contributes "
-             f"{a_xz - predicted:+.4f}")
     P(f"    MEASURED Knob C vs mirror about YZ: {a_yz:.4f} / {b_yz:.4f} mm^3")
-    P("    Non-zero, and the reason is ODD N: the D-flat survives x -> -x,")
-    P(f"    but theta -> pi - theta maps {{2*pi*i/{CROSS_N}}} onto itself only")
-    P("    for EVEN N.  So the whole knob is chiral, and its enantiomorph is")
-    P("    the same knob with the texture re-clocked half a pitch "
-      f"({180.0 / CROSS_N:.3f} deg)")
-    P("    against the flat — cosmetically null on a part that rotates.")
+    log.gate("Knob C owns the YZ mirror plane (cross-hatch + D-flat)",
+             max(a_yz, b_yz) < 1e-6,
+             f"{a_yz:.6f} / {b_yz:.6f} mm^3")
     a_yz_b2, b_yz_b2 = F.chirality_mm3(solids["B2"][0], Plane.YZ)
     log.gate("Knob B2 owns the YZ mirror plane (scoop + flat both on +y)",
              max(a_yz_b2, b_yz_b2) < 1e-6,
@@ -827,7 +847,7 @@ if __name__ == "__main__":
     P("")
 
     # ---------------------------------------------------------------- §8
-    P("8.  FDM PRINTABILITY (khana inspect, ADVISORY)")
+    P("9.  FDM PRINTABILITY (khana inspect, ADVISORY)")
     P("    Calibration: every v1 topper scores 0.13-0.38 and "
       "assertion_failed.")
     P("    The mesh min_wall metric scores sharp exterior edges and texture")
@@ -881,11 +901,16 @@ if __name__ == "__main__":
         "deck_z": F.DECK_Z,
         "keycap_top_dish_z": F.KEYCAP_TOP_DISH_Z,
         "keycap_top_plateau_z": F.KEYCAP_TOP_PLATEAU_Z,
-        "od": KNOB_OD, "bottom_z": KNOB_BOT_Z, "top_z": KNOB_TOP,
+        "body_od": KNOB_OD,
+        "has_cover_flange": False,
+        "bottom_z": KNOB_BOT_Z, "top_z": KNOB_TOP,
         "texture_start_z": TEX_START_Z, "top_ring": TOP_RING,
-        "top_chamfer": TOP_CHAMFER, "hide_floor": HIDE_FLOOR,
-        "opening_corner_reach": {"plus_x": round(cmax, 4),
-                                 "minus_x": round(cmin, 4)},
+        "top_chamfer": TOP_CHAMFER,
+        "key_clearance": {
+            "centre_pitch": centre_pitch,
+            "primary_key_od": F.KEYCAP_W,
+            "grip_horizontal_gap": round(grip_key_clear, 3),
+            "keycap_z": [F.KEYCAP_RIM_Z, F.KEYCAP_TOP_PLATEAU_Z]},
         "shaft": {"source": "ALPS EC11E catalog Update 2510 p.2 Drawing No.2",
                   "round_d": SHAFT_ROUND_D, "across_flat": SHAFT_FLAT_ACROSS,
                   "flat_len": F.SHAFT_FLAT_LEN,
@@ -898,10 +923,13 @@ if __name__ == "__main__":
                       for v in F.SHAFT_VARIANTS}},
         "bore": {"cbore_d": CBORE_D, "cbore_ceil_z": CBORE_CEIL_Z,
                  "journal_clear": JOURNAL_CLEAR,
+                 "default_clearance": DEFAULT_CLEARANCE,
+                 "lead_in": None,
                  "tip_headroom_required": TIP_HEADROOM,
                  "knob_roof_t": KNOB_ROOF_T,
                  "ladder": {k: {"round_d_delta": v[0],
-                                "across_flat_delta": v[1]}
+                                "across_flat_delta": v[1],
+                                **clearance_table[k]}
                             for k, v in BORE_LADDER.items()}},
         "height_ladder": height_ladder,
         "scoop_trade": trade,
@@ -920,10 +948,9 @@ if __name__ == "__main__":
                     "verts": n_n, "R_plus": round(rp_n, 4),
                     "R_minus": round(rm_n, 4), "hand": hand_n}},
             "knobC_chirality_mm3": {
-                "xz": [round(a_xz, 4), round(b_xz, 4)],
                 "yz": [round(a_yz, 4), round(b_yz, 4)],
-                "xz_predicted_from_d_flat": round(predicted, 4),
-                "texture_residual": round(a_xz - predicted, 4)},
+                "expected": "zero; even cross-hatch families and +y D-flat "
+                            "preserve the YZ mirror plane"},
             "knobB2_chirality_mm3": {"yz": [round(a_yz_b2, 6),
                                             round(b_yz_b2, 6)]}},
         "printability": printab,
@@ -933,5 +960,7 @@ if __name__ == "__main__":
     with open(os.path.join(par_dir, "encoder_knob_v2_params.json"), "w") as f:
         json.dump(params, f, indent=2)
     P(f"wrote params/encoder_knob_v2_params.json  ({len(KNOBS)} knobs x "
-      f"{len(BORE_LADDER)} rungs = {len(KNOBS) * len(BORE_LADDER)} STL)")
+      f"{len(BORE_LADDER)} clearances = "
+      f"{len(KNOBS) * len(BORE_LADDER)} STL; default "
+      f"{DEFAULT_CLEARANCE.upper()})")
     log.finish(os.path.join(out_dir, "encoder_knob_v2_gate.txt"))

@@ -80,17 +80,16 @@ S.test('printed plate -> the plate leaves the fab order entirely', () => {
   ok(!ids(sheet, 'pcbway').includes('plate_finish'), 'no fab finish on the printed path');
 });
 
-S.test('printed plate -> STEP + DXF move into the print manifest, with the touch note', () => {
+S.test('printed plate -> STL moves into the print manifest, with the touch note', () => {
   const sheet = buildSheet(withPath(base(), 'plate.make', 'printed'), data);
   const print = sec(sheet, 'print').entries;
-  eq(print.find((e) => e.id === 'plate_step').text, 'agentpad13_v2_plate.step');
-  eq(print.find((e) => e.id === 'plate_dxf').text, 'agentpad13_v2_plate_v5.dxf');
+  eq(print.find((e) => e.id === 'plate_stl').text, 'agentpad13_v2_plate.stl');
   ok(print.some((e) => e.id === 'plate_printed_touch' && e.kind === 'note'), 'the touch note is required');
 });
 
-S.test('FR4 plate -> no plate STEP/DXF in the print manifest', () => {
+S.test('FR4 plate -> no plate STL in the print manifest', () => {
   const list = ids(buildSheet(withPath(base(), 'plate.make', 'fr4'), data), 'print');
-  ok(!list.includes('plate_step') && !list.includes('plate_dxf'), 'the fab plate is not printed');
+  ok(!list.includes('plate_stl'), 'the fab plate is not printed');
 });
 
 S.test('footer is the single UF2, the flash line and the two docs', () => {

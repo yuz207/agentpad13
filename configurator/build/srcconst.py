@@ -1,9 +1,7 @@
 """Read module-level constants out of a Python source file WITHOUT importing it.
 
-`agentpad13_case_v2.py` cannot be imported here: it needs build123d/OCP and it
-parses a banked `v5_6.kicad_pcb` that does not exist at that path in the
-reorganised repo (`agentpad13_case_v2.py:260-262`, `:292`). Importing it would
-also run its gates. So the constants are read statically, which additionally
+`agentpad13_case_v2.py` cannot be imported here: it needs build123d/OCP and
+also runs its gates at import. So the constants are read statically, which additionally
 gives us the exact line number of every value for the `sources` citations.
 
 Only literals and arithmetic over already-known names are evaluated; anything
