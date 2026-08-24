@@ -16,7 +16,7 @@ parts. It picks the fabpack below and nothing else — the 13 per-key LEDs are o
 
 ## 2. Board — the one part you cannot make at home
 
-Upload to PCBWay (or any turnkey fab), from `hardware/pcb/fabpack_out_v5_7/`: **`gerbers_v5_7.zip`**
+Upload to PCBWay (or any turnkey fab), from `hardware/pcb/fabpack_out_v5_8/`: **`gerbers_v5_8.zip`**
 for the PCB quote, **`assembly/bom_<sku>.csv`** + **`assembly/cpl_<sku>.csv`** for assembly
 (`<sku>` = `translucent` or `opaque`) — or the all-in-one **`fabpack_<sku>.zip`**.
 
@@ -27,8 +27,11 @@ cheapest. Remarks box:
 > Please plug/fill the via-in-pad locations (two are on LED pads). Please confirm the 0.2 mm via
 > drill is standard tier. Board has intentional reverse-mount LED apertures (through-board cutouts).
 
-Boards arrive fully soldered except `assembly/hand_solder_afterlist.csv` — the encoder, plus
-anything you omitted.
+The encoder and joystick are both included in the factory placement files. The only normal
+user-solder item is the optional `TP5_CONTACT`: a spring, wire, or other conductive contact from
+TP5 to an electrode-equipped plate. Omit it for a blank or non-touch plate. The afterlist also
+records opt-out rows in case you deliberately exclude the MX sockets or BOOT/RESET switches from
+factory assembly.
 
 ## 3. Plate — FR4 from a fab, or printed
 
@@ -129,16 +132,15 @@ From `hardware/case/v2/toppers/stl/`; renders of all of them in `../toppers/rend
 None of this is in the bundle, and every price is an estimate that changes.
 
 - 13 × MX switches
-- 1 × EC11 encoder — Alps 11.2 mm mounting-tab pattern, flatted D-shaft
 - 1 × Ø6 D-shaft knob, if you are not printing one
 - 1 × 2u plate-mount stabilizer, if you want one
 - 4 × M3×8 ISO 7380 button-head screws
-- 4 × M3 heat-set inserts — Ø4.2 pilot, 5.7 mm long
-- 1 × conductive foam pillar — ≈Ø8–10 × 5 mm, sits on the TP5 pad
+- 4 × standard Voron-style M3×4×5 heat-set inserts — 4 mm long, nominal 5 mm OD
+- optional solderable spring, wire, or other conductive contact from TP5 to an electrode-equipped plate
 - 1 × 0.5 mm adhesive-backed PORON sheet, smallest sold — the optional gasket. **Buy 0.5 mm, not
   thicker:** it compresses into a 0.3 mm gap, which 1–2 mm stock will not do. Cut it against
   `hardware/case/v2/gasket/gasket_template.pdf` **at 100 % scale**; see that folder's `README.md`.
-- rubber feet, and a USB-C cable
+- USB-C cable
 
 ## 10. Print notes
 
@@ -153,8 +155,8 @@ The five the configurator prints on your sheet — the ones that change what you
 ## 11. Assemble
 
 1. Heat-set the four inserts into the tray posts (~245 °C).
-2. Hand-solder the afterlist — encoder last, seated flush.
-3. Foam pillar onto the PCB's TP5 pad; gasket, if you cut one, onto the band ledge.
+2. If using an electrode-equipped touch plate, solder your chosen spring or wire contact to TP5.
+3. Fit that contact against the plate electrode; gasket, if you cut one, onto the band ledge.
 4. Stack tray → PCB (it just sits on the posts, no screws) → band → plate; drive the four M3 screws.
 5. Snap in the switches, supporting the plate from behind on the first few, and cap everything.
 

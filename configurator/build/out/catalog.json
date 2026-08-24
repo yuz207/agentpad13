@@ -2,20 +2,20 @@
   "schema": "agentpad13-configurator-catalog-v1",
   "generated_from": {
     "manifest": "release/MANIFEST.md",
-    "sha256": "5be4f0d63df012c428c53622e89ae43102bb7eece1b8c9a2046e848ef8d828d8"
+    "sha256": "a7d65b78eba2f082b039786f29804db2f8b3bae0f9350874100b5faa72c1cb53"
   },
   "board": {
     "fabpacks": {
-      "opaque": "release/hardware/pcb/fabpack_out_v5_7/fabpack_opaque.zip",
-      "translucent": "release/hardware/pcb/fabpack_out_v5_7/fabpack_translucent.zip"
+      "opaque": "release/hardware/pcb/fabpack_out_v5_8/fabpack_opaque.zip",
+      "translucent": "release/hardware/pcb/fabpack_out_v5_8/fabpack_translucent.zip"
     },
-    "gerbers": "release/hardware/pcb/fabpack_out_v5_7/gerbers_v5_7.zip",
+    "gerbers": "release/hardware/pcb/fabpack_out_v5_8/gerbers_v5_8.zip",
     "assembly": {
-      "bom_opaque": "release/hardware/pcb/fabpack_out_v5_7/assembly/bom_opaque.csv",
-      "bom_translucent": "release/hardware/pcb/fabpack_out_v5_7/assembly/bom_translucent.csv",
-      "cpl_opaque": "release/hardware/pcb/fabpack_out_v5_7/assembly/cpl_opaque.csv",
-      "cpl_translucent": "release/hardware/pcb/fabpack_out_v5_7/assembly/cpl_translucent.csv",
-      "hand_solder_afterlist": "release/hardware/pcb/fabpack_out_v5_7/assembly/hand_solder_afterlist.csv"
+      "bom_opaque": "release/hardware/pcb/fabpack_out_v5_8/assembly/bom_opaque.csv",
+      "bom_translucent": "release/hardware/pcb/fabpack_out_v5_8/assembly/bom_translucent.csv",
+      "cpl_opaque": "release/hardware/pcb/fabpack_out_v5_8/assembly/cpl_opaque.csv",
+      "cpl_translucent": "release/hardware/pcb/fabpack_out_v5_8/assembly/cpl_translucent.csv",
+      "hand_solder_afterlist": "release/hardware/pcb/fabpack_out_v5_8/assembly/hand_solder_afterlist.csv"
     },
     "outline_mm": [
       84.2,
@@ -24,7 +24,7 @@
     "thickness_mm": 1.6,
     "mesh": "meshes/board.glb",
     "texture": "meshes/board_top.png",
-    "texture_source": "release/hardware/pcb/v5_7_render_top.png"
+    "texture_source": "release/hardware/pcb/v5_8_render_top.png"
   },
   "plate": {
     "variants": [
@@ -356,7 +356,8 @@
     "default_knob_bore": "low",
     "default_stick_sock": "cell2",
     "renders": {
-      "knobs": "release/hardware/case/v2/toppers/renders/toppers_v2_knobs.png"
+      "knobs": "release/hardware/case/v2/toppers/renders/toppers_v2_knobs.png",
+      "stick_caps": "release/hardware/case/v2/toppers/renders/toppers_v2_stick.png"
     }
   },
   "gasket": {

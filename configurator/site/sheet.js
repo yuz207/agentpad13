@@ -15,7 +15,7 @@ import { derive, applyOrder, finishOf } from './rules.js';
 const FLASH_FALLBACK = 'dd if=firmware/prebuilt/agentpad13.uf2 of=/Volumes/RPI-RP2/fw.uf2 bs=1m';
 
 /**
- * The fab finish per plate variant — release/HOW-TO-ORDER.md §3 Plate, and the
+ * The fab finish per plate variant — release/HOW-TO-ORDER.md card 3, and the
  * one line on this sheet that is a MANUFACTURING instruction rather than a
  * taste. Round 4 owner ruling, verbatim: "call standard something else b/c that
  * matters for the manufacturing process (not leaded!)".
@@ -96,7 +96,7 @@ export function buildSheet(state, data, derived = derive(state, data)) {
     // decision (owner ruling above), the catalog id stays pipeline data.
     pcbway.push({ kind: 'value', id: 'plate_finish', label: 'plate finish', value: PLATE_FINISH[plateVariant.id] || plateVariant.finish });
   }
-  pcbway.push({ kind: 'note', id: 'assembly', text: 'SMD is fab-placed; the hand-solder afterlist is the encoder.' });
+  pcbway.push({ kind: 'note', id: 'assembly', text: 'SMD, encoder, and joystick are factory-populated; the afterlist contains only the optional user-soldered TP5 spring or wire contact.' });
 
   /* --- 2. Self-buy list (rule-driven) ------------------------------- */
   const selfbuy = derived.lines

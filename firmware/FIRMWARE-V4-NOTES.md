@@ -3,8 +3,8 @@
 > **Historical ledger.** This file preserves the v4/v5_6 verification record,
 > including names of private working-tree ledgers that were not published. For
 > the current public state use `firmware/BUILD.md`, the definitive table in
-> `firmware/check_pins_v4.py`, the v5_7 board at
-> `release/hardware/pcb/v5_7.kicad_pcb`, and the self-contained host
+> `firmware/check_pins_v4.py`, the v5_8 board at
+> `release/hardware/pcb/v5_8.kicad_pcb`, and the self-contained host
 > oracle at `firmware/tests/conformance/protocol_oracle.py`.
 
 Ledger for the firmware wave that brought `firmware/` from the pre-v4 scaffold

@@ -259,28 +259,36 @@ S.test('lit is offered on every board: only the BAND half follows led yes/no', (
   }
 });
 
-S.test('encoder and switch lines are unconditional and ordered', () => {
+S.test('the switch line is unconditional and factory-populated encoder is not self-buy', () => {
   const d = derive(base(), data);
-  deep(lineIds(d), ['encoder', 'switches', 'screws', 'inserts', 'touch_foam', 'gasket_sheet']);
-  ok(d.lines[0].text.includes('Alps 11.2 mm mounting-tab pattern'), 'encoder spec line, not an MPN');
+  deep(lineIds(d), ['switches', 'screws', 'inserts', 'touch_contact', 'gasket_sheet']);
+  ok(!lineIds(d).includes('encoder'), 'RE1 is in the factory CPL/BOM, not the self-buy list');
 });
 
-S.test('the four fastener/foam/gasket lines carry the spec their source states', () => {
+S.test('the fastener/contact/gasket lines carry the spec their source states', () => {
   /* Each one is sourced in its rule's `_` comment; the numbers here are the
      ones a buyer has to get right, so they are pinned:
        screws + inserts — CASE-V2-NOTES.md §4 "4× M3×8 ISO 7380 button-head;
-                          4× CNC Kitchen std M3 inserts (L5.7, Ø4.2 pilot)"
-       touch foam       — CASE-V2-NOTES.md §5 "≈Ø8–10 × 5 mm uncompressed"
+                          CASE-V2-NOTES.md §33 Voron-style M3×4×5 inserts"
+       touch contact    — V5-NOTES.md v5.8 release boundary, optional/user-soldered
        gasket sheet     — gasket/README.md "0.5 mm PORON", adhesive-backed,
                           smallest sheet sold, and OPTIONAL. */
   const t = (id) => derive(base(), data).lines.find((l) => l.id === id).text;
   eq(t('screws'), '4 × M3×8 ISO 7380 button-head screws');
-  eq(t('inserts'), '4 × M3 heat-set inserts — Ø4.2 pilot, 5.7 mm long');
-  ok(/Ø8–10 × 5 mm/.test(t('touch_foam')), `foam size missing: ${t('touch_foam')}`);
-  ok(/TP5/.test(t('touch_foam')), 'the foam line must name the pad it sits on');
+  eq(t('inserts'), '4 × standard Voron-style M3×4×5 heat-set inserts — 4 mm long, nominal 5 mm OD');
+  ok(/optional/i.test(t('touch_contact')) && /user-solder/i.test(t('touch_contact')), 'touch contact must state both boundaries');
+  ok(/TP5/.test(t('touch_contact')), 'the contact line must name the solder landing');
   ok(/0\.5 mm/.test(t('gasket_sheet')), 'the gasket line must pin 0.5 mm, not 1–2 mm');
   ok(/PORON/.test(t('gasket_sheet')) && /adhesive/.test(t('gasket_sheet')), 'material + backing');
   ok(/optional/i.test(t('gasket_sheet')), 'the gasket kit is optional and must say so');
+});
+
+S.test('TP5 contact appears only for an electrode-equipped FR4 plate', () => {
+  const idsFor = (s) => lineIds(derive(s, data));
+  ok(idsFor(base()).includes('touch_contact'), 'default tented-ring FR4 plate has an electrode');
+  ok(idsFor(withPath(base(), 'plate.variant', 'standard')).includes('touch_contact'), 'exposed-pad FR4 plate has an electrode');
+  ok(!idsFor(withPath(base(), 'plate.variant', 'blank')).includes('touch_contact'), 'blank FR4 plate has no electrode');
+  ok(!idsFor(withPath(base(), 'plate.make', 'printed')).includes('touch_contact'), 'printed plate has no electrode');
 });
 
 S.test('no printed knob -> off-the-shelf knob line appears', () => {
@@ -294,7 +302,7 @@ S.test('self-buy lines come out in their declared order', () => {
   let s = withPath(base(), 'view.caps', true);
   s = withPath(s, 'toppers.knob', 'none');
   deep(lineIds(derive(s, data)),
-    ['encoder', 'switches', 'stab', 'knob_cots', 'screws', 'inserts', 'touch_foam', 'gasket_sheet']);
+    ['switches', 'stab', 'knob_cots', 'screws', 'inserts', 'touch_contact', 'gasket_sheet']);
 });
 
 /* --- engine contracts ---------------------------------------------- */

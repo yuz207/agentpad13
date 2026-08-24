@@ -8,7 +8,7 @@ and stores the result in its own memory.
 > **Where this file lives.** `firmware/BRING-UP.md` in the working tree is the
 > **single source of truth** for this procedure; `firmware/BUILD.md` §4a points
 > here rather than repeating it. A copy ships in the release bundle
-> (`release/firmware/BRING-UP.md`), refreshed from this one when the
+> (`v5-release-compiled/firmware/BRING-UP.md`), refreshed from this one when the
 > bundle is rebuilt. Everything below needs only this page, a USB cable, and the
 > `.uf2` files in `firmware/prebuilt/` — no build toolchain and no source
 > checkout.

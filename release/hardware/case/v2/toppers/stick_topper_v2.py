@@ -20,7 +20,7 @@ keycap at the full 30 degree mechanical throw.
 
 Run with the khana Python (build123d):
 
-    cad-khana-python stick_topper_v2.py
+    /Users/yuanz/.local/share/uv/tools/cad-khana/bin/python stick_topper_v2.py
 
 Emits exactly four STLs, two clearance choices per topper, plus parameters,
 printability reports, and a gate transcript.

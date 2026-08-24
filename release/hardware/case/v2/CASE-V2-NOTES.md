@@ -32,13 +32,14 @@ Owner directives folded in (2026-07-18, this session, verbatim):
 | 3 | PCB v4_r27 — floating, never screwed | already ordered (frozen) | — |
 | 4 | `tray` — bottom case, all inserts + pins | FDM PETG **always** | `stl/ step/ agentpad13_v2_tray.*` |
 
-Hardware: 4× M3×8 ISO 7380 button-head; 4× CNC Kitchen std M3 inserts
-(L5.7, Ø4.2 pilot) in the tray only; 4× 3M SJ61A1 bumpons (Ø7.9×2.2,
+Hardware: 4× M3×8 ISO 7380 button-head; 4× standard Voron-style M3×4×5
+heat-set inserts (4 mm long, nominal 5 mm OD, Ø4.7 tray cavity) in the tray
+only; 4× 3M SJ61A1 bumpons (Ø7.9×2.2,
 clear) on the corner-boss bottom faces; 2 mm PORON around sockets
 (unmodeled, v1 §10 carry-over); conductive foam pad pending the touch coupon.
 
 **One screw path** (the whole assembly): M3 head proud on the deck → plate
-Ø3.2 → band cap Ø4.4 (z +1.5…+3.5) → tray boss insert (bore Ø4.2,
+Ø3.2 → band cap Ø4.4 (z +1.5…+3.5) → tray boss insert (bore Ø4.7,
 +1.5…−4.2). Plate, band, and tray clamp as one stack; the PCB floats inside
 on three press pins (H5/H6/H7) and support bosses — the owner's "it just
 sits in its spot" model, verbatim.
@@ -318,7 +319,7 @@ over Ø10, USB ceiling 10 mm. The corner crescents (0.74 min) print as
 small local perimeter loops — cosmetic; inspect first article.
 
 **Tray:** PETG always (thermoset resin cannot take heat-set inserts, §4/§10).
-Upright, 0.16–0.20. Inserts M3 CNC Kitchen, set from the boss top face
+Upright, 0.16–0.20. Inserts are standard Voron-style M3×4×5, set from the boss top face
 (+1.5), iron ~245 °C, melt 90% then press flat (§4). Slicer preview the two
 [NOT ROOT-CAUSED] advisories above before the first print.
 
@@ -499,7 +500,7 @@ What changed (all in `agentpad13_case_v2.py`; provenance tag [V5]):
    spanning z −1.85..+1.5 only (full-round below: cross-section only
    shrinks going up — prints clean; EFC untouched). At (3.7,3.7): round
    slip −0.649 → flat at 3.751 from center; **insert-bore wall thins to
-   1.65 at one azimuth** (CNC Kitchen M3 in PETG: acceptable; first-article
+   1.40 at one azimuth** after the Voron M3×4×5 cavity update (first-article
    watch: check for bulge at the flat when setting the insert). Other three
    corners keep 0.341 round slip — machine-checked per corner.
 3. **USB flip [V5].** `usb_receptacle()` envelope is the flipped J1: x
@@ -848,7 +849,7 @@ tray 0.051/76.88/90° (overhang area 63.2 -> 76.88, the new rail-skip edges;
 min_wall unchanged) — both the §8.7/§8.8 documented classes, slicer-preview
 before print.
 
-**Render inventory** (`v24_*.png`, extract-tessellate-
+**Render inventory** (`/Users/yuanz/Desktop/v24_*.png`, extract-tessellate-
 render pipeline): `v24_assembled_iso` (full populated stack + lid-off
 top-down), `v24_side_elevations` (true ortho front x-z + side y-z of the
 complete assembly), `v24_section_controls` (encoder y=12.5 + joystick y=13.37,
@@ -883,7 +884,7 @@ socket-roof bridge overhangs, as with every family). Exports: 3 taper STLs
 (`stick_cap_taper_sock_{nom,p05,p10}.stl`); `stick_cap_params.json` gains the
 `taper` variant with its sweep params (default field UNCHANGED). Renders:
 `toppers/renders/stick_caps.png` re-rendered with the 4th (taper) row, plus
-`v25_cap_taper_vs_dome.png` (dome vs taper, side profile +
+`/Users/yuanz/Desktop/v25_cap_taper_vs_dome.png` (dome vs taper, side profile +
 top, for the owner's look call). Band and all board/plate/fabpack files
 UNTOUCHED; the case model still consumes the default dome, so no khana rebuild.
 
@@ -2021,17 +2022,17 @@ New constants (`# --- Tray features ---`): `BASE_PEG_BORE = 3.6`,
 Two module-scope assertions make it structural, not a claim:
 
 ```
-assert BASE_PEG_BORE <= M3_INSERT_PILOT              # 3.6 <= 4.2
+assert BASE_PEG_BORE <= M3_INSERT_PILOT              # 3.6 <= 4.7
 assert Z_INSERT_BOT - Z_BASE_PEG_TOP >= BASE_PEG_ROOF_MIN   # 1.300 >= 1.2
 ```
 
 The (0,0) boss is notched to a standoff of **3.7512** from its centre. The M3
-insert bore (Ø4.2) therefore already sets this part's minimum wall at
-**1.6512** over z −4.2 … +1.5. Because the pocket is *narrower* than the insert
+insert bore (Ø4.7) therefore sets this part's current minimum wall at
+**1.4012** over z −4.2 … +1.5. Because the pocket is *narrower* than the insert
 bore, its wall on the same azimuth is **1.9512** — looser by +0.3000. And the
 two thin bands occupy **different z ranges** (pocket −7.5 … −5.5; insert bore
 −4.2 … +1.5), separated by 1.3 mm of full-section boss, so they can never stack
-into one tall thin wall. **The tray's minimum wall is unchanged at 1.6512.**
+into one tall thin wall. **The tray's current minimum wall is 1.4012 mm.**
 The pocket mouth is left un-chamfered on purpose: a 0.5 × 45° lead-in would
 neck that azimuth to 1.451 at the bottom face for no functional gain, so the
 lead-in chamfer lives on the *peg* instead.
@@ -2066,7 +2067,7 @@ the tray changed, and only by the four pockets.
 Printability (ADVISORY, as always): tray `min_wall` **0.050741 → 0.050741,
 unchanged**; overhang area 76.88 → 117.44 mm² = +40.56, which is exactly the
 four Ø3.6 pocket roofs (4 × 10.18 = 40.72 nominal). Those are Ø3.6 bridges —
-the tray already bridges its Ø4.2 insert bores. Band printability byte-identical.
+the tray already bridges its insert bores. Band printability byte-identical.
 
 ### 21.4 Artifacts
 
@@ -2567,7 +2568,7 @@ and the corner radius.
 (85.0 × 100.8, ~0.8 mm y-float). It is usable and is not recalled — the owner
 explicitly kept it: *"In our case, we won't reorder it, it's usable."*
 
-### 24.5 Geometry-neutrality proof (scratchpad)
+### 24.5 Geometry-neutrality proof (scratch-only)
 
 To prove the `PLATE_H` refactor and the fit restructure changed nothing except
 the intended pocket, the band was rebuilt in the scratchpad with the pocket
@@ -3072,3 +3073,73 @@ tray bottom at z = −9.5, which is 2.0 mm below the separately frozen band
 bottom at z = −7.5. The base geometry already consumed `C.Z_TRAY_BOT` and
 was correct; only the generated description had retained the pre-v2.11 claim
 that the two bottoms were coplanar.
+
+## 31. TPU joystick socket fit returned to physical qualification (2026-08-22)
+
+Section §28's Ø6.350 puck is also retired: shrinking the puck to approximately
+the nub diameter was not an owner requirement. The last owner-final puck
+upper envelope is commit `74a4b072d7e42f8f80b459aa600b6a8d18652808`
+(`Toppers v2: ... one-piece TPU puck`), whose source, params and exported STL
+agree on a round Ø9.4118579 mm exact / Ø9.412 mm published envelope, top
+z=19.6, R0.6 rim, 0.55 mm rim land, 0.35/0.55 mm cup and four raised 0.8 mm
+X dashes. Those upper and lateral features are restored exactly.
+
+The same historical part's underside cone/restrictor and Ø5.2 hollow bore are
+not restored. The owner's later directives explicitly removed the integrated
+restrictor and required the bottom to be solid except for the shaft slot. The
+live puck therefore keeps the flat, non-restricting bottom at z=14.4 and the
+4.00 mm blind rectangular socket. Any throw limit belongs to the separate
+cover/insert, not the topper.
+
+The joystick socket dimensions in §28 are no longer production-approved. A
+printed `clearance_low` at 2.10 × 1.30 mm spins freely on the measured
+1.70 × 1.00 mm shaft; the 2.30 × 1.50 mm `clearance_high` was not physically
+qualified. The earlier 1.95 × 1.25 mm print did not seat. The prior rigid
+anti-rotation gate proved only that the shaft could not turn a full 90 degrees
+inside the nominal rectangle, not that flexible printed walls would retain it
+without angular play.
+
+`toppers/stl/stick_socket_fit_coupon_TPU95A_0p4.stl` now brackets that known
+transition in 0.05 mm increments using eight numbered, full-factorial cells.
+The coupon is an internal process-calibration artifact, not a public family of
+topper variants. `toppers/TPU-SOCKET-FIT.md` records the cell map, print
+contract and required observations. Production LOW/HIGH remain null in
+`toppers/params/stick_topper_v2_fit_selection.json`, and the topper generator
+blocks production STL export until physical coupon results select both cells.
+
+## 32. Two-type joystick topper lineup (2026-08-22)
+
+The compact direct-on-shaft family remains exactly two exterior choices: the
+existing Ø6.189 seven-dot nub and restored round Ø9.412 puck. Neither exterior
+is reopened by the fit correction; both consume the same physically qualified
+TPU socket pair after the coupon is graded.
+
+`toppers/restricted_thumb_topper_v1.py` introduces a separate Type 2 source for
+one larger conventional round topper used only with the separate YA13
+retaining restrictor cap. It is not a nub revision and does not replace or
+rename either compact part. The approved body is Ø12.0 with a Ø4.45 straight
+neck, z=14.4 mouth, z=14.92 shoulder start, z=15.02 full-body start and z=19.6
+top. It is a plain shallow round cup with no lip, ovalization, decoration,
+integrated restrictor or plate-coverage objective.
+
+The body gate imports the live cap authority and checks the actual solids
+through the 15.5° verified hard maximum at 15° azimuth increments. It records
+zero overlap, 0.292 mm minimum cap clearance and 0.331 mm minimum clearance to
+the conservative adjacent-key plane. A clearly named no-socket body-reference
+STL and render are available for inspection. Production LOW/HIGH socket STLs
+remain blocked until the shared eight-cell TPU coupon is physically graded.
+
+## 33. Tray insert cavity changed to Voron M3x4x5 (2026-08-24)
+
+The tray now specifies the standard Voron-style M3x4x5 heat-set insert: M3
+internal thread, 4 mm insert length and nominal 5 mm outer diameter. The four
+tray cavities widen from Ø4.2 to **Ø4.7 mm**. Their blind depth remains 5.7 mm,
+leaving 1.7 mm of relief below the 4 mm insert for the existing M3x8 screw.
+No screw clearance hole, pass hole, boss centre, external case dimension or
+other mating interface changed.
+
+The regenerated tray loses 79.6865 mm³, exactly the volume of four 5.7 mm-deep
+cylinders widened from Ø4.2 to Ø4.7. The assembly gate remains **status ok,
+104/104 assertions passed**. The new limiting calculated wall at the notched
+(3.7, 3.7) boss is **1.4012 mm**. This CAD result still requires the usual
+first-article heat-set test on the target printer and PETG.

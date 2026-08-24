@@ -37,7 +37,8 @@ S.test('fixed config snapshot -> exact PCBWay package', () => {
   eq(e[1].text, 'plate_v5_ring_gerbers.zip');
   eq(e[2].value, 'Black');
   eq(e[4].value, 'HASL-LF');
-  ok(e[5].text.includes('hand-solder afterlist'), 'assembly note required by spec §3.1');
+  ok(e[5].text.includes('factory-populated'), 'assembly note must state the v5.8 population boundary');
+  ok(e[5].text.includes('TP5'), 'assembly note must identify the optional user-soldered contact');
 });
 
 S.test('the exposed-pad plate is the ONE that must be ordered lead-free gold', () => {
@@ -245,7 +246,7 @@ S.test('self-buy carries only the spec §3.2 lines', () => {
      Each is sourced in its rule's `_` comment in rules.json. */
   let s = withPath(base(), 'view.caps', true);
   deep(ids(buildSheet(s, data), 'selfbuy'),
-    ['encoder', 'switches', 'stab', 'screws', 'inserts', 'touch_foam', 'gasket_sheet']);
+    ['switches', 'stab', 'screws', 'inserts', 'touch_contact', 'gasket_sheet']);
 });
 
 /* --- prices ----------------------------------------------------------- */

@@ -1,4 +1,4 @@
-"""agentpad13 v5 toppers — SHARED FRAME (v2 family).
+"""work-loudest v5 toppers — SHARED FRAME (v2 family).
 
 The single source of cited facts, the collision law, the profile helpers and
 the gate primitives used by BOTH v2 topper scripts:
@@ -8,8 +8,8 @@ the gate primitives used by BOTH v2 topper scripts:
 
 Run either with the khana python (has build123d):
 
-    cad-khana-python encoder_knob_v2.py
-    cad-khana-python stick_topper_v2.py
+    /Users/yuanz/.local/share/uv/tools/cad-khana/bin/python encoder_knob_v2.py
+    /Users/yuanz/.local/share/uv/tools/cad-khana/bin/python stick_topper_v2.py
 
 This module has a __main__ of its own that runs the frame-level gates (the
 collision law, the keycap chain cross-check and their negative controls) and
@@ -35,13 +35,13 @@ repo file that is read-only to this module; the tag is carried on the line.
              Update 2510, p.2 Drawing No.2 (vertical / flat actuator /
              actuator length 20 / with push-on switch).  The board is
              footprinted RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm
-             [release/hardware/pcb/v5_7.kicad_pcb:754].
+             [hardware/pcb/v5_7.kicad_pcb:754].
     [BOURNS] Bourns PEC11R datasheet REV 04/26 p.2 outline + p.3 Flatted Shaft
              L/LB/F table  (compatibility table only)
     [YA13]   YTL drawing CF-G04-J13-016  (joystick JS1)
-    [KEYCAP] shipped 17.5 mm dish/plateau keycap STL geometry
-    [CASE]   release/hardware/case/v2/agentpad13_case_v2.py
-    [TOPPER] archived v1 stick-cap / encoder-knob design record
+    [KEYCAP] hardware/case/keycaps/keycaps.py + params/keycap_params.json
+    [CASE]   hardware/case/agentpad13_case_v2.py  (line numbers given)
+    [TOPPER] hardware/case/toppers/stick_cap.py / encoder_knob.py  (v1, shipped)
     [CM-EST] ESTIMATE off Codex Micro imagery — NOT a published dimension
     [TPU-EST] engineering judgement about TPU — NOT a datasheet value
 """

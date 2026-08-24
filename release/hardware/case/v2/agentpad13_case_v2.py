@@ -27,7 +27,7 @@ Owner-locked architecture (2026-07-18), top to bottom, FOUR product parts:
                  see CASE-V2-NOTES §22).
 
 One screw path: M3x8 button head -> plate Ø3.4 -> band cap Ø4.4 -> tray boss
-insert (bore Ø4.2 from +1.5 to -4.2). Four screws total. The corner bosses
+insert (Voron-style M3x4x5, bore Ø4.7 from +1.5 to -4.2). Four screws total. The corner bosses
 live in the voids the octagon's 14.6 mm chamfers vacate — the v1 "ears"
 (CASE-NOTES §v1.1) dissolve; the case is a clean rounded rectangle.
 
@@ -264,10 +264,10 @@ import pcb_components_data_v2 as PCB  # noqa: E402  [S]
 # 0. CONTRACT COORDINATES  (single source: contract_v4.json read at runtime)
 # =========================================================================
 
-# AGENTPAD13_CONTRACT may override the bundled product contract; the default
-# is the released v5_7 contract beside the public board source.
+# AGENTPAD13_CONTRACT overrides the board contract (v5+ overlays); the
+# default remains the frozen v4 contract.
 _CONTRACT_PATH = os.environ.get("AGENTPAD13_CONTRACT") or os.path.normpath(
-    os.path.join(HERE, "..", "..", "pcb", "harness", "contract_v4.json"))
+    os.path.join(HERE, "..", "pcb", "harness", "contract_v4.json"))
 with open(_CONTRACT_PATH) as _f:
     _CONTRACT = json.load(_f)
 _REFS = {k: (v["x"], v["y"]) for k, v in _CONTRACT["refs"].items()}
@@ -300,13 +300,11 @@ for _kn, _kb in _KNOB["variants"].items():
         "case's single knob envelope is no longer valid for every texture; "
         "model them separately before trusting any knob gate")
 
-# --- Released board (v2.4: DERIVE the YA13 THT pin tails from the board pads,
-#     never retype). v5_7 changes only LED20/LED21 orientation, so the YA13
-#     geometry remains the frozen v5_6 geometry; the hash pins the actual file
-#     shipped in this public bundle. ---------------------------------------
+# --- Banked board (v2.4: DERIVE the YA13 THT pin tails from the board pads,
+#     never retype). md5 MUST match the frozen v5_6 or the parse is stale. ---
 BANKED_BOARD = os.path.normpath(
-    os.path.join(HERE, "..", "..", "pcb", "v5_7.kicad_pcb"))
-BANKED_BOARD_MD5 = "08cf68dae979ab28aadd5e0dda34de01"
+    os.path.join(HERE, "..", "pcb", "v5_6.kicad_pcb"))
+BANKED_BOARD_MD5 = "221ebb98fcf44f860ed65f7ed8d1bc45"
 
 
 def _parse_js1_pads(path=BANKED_BOARD):
@@ -314,11 +312,11 @@ def _parse_js1_pads(path=BANKED_BOARD):
     world-frame keep-outs: [(x, y, drill, pad_d)]. The footprint pose is at
     (69.71, 13.37, rot 180); a rot-180 pad at local (lx, ly) lands at world
     (fx - lx, fy - ly). Guards: board md5, footprint pose vs contract JS1,
-    pad count == 10. [v5_7 public-bundle parse]"""
+    pad count == 10. [v5_6 parse]"""
     txt = open(path).read()
     got = hashlib.md5(txt.encode()).hexdigest()
     assert got == BANKED_BOARD_MD5, (
-        f"v5_7 board md5 {got} != released {BANKED_BOARD_MD5} — the board "
+        f"v5_6 board md5 {got} != frozen {BANKED_BOARD_MD5} — the board "
         "changed; re-verify JS1 pads before trusting js_pins()")
     i0 = txt.index('(footprint "Joystick:YA13')
     i1 = txt.index("\n\t(footprint", i0 + 16)
@@ -528,7 +526,7 @@ if _WALL_ENV:                                     # variant build, no file edit
 # THIS ONE NUMBER and re-export — the generator IS the loose variant. 0.3
 # reproduces the legacy pocket on X and the corner R (with 0.4 on Y it
 # reproduces the ordered band exactly; that equivalence is proven by a
-# scratchpad byte-identity check each time this constant is refactored).
+# scratch-only byte-identity check each time this constant is refactored).
 PLATE_FIT = 0.1            # THE fit. Uniform per side on x, y and corner R.
 #                            -> pocket 84.6 x 100.2 R5.5 around the shipped
 #                            84.4 x 100.0 R5.4 plate. Reveal 0.1 all round.
@@ -591,8 +589,10 @@ CAP_Z1 = PLATE_TOP_TO_PCB - PLATE_T  # cap top = plate seat (== Z_PLATE_BOT,
 #                            +3.4). v2.1: was hardcoded 3.5; derived now so the
 #                            caps always end exactly at the plate underside.
 SOCKET_SLIP = 0.25         # [§4] tray boss in band socket (Ø9.5 in Ø10.0)
-M3_INSERT_PILOT = 4.2      # [§4] CNC Kitchen std M3 pilot (4.1-4.25) [D]
-M3_INSERT_DEPTH = 5.7      # [§4] CNC Kitchen std M3 length [D]
+M3_INSERT_OD = 5.0         # standard Voron M3x4x5 nominal outer diameter
+M3_INSERT_LENGTH = 4.0     # standard Voron M3x4x5 insert length
+M3_INSERT_PILOT = 4.7      # standard Voron printed-part insert cavity
+M3_INSERT_DEPTH = 5.7      # blind bore depth; 1.7 mm relief below the insert
 M3_SCREW_CLEAR = 3.2       # [D] ISO 273 CLOSE-fit M3 clearance (plate holes).
 #                            Owner 2026-07-18: tightened from 3.4 so the four
 #                            screws center the plate to ±0.1 and the 0.2
@@ -605,8 +605,8 @@ M3_PASS_BAND = 4.4         # band cap pass bore: loose, screw never threads it
 M3_SCREW_D = 3.0           # [D] M3 nominal
 M3_HEAD_D = 5.7            # [D] ISO 7380 button head OD
 M3_HEAD_H = 1.8            # [§4] head envelope (ISO 7380 nominal 1.65)
-SCREW_LEN = 8.0            # [§4] M3x8: head seat +5.0 -> tip -3.0; insert
-#                            spans +1.5..-4.2 -> 4.5 mm engagement
+SCREW_LEN = 8.0            # M3x8: head seat +5.0 -> tip -3.0; the 4 mm insert
+#                            spans +1.5..-2.5, with 1.7 mm bore relief below
 
 # --- Plate openings ---------------------------------------------------------
 FR4_CUTOUT = 14.0          # [§1] Cherry MX plate cutout in 1.5 FR4 [D]
@@ -974,8 +974,8 @@ NOTCH_Z0 = -1.85           # [v2.10] BACK to the v2.2 board-passage-only
 #                            report, whose main body was the unbounded notch
 #                            cutter fixed in tray(). Gone: the floor there
 #                            is now continuous. (2) The insert-bore wall is
-#                            full thickness (4.75 - 2.1 = 2.65) below -1.85
-#                            again; the 1.6512 mm thin band now spans only
+#                            full thickness (4.75 - 2.35 = 2.40) below -1.85
+#                            again; the 1.4012 mm thin band now spans only
 #                            the notch's top zone instead of the whole
 #                            insert depth, which improves the standing
 #                            first-article watch-item, and the SJ61A1
@@ -983,7 +983,7 @@ NOTCH_Z0 = -1.85           # [v2.10] BACK to the v2.2 board-passage-only
 #                            The flat itself is UNMOVED: same plane, same
 #                            NOTCH_CLEAR, same standoff — the standoff
 #                            arithmetic in _boss_notches() is z-independent,
-#                            so notch_insert_wall stays 1.6512.
+#                            so notch_insert_wall stays 1.4012.
 SVC_CLEAR = 0.5            # service slot clearance around the tact solids [S]
 SVC_TOOL_R = 1.0           # slot corner R: at R1.0/0.5 the corner arc clears
 #                            the tact box corner (R1.5/0.4 clipped it by 0.06,
@@ -1044,8 +1044,8 @@ EFC_CHAMFER = 0.4          # [§4] elephant-foot chamfer on bed-side edges
 #     (interference / D), so for a given absolute dimensional error a LARGER
 #     bore is the MORE forgiving one. It also doubles the bearing area.
 #   * MAGNETS STAY REJECTED (v2.8 arithmetic, unchanged and not revisited):
-#     a Ø6 pocket necks the notched (0,0) boss wall to 0.651 against a
-#     1.6512 minimum that is already a first-article watch-item.
+#     a Ø6 pocket would further neck the already-thin notched (0,0) boss wall;
+#     the current Ø4.7 insert cavity leaves 1.4012 mm there.
 #
 # The pattern is 4-fold symmetric ON PURPOSE: a base mounts in any of four
 # 90° orientations, so one printed wedge tilts four ways.
@@ -1284,8 +1284,8 @@ def _boss_notches():
     flat sits NOTCH_CLEAR back from the chamfer line, so the board-corner
     clearance equals NOTCH_CLEAR by construction. The (0,0) corner at leg
     13.2: round slip = (13.2 - 7.4)/sqrt2 - 4.75 = -0.649 -> notched at
-    3.751 from center; insert-bore wall thins to 3.751 - 2.1 = 1.65 at one
-    azimuth (CNC Kitchen M3 in PETG: acceptable, first-article watch-item).
+    3.751 from center; the Ø4.7 Voron insert cavity leaves 3.751 - 2.35 =
+    1.401 mm at one azimuth (first-article watch-item).
     """
     out = []
     for (bx, by), (cx0, cy0) in zip(BOSS_CENTERS, BOARD_CORNERS):

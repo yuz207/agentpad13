@@ -137,7 +137,7 @@ falsified assumption was turned into a switch rather than left standing:
 
 | Mode | "Clockwise" is | Meaning |
 |---|---|---|
-| `board` *(default)* | the **reversed** GP13/GP14 walk | The fabricated v5_6 A/B landing, measured on hardware and unchanged in public v5_7. **This is the mode that must pass.** |
+| `board` *(default)* | the **reversed** GP13/GP14 walk | The fabricated v5_6 A/B landing, measured on hardware and unchanged in public v5_8. **This is the mode that must pass.** |
 | `firmware` | the **forward** walk | What this file asserted before 2026-08-15, i.e. the pre-flip assumption. It describes no board that exists; since the flip it is the arm that fails. |
 
 Both modes assert the **same behavior** — CW must give `KC_VOLU`, CCW must give
@@ -165,7 +165,7 @@ each isolates its own fault. Measured on both current builds:
 
 **Board truth**, confirmed directly in the released board:
 
-* `release/hardware/pcb/v5_7.kicad_pcb` — footprint `R10`, value `0R`, pads
+* `release/hardware/pcb/v5_8.kicad_pcb` — footprint `R10`, value `0R`, pads
   `1 → TOUCH_AHLB`, `2 → GND`
 
 On a TTP223, **AHLB tied low selects active-high output**: `Q` idles LOW and

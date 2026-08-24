@@ -7,16 +7,16 @@
   },
   "board": {
     "fabpacks": {
-      "opaque": "release/hardware/pcb/fabpack_out_v5_7/fabpack_opaque.zip",
-      "translucent": "release/hardware/pcb/fabpack_out_v5_7/fabpack_translucent.zip"
+      "opaque": "release/hardware/pcb/fabpack_out_v5_8/fabpack_opaque.zip",
+      "translucent": "release/hardware/pcb/fabpack_out_v5_8/fabpack_translucent.zip"
     },
-    "gerbers": "release/hardware/pcb/fabpack_out_v5_7/gerbers_v5_7.zip",
+    "gerbers": "release/hardware/pcb/fabpack_out_v5_8/gerbers_v5_8.zip",
     "assembly": {
-      "bom_opaque": "release/hardware/pcb/fabpack_out_v5_7/assembly/bom_opaque.csv",
-      "bom_translucent": "release/hardware/pcb/fabpack_out_v5_7/assembly/bom_translucent.csv",
-      "cpl_opaque": "release/hardware/pcb/fabpack_out_v5_7/assembly/cpl_opaque.csv",
-      "cpl_translucent": "release/hardware/pcb/fabpack_out_v5_7/assembly/cpl_translucent.csv",
-      "hand_solder_afterlist": "release/hardware/pcb/fabpack_out_v5_7/assembly/hand_solder_afterlist.csv"
+      "bom_opaque": "release/hardware/pcb/fabpack_out_v5_8/assembly/bom_opaque.csv",
+      "bom_translucent": "release/hardware/pcb/fabpack_out_v5_8/assembly/bom_translucent.csv",
+      "cpl_opaque": "release/hardware/pcb/fabpack_out_v5_8/assembly/cpl_opaque.csv",
+      "cpl_translucent": "release/hardware/pcb/fabpack_out_v5_8/assembly/cpl_translucent.csv",
+      "hand_solder_afterlist": "release/hardware/pcb/fabpack_out_v5_8/assembly/hand_solder_afterlist.csv"
     },
     "outline_mm": [
       84.2,
@@ -358,7 +358,8 @@
     "default_knob_bore": "low",
     "default_stick_sock": "cell2",
     "renders": {
-      "knobs": "release/hardware/case/v2/toppers/renders/toppers_v2_knobs.png"
+      "knobs": "release/hardware/case/v2/toppers/renders/toppers_v2_knobs.png",
+      "stick_caps": "release/hardware/case/v2/toppers/renders/toppers_v2_stick.png"
     }
   },
   "gasket": {

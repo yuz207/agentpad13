@@ -45,7 +45,7 @@ topper paired with a TPU restrictor. Details are in [`release/RELEASE.md`](relea
 
 ## Status
 
-- **PCB — complete.** v5_7, 84.2 × 100 mm, 2-layer, DRC clean, fab package ready to upload.
+- **PCB — complete.** v5_8, 84.2 × 100 mm, 2-layer, DRC clean, fab package ready to upload. It retains the v5.7 LED correction, adds the Ø4.0 TP5 solder landing, and factory-populates the encoder.
 - **Case — complete.** v2.17: FR4 or printed plate, band in three sidewalls, printed tray.
 - **Bases — complete.** Three optional printed bases; the case is finished without one.
 - **Firmware — validated.** Emulator-booted and protocol-conformant. Flash `agentpad13.uf2`.

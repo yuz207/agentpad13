@@ -97,11 +97,6 @@
       }
     },
     {
-      "id": "encoder_spec_line",
-      "when": { "fact": "always", "eq": true },
-      "then": { "lines": [{ "section": "selfbuy", "id": "encoder", "text": "1 × EC11 encoder — Alps 11.2 mm mounting-tab pattern, flatted D-shaft", "order": 10 }] }
-    },
-    {
       "id": "switches_line",
       "when": { "fact": "always", "eq": true },
       "then": { "lines": [{ "section": "selfbuy", "id": "switches", "text": "13 × MX switches", "order": 20 }] }
@@ -119,15 +114,15 @@
     },
     {
       "id": "inserts_line",
-      "_": "Source: same CASE-V2-NOTES.md §4 line — '4× CNC Kitchen std M3 inserts (L5.7, Ø4.2 pilot) in the tray only'; agentpad13_case_v2.py M3_INSERT_PILOT 4.2 / M3_INSERT_DEPTH 5.7. The tray is printed on every build and the screws land in these, so unconditional.",
+      "_": "Source: CASE-V2-NOTES.md §33 — four standard Voron-style M3x4x5 inserts in Ø4.7 tray cavities; agentpad13_case_v2.py pins nominal OD 5.0, insert length 4.0 and cavity diameter 4.7. The tray is printed on every build and the screws land in these, so unconditional.",
       "when": { "fact": "always", "eq": true },
-      "then": { "lines": [{ "section": "selfbuy", "id": "inserts", "text": "4 × M3 heat-set inserts — Ø4.2 pilot, 5.7 mm long", "order": 60 }] }
+      "then": { "lines": [{ "section": "selfbuy", "id": "inserts", "text": "4 × standard Voron-style M3×4×5 heat-set inserts — 4 mm long, nominal 5 mm OD", "order": 60 }] }
     },
     {
-      "id": "touch_foam_line",
-      "_": "Source: release/hardware/case/v2/CASE-V2-NOTES.md §5 (the TP5 landing) — 'conductive foam pillar (≈Ø8–10 × 5 mm uncompressed) between the TP5 bare dot and the chip's underside landing'. Every board carries TP5, so the pillar is on every list.",
-      "when": { "fact": "always", "eq": true },
-      "then": { "lines": [{ "section": "selfbuy", "id": "touch_foam", "text": "1 × conductive foam pillar — ≈Ø8–10 × 5 mm, sits on the TP5 pad", "order": 70 }] }
+      "id": "touch_contact_line",
+      "_": "Source: v5.8 release boundary in V5-NOTES.md — TP5 has a Ø4.0 solder landing for an optional builder-selected spring, wire, or other conductive contact. It is user-soldered and only applies to the two electrode-equipped FR4 plate variants; blank and printed plates omit it.",
+      "when": { "all": [{ "fact": "plate_make", "eq": "fr4" }, { "not": { "fact": "plate_variant", "eq": "blank" } }] },
+      "then": { "lines": [{ "section": "selfbuy", "id": "touch_contact", "text": "Optional TP5 spring or wire contact — user-solder for an electrode-equipped plate", "order": 70 }] }
     },
     {
       "id": "gasket_sheet_line",

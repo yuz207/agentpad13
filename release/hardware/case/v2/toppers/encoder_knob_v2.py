@@ -1,9 +1,9 @@
-"""agentpad13 v5 topper — ROTARY ENCODER KNOB, v2 family (SHIPPING).
+"""work-loudest v5 topper — ROTARY ENCODER KNOB, v2 family (SHIPPING).
 
 Supersedes encoder_knob.py's three families.  Owner-final after the v2 design
 study; run with the khana python (has build123d):
 
-    cad-khana-python encoder_knob_v2.py
+    /Users/yuanz/.local/share/uv/tools/cad-khana/bin/python encoder_knob_v2.py
 
 Emits, into ./stl, ./params, ./outputs:
   - 3 knobs x 2 D-bore clearances = 6 STL, MIRRORED into the print frame

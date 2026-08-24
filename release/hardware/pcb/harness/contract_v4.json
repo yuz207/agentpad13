@@ -3,9 +3,9 @@
  "status": "OK | RE1+SW-chamfer adjudicated 2026-07-19: owner-directed block move (shaft->plate opening 13.525,12.5 measured; chamfer leg 14.6->13.2, band grows in case pass). See NOTES-V4.md r28 ledger. | J1 adjudicated 2026-07-20 (v5_5 flip): y 5.1->3.05, rot 180->0, owner-authorized anchor per V5-NOTES.md coordinator addendum. | JS1 adjudicated 2026-07-20 (v5_6 YA13 rev): (70.675,12.5,rot0)->(69.71,13.37,rot180), F.Cu; PSP-slider SMD footprint replaced by YTL YA13-FL7.4 THT tilt joystick (LCSC C37323742) per placement-study freeze. rot180 = 180deg-from-datasheet-datum clocking (pot boxes face West+North). RE1-mirror symmetry break of 1.30mm owner-approved by the freeze. | LED20+LED21 adjudicated 2026-08-19 (v5_7 underglow rotation): rot 0->180 both, x/y/side unchanged; owner-directed (\"flip the two bottom LEDs to shoot inwards\"). Root cause = rotate-then-flip in gen/build_pcb.py negates orientation, reversing the two Y-firing parts only. LED15/16 left outward by owner choice.",
  "generated": "2026-07-17",
  "generated_by": "grade_board.py --gen-contract (pcbnew 9.0.9 read-back)",
- "source_board": "hardware/pcb/v4/v4_placed.kicad_pcb",
+ "source_board": "/Users/yuanz/Documents/GitHub/work-loudest/hardware/pcb/v4/v4_placed.kicad_pcb",
  "source_md5": "af4ce244380b1dd742b144edc43b8dad",
- "cross_check_reference": "hardware/pcb/v4/CONTRACT-V4-PROPOSAL.md",
+ "cross_check_reference": "/Users/yuanz/Documents/GitHub/work-loudest/hardware/pcb/v4/CONTRACT-V4-PROPOSAL.md",
  "pos_tol_mm": 0.003,
  "rot_tol_deg": 0.1,
  "outline": {

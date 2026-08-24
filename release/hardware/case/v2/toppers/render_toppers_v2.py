@@ -1,6 +1,6 @@
-"""agentpad13 v5 toppers — RENDER SHEETS for the v2 family.
+"""work-loudest v5 toppers — RENDER SHEETS for the v2 family.
 
-    cad-khana-python render_toppers_v2.py
+    /Users/yuanz/.local/share/uv/tools/cad-khana/bin/python render_toppers_v2.py
 
 Writes ./renders/toppers_v2_*.png.
 
@@ -354,7 +354,7 @@ if __name__ == "__main__":
             + hand,
             span=23.0, cz=17.5, zlines=ZL))
     sheet(ims, 2, "toppers_v2_knobs.png",
-          "agentpad13 v5 — ENCODER KNOBS v2  (straight o17.5 body, top +27.0, "
+          "work-loudest v5 — ENCODER KNOBS v2  (straight o17.5 body, top +27.0, "
           "texture/scoop above +18.2)  — rendered FROM THE EXPORTED STL BYTES")
 
     # -------------------------------------------------- B2 before / after
@@ -387,7 +387,7 @@ if __name__ == "__main__":
                                 "notch, +27.0 top", (90, 92, 98))],
                               span=23.0, cz=17.5, zlines=ZLB))
     sheet(ims, 2, "toppers_v2_knobB2_before_after.png",
-          "agentpad13 v5 — KNOB B2 SCOOP, REVISED  (owner: 'not concave "
+          "work-loudest v5 — KNOB B2 SCOOP, REVISED  (owner: 'not concave "
           "enough ... the notch is too high')")
 
     # ------------------------------------------------------- knobs on deck
@@ -413,7 +413,7 @@ if __name__ == "__main__":
          ("knob roof +25.5 -> headroom +1.000", GRN)],
         (F.RE1_X + 3, F.RE1_Y + 10, 15.0)))
     sheet(ims, 2, "toppers_v2_knobs_on_deck.png",
-          "agentpad13 v5 — ENCODER KNOBS v2 ON THE DECK  (keycaps drawn at "
+          "work-loudest v5 — ENCODER KNOBS v2 ON THE DECK  (keycaps drawn at "
           "their TRUE inserted height: rim +11.6, top +17.6)")
 
     # -------------------------------------------------------- stick sheet
@@ -442,7 +442,7 @@ if __name__ == "__main__":
                             "(minimum roof 0.800)", (90, 92, 98))],
                           elev=68.0, azim=-58.0, span=12.0, cz=18.6))
     sheet(ims, 2, "toppers_v2_stick.png",
-          "agentpad13 v5 — JOYSTICK TOPPERS v2  (nub C2 + one-piece TPU "
+          "work-loudest v5 — JOYSTICK TOPPERS v2  (nub C2 + one-piece TPU "
           "puck)  — rendered FROM THE EXPORTED STL BYTES")
 
     # ----------------------------- both joystick toppers at rest and full throw
@@ -498,5 +498,5 @@ if __name__ == "__main__":
                     (42.0, 20.0, 14.0), elev=17.0, azim=-70.0, span=104.0,
                     dist=420.0)
     sheet([im], 1, "toppers_v2_family_hero.png",
-          "agentpad13 v5 — TOPPER FAMILY v2 ON THE DECK")
+          "work-loudest v5 — TOPPER FAMILY v2 ON THE DECK")
     print("done")

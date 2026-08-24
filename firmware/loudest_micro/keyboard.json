@@ -1,5 +1,5 @@
 {
-    "$comment": "agentpad13 Rev A - vial-qmk port. Current public board: release/hardware/pcb/v5_7.kicad_pcb (v5_7, md5 08cf68dae979ab28aadd5e0dda34de01). The pin map was re-verified 20/20 GPIO against v5_6; v5_7 changes only the rotations of LED20 and LED21, with zero net, centroid, outline, or pin-map changes. firmware/check_pins_v4.py embeds the definitive GPIO table. firmware/gen_led_layout.py re-derives rgb_matrix.layout from the public board; chain positions 0-12 are SW1-SW13, 13 is the layer indicator, and 14-23 are underglow.",
+    "$comment": "agentpad13 Rev A - vial-qmk port. Current public board: release/hardware/pcb/v5_8.kicad_pcb (v5_8, md5 8c32ff4a6e6d77a87c4584029d4a1c75). The pin map was re-verified 20/20 GPIO against v5_6; v5_8 retains the LED20/LED21 correction from v5_7 and changes only the TP5 solder landing, with zero centroid, outline, or pin-map changes. firmware/check_pins_v4.py embeds the definitive GPIO table. firmware/gen_led_layout.py re-derives rgb_matrix.layout from the public board; chain positions 0-12 are SW1-SW13, 13 is the layer indicator, and 14-23 are underglow.",
     "keyboard_name": "agentpad13",
     "manufacturer": "Open Hardware",
     "maintainer": "yuz207",
@@ -48,7 +48,7 @@
         "pin": "GP17",
         "driver": "vendor"
     },
-    "$rgb_comment": "GP17 = RGB_MCU -> SN74LVC1T45 level shifter -> 5 V RGB_D00 -> LED1..LED24. max_brightness 105/255 enforces the USB 500 mA budget. firmware/gen_led_layout.py derives isotropic coordinates from the current public v5_7 board: both axes use 64/bbox_height = 0.640 units/mm and x is centered on QMK's default [112,32], producing LED extremes x 88..136 and y 3..62. v5_7 rotates LED20 and LED21 without moving their centroids, so the firmware layout is unchanged.",
+    "$rgb_comment": "GP17 = RGB_MCU -> SN74LVC1T45 level shifter -> 5 V RGB_D00 -> LED1..LED24. max_brightness 105/255 enforces the USB 500 mA budget. firmware/gen_led_layout.py derives isotropic coordinates from the current public v5_8 board: both axes use 64/bbox_height = 0.640 units/mm and x is centered on QMK's default [112,32], producing LED extremes x 88..136 and y 3..62. v5_8 retains the LED20/LED21 correction without moving any LED centroid, so the firmware layout is unchanged.",
     "rgb_matrix": {
         "driver": "ws2812",
         "max_brightness": 105,

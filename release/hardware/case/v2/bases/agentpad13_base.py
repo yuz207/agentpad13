@@ -1,4 +1,4 @@
-"""agentpad13 v2.9 — TRAY BASE family, built on the CENTRAL MOUNT contract.
+"""work-loudest v2.9 — TRAY BASE family, built on the CENTRAL MOUNT contract.
 
 Owner directives, verbatim.
 
@@ -81,8 +81,8 @@ pockets do not already deliver: the base is LOCATED by the four pegs and
 LOADED through the flat mating plane, never through the pegs.
 
 Magnets stay rejected on the v2.8 arithmetic, which this pass did not revisit:
-a Ø6 pocket necks the notched (0,0) boss wall to 0.651 mm against a 1.6512 mm
-minimum that is already a first-article watch-item.
+a Ø6 pocket would further neck the notched (0,0) boss wall, whose current
+Ø4.7 insert cavity already leaves only 1.4012 mm at the limiting azimuth.
 
 TPU: fine, and the reason the ladder has a dedicated rung. A TPU peg compresses
 into the pocket instead of shearing the pocket wall, so it wants the TIGHT rung
