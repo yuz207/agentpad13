@@ -28,7 +28,7 @@ release/            The bundle — everything you order, print or flash.
   MANIFEST.md         Every file in the bundle with its md5 and byte count.
   hardware/           Board fab package, case, plate, bases, keycaps, toppers, gasket.
   firmware/           Flashable UF2s, BRING-UP.md, POLARITY-NOTE.md.
-configurator/       The site above, plus the pipeline that generates its data.
+configurator/       The published site and its consumption assets; current outputs are copied from development.
 firmware/           vial-qmk tree, simulations, conformance tests, BUILD.md.
 docs/               The Raw HID protocol contract, and the design reviews.
 ```
@@ -39,9 +39,9 @@ hiding in the bundle.
 
 ## Printed toppers already? Print them again
 
-The v1 encoder knobs and stick caps are retired: the old Ø18 knob never covered the plate's encoder
-opening and was too short for the shaft on your board. The family is now three Ø19 knobs and two
-stick parts. The reasoning and the measurements are in [`release/RELEASE.md`](release/RELEASE.md) §(f).
+The v1 encoder knobs and stick caps are retired. The current release carries three Ø17.5 encoder
+knob styles and three joystick toppers: a compact nub, restored TPU puck, and a conventional Ø12
+topper paired with a TPU restrictor. Details are in [`release/RELEASE.md`](release/RELEASE.md) §(f).
 
 ## Status
 

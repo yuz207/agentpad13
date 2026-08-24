@@ -1162,7 +1162,8 @@ export function createViewer({ canvas, data, meshBase }) {
     if (!stick) { clearSlot('stick'); mark(); }
     else fill('stick', stick.mesh, (g, parts) => {
       const mat = finishMaterial(state.toppers.finish, state.toppers.translucent);
-      for (const part of parts) add(g, part, mat, [p.stick.x, 0, p.stick.y]);
+      const recentre = stick.placement !== 'origin';
+      for (const part of parts) add(g, part, mat, [p.stick.x, 0, p.stick.y], null, recentre);
     });
 
     /* LIT. View only — state.lighting is never a fact (see state.js). The two

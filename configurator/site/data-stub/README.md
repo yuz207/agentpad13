@@ -6,11 +6,9 @@ console. Everything here is **marked `"STUB": true`** and exists so the page —
 layout, rules, build sheet, viewer placement — can be developed and tested
 before the pipeline lands.
 
-Regenerate the meshes with:
-
-```sh
-node configurator/site/tools/make_stub_meshes.mjs
-```
+Do not regenerate these files in the public repository. Current consumption
+assets are copied from the development repository and validated before
+publication; the helper script is retained only as implementation history.
 
 ## What is real and what is not
 

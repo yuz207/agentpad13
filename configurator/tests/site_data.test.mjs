@@ -50,6 +50,16 @@ S.test('every mesh the catalog names exists next to the catalog', () => {
   for (const m of meshes) ok(existsSync(join(STUB_DIR, m)), `missing stub mesh: ${m}`);
 });
 
+S.test('the restricted topper stays on the YA13 origin and prints with its restrictor', () => {
+  const item = data.catalog.toppers.stick_caps.find((x) => x.id === 'restricted_12mm');
+  ok(item, 'restricted_12mm catalog item');
+  eq(item.placement, 'origin', 'the asymmetric composite must not be bbox-centred');
+  deep(item.print_files.map((x) => [x.id, x.role]), [
+    ['stick_cap', 'topper'],
+    ['stick_restrictor', 'restrictor'],
+  ]);
+});
+
 S.test('the site owns the five stand-ins the release ships no file for', () => {
   /* Round 4 added the two THT modules: "the configurator still doesn't show
      the encoder or joystick itself, just the toppers." Both are self-buy

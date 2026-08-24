@@ -1,17 +1,15 @@
-# agentpad13 configurator — data pipeline
+# agentpad13 configurator — legacy build snapshot
 
-Generates the four data files and the viewer meshes the site consumes. Every
-byte is derived from artifacts that ship in `release/`; nothing is re-run
-through CAD and nothing is typed in by hand.
+The public repository is a consumption release. Its current catalog, viewer
+meshes, and printable files are copied from the development repository and
+validated as published bytes; the public copy does not regenerate itself.
 
-## One command
+The scripts in this directory are retained as a legacy implementation record.
+They predate the 2026-08-24 joystick refresh and are not current authority for
+the published joystick outputs. Do not use `build_all.py`, `gen_catalog.py`, or
+`gen_meshes.py` to refresh the public release.
 
-```sh
-python3 configurator/build/build_all.py          # generate + gate + test
-python3 configurator/build/build_all.py --no-tests
-```
-
-Runs, in order and stopping at the first failure:
+## Historical pipeline components
 
 | stage | writes | gate |
 |---|---|---|
@@ -29,20 +27,11 @@ Optional, needs `matplotlib` (not required by the build):
 python3 configurator/build/verify_chirality.py out/chirality_check.png
 ```
 
-## Environment
+## Historical environment
 
-Create an isolated environment and install the versions used for the committed
-assets:
-
-```sh
-python3 -m venv .venv
-. .venv/bin/activate
-python -m pip install -r configurator/build/requirements.txt
-python configurator/build/build_all.py
-```
-
-The committed build was generated with Python 3.13.7 and the exact direct
-dependencies in `requirements.txt`.
+The retained snapshot used Python 3.13.7 and the direct dependencies in
+`requirements.txt`. This records provenance; it is not a public release
+regeneration procedure.
 
 | package | used by | why |
 |---|---|---|

@@ -142,7 +142,13 @@ export function buildSheet(state, data, derived = derive(state, data)) {
     const s = catalog.toppers.stick_caps.find((x) => x.id === state.toppers.stick);
     if (s) {
       const path = (s.socks && s.socks[catalog.toppers.default_stick_sock]) || s.stl;
-      print.push({ kind: 'file', id: 'stick_cap', text: base(path), path });
+      const files = s.print_files || [{ id: 'stick_cap', role: 'topper', stl: path }];
+      for (const file of files) {
+        print.push({
+          kind: 'file', id: file.id, role: file.role,
+          text: base(file.stl), path: file.stl,
+        });
+      }
     }
   }
   print = applyOrder(print, derived.order.filter((o) => o.section === 'print'));

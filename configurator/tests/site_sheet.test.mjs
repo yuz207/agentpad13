@@ -206,6 +206,14 @@ S.test('toppers are data-driven: any catalog style resolves to its STL', () => {
     const sheet = buildSheet(withPath(base(), 'toppers.stick', c.id), data);
     const want = (c.socks && c.socks[data.catalog.toppers.default_stick_sock]) || c.stl;
     eq(sec(sheet, 'print').entries.find((e) => e.id === 'stick_cap').text, want.split('/').pop());
+    const files = c.print_files || [{ id: 'stick_cap', stl: want }];
+    for (const file of files) {
+      eq(sec(sheet, 'print').entries.find((e) => e.id === file.id).text, file.stl.split('/').pop());
+    }
+    if (!files.some((f) => f.id === 'stick_restrictor')) {
+      ok(!sec(sheet, 'print').entries.find((e) => e.id === 'stick_restrictor'),
+        `${c.id} must not add a restrictor`);
+    }
   }
 });
 
@@ -213,7 +221,8 @@ S.test('toppers set to none drop out of the print manifest', () => {
   let s = withPath(base(), 'toppers.knob', 'none');
   s = withPath(s, 'toppers.stick', 'none');
   const list = ids(buildSheet(s, data), 'print');
-  ok(!list.includes('knob') && !list.includes('stick_cap'), 'no topper files expected');
+  ok(!list.includes('knob') && !list.includes('stick_cap') && !list.includes('stick_restrictor'),
+    'no topper files expected');
 });
 
 S.test('the notes land in the print section, one line each', () => {

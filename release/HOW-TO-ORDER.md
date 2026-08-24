@@ -116,12 +116,13 @@ From `hardware/case/v2/toppers/stl/`; renders of all of them in `../toppers/rend
   `clearance_high` if your printer closes the small internal D-bore. Low is the nominal
   Ø6.0 / 4.5 mm D-shaft size used by commercial push-on knobs; high is Ø6.3 / 4.8 mm
   (0.15 mm clearance, the maximum) for printer/material hole error.
-- **ONE stick topper** — two different parts, not two styles. The dot nub and puck each come as
-  `_clearance_low` and `_clearance_high`. Start with `clearance_low`; use the deliberately generous
-  `clearance_high` if it will not seat. Low is 2.10 × 1.30 mm; high is 2.30 × 1.50 mm, against
-  the measured 1.70 × 1.00 mm blade. **Print the round Ø6.350 mm puck in TPU ~95A.**
-  Both toppers are solid except for the rectangular shaft socket and both retain the joystick's
-  full 30° travel.
+- **ONE stick topper** — choose the compact Ø6.189 dot nub, the restored round Ø9.412 TPU puck,
+  or the conventional Ø12 restricted topper. All three use the same 2.00 × 1.25 × 4.00 mm
+  rectangular `cell2` socket; the old LOW/HIGH socket ladder is retired. The nub and puck preserve
+  the joystick's full 30° travel. The Ø12 topper must be used with
+  `ya13_restrictor_cap_TPU_print_roof_down.stl`, which limits throw to about 15.5° so it clears the
+  adjacent key. **Print the puck and restrictor in TPU ~95A.** Small TPU sockets and the restrictor's
+  retention ribs are printer-sensitive, so confirm seating and throw on the first print.
 
 ## 9. Self-buy list
 

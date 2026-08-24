@@ -1,4 +1,4 @@
-# v5-release-compiled — release checkpoint (2026-07-20, band default updated 2026-07-24, SW14/15 BOM corrected 2026-08-05, board refreshed to v5_7 2026-08-19, plate encoder opening widened 2026-08-19, band plate-pocket fit corrected 2026-08-19, tray bases published 2026-08-20, base catalog finalised 2026-08-20)
+# v5-release-compiled — release checkpoint (2026-07-20, band default updated 2026-07-24, SW14/15 BOM corrected 2026-08-05, board refreshed to v5_7 2026-08-19, plate encoder opening widened 2026-08-19, band plate-pocket fit corrected 2026-08-19, tray bases published 2026-08-20, base catalog finalised 2026-08-20, joystick outputs refreshed 2026-08-24)
 
 Self-contained snapshot of the v5 deliverables. Every file here is a **COPY**;
 the originals remain in their working locations. This bundle mirrors the
@@ -435,7 +435,7 @@ and **verified against the packaged artifacts** (right column). Rev A = the
 | **C** | **Joystick JS1 → YA13**: PSP-slider SMD footprint replaced by the YTL YA13-FL7.4 THT tilt gimbal (LCSC C37323742), placed (69.71, 13.37, rot 180) F.Cu, machine-placed THT, 10 pads. 180°-from-datum clocking → see `firmware/POLARITY-NOTE.md`. | `contract_v4.json` JS1; BOM JS1 line C37323742 / YA13 MPN (both SKUs); CPL JS1 row `69.710000,-13.370000,180.000000,top`; JS1 drill census 6×Ø1.0 + 4×Ø1.2 |
 | **D** | **Plate opening refab** (v5 plate): the circular Ø16 joystick opening replaced by the YA13 asymmetric rounded-rect (W 58.91 / N 2.57 / E 77.36 / S 21.02, R1.5); 1.6 mm FR4; 3 fab variants (plain / blank / tented-ring). | `fab/agentpad13_v2_plate_v5.kicad_pcb` + `validate_fab_v5.py` frozen expectations (W58.91/N2.57/E77.36/S21.02); CASE-V2-NOTES §14/§15 |
 | **E** | **Case v2.2 → v2.7**: board-v5 convergence (tray notch for the 13.2 chamfer → `tray_v5`), perimeter support rail (v2.3), true E2E populated-hardware fitment (v2.4), taper stick-cap default (v2.5), **band sidewall `WALL` 2.4 → 3.0 + parametric USB port funnel (v2.6/v2.6b, PCBWay thin-wall EQ)**, **`WALL` default → 5.4 (v2.7, owner decision)**. Tray gained the notch + JS1 rail-skip; the band grew OUTWARD ONLY — every mating interface is provably unmoved. | `agentpad13_case_v2.py` (v2.7); `outputs/case/mechanism.json` (101/101, status ok); band md5 `34be6bf7…` (w5.4) + tray_v5 md5 `d7d16481…` (UNCHANGED through every band rev) |
-| **F** | **House toppers — corrected v2 family (2026-08-21/22)**: three encoder knobs (**A** helical knurl / **B2** deep scoop / **C** cross-hatch), each a straight **Ø17.5** body with no skirt or flange. Their push-on D-bores now follow ordinary knob practice: `clearance_low` is the nominal **Ø6.0 / 4.5 across-flat** shaft size, while `clearance_high` is the bounded FDM-compensation option at **Ø6.3 / 4.8** (0.15 mm radial and flat clearance, the owner-set maximum). The rejected Ø6.6 / 5.1 high bore was physically far too loose. The two joystick toppers — the **Ø6.189** dot nub and round **Ø6.350** TPU puck — are solid except for the rectangular shaft socket and preserve the full **30°** joystick travel. Their physically bracketed socket pair is `clearance_low` (**2.10 × 1.30 mm**) and `clearance_high` (**2.30 × 1.50 mm**). Start with low; use high when a printer closes the internal feature. The rejected 2.50 × 1.80 mm high socket allowed the 1.70 × 1.00 mm shaft to rotate fully. The v1 stick caps remain **RETIRED** in `archive/toppers-v1/`. | `toppers/` **10 STLs** (6 knob + 2 nub + 2 puck) + `params/{encoder_knob_v2,stick_topper_v2}_params.json` + printability reports + gate transcripts + render sheets |
+| **F** | **House toppers — current release set (2026-08-24)**: the six encoder-knob STLs remain unchanged (three straight Ø17.5 styles × LOW/HIGH D-bores). Joystick outputs are now exactly three `cell2` toppers sharing a **2.00 × 1.25 × 4.00 mm** socket: the **Ø6.189** dot nub, restored **Ø9.412** TPU puck, and conventional **Ø12** restricted topper. The four obsolete nub/puck LOW/HIGH STLs are removed. Nub and puck preserve the full **30°** travel; the Ø12 topper uses the separate continuous-wall TPU restrictor, which limits throw to **15.354–15.487°** so it clears the adjacent 17.5 mm key. | `toppers/stl/` **10 STLs** (6 knob + 3 joystick topper + 1 restrictor). The restrictor and small TPU sockets are printer/material-sensitive; verify seating and throw on the first print. |
 | **G** | **Fabpack reclassification**: JS1 reclassified HAND_SOLDER → PLACE (machine-placed THT), both SKUs; retired PSP-slider/Adafruit-3103 BOM + afterlist line removed; verify harness grew 17 → 26 checks. | `fabpack_out_v5_7/assembly/` BOM (JS1 Place / PCBWay-THT; no 3103/6193574/live-slider) + `hand_solder_afterlist.csv` (RE1 only); `verify_fabpack` 31/31 |
 | **H** | **SW14/SW15 tact MPN correction (2026-08-05, PCBWay component-verification catch)**: XKB **TS-1187A / C318884** (5.1 × 5.1 mm, 6.5 mm lead span) was specified against the C&K PTS645 6.0 × 6.0 / H4.3 gull-wing land pattern `SW_SPST_PTS645Sx43SMTR92` (7.96 mm pad span) — not solderable. Now C&K **PTS645SM43SMTR92 LFS / C221880** (DigiKey CKN9112CT-ND, 160 gf); alternates B3S-1000P (C180420) / ZX-QC66-4.3TP (C7470150) / PTS645SK43SMTR92 LFS; **forbidden:** PTS645SM43JSMTR92 LFS (C2801847, J-lead). +$0.59/board. Metadata-only: Gerbers/drills/CPL unchanged. Verify harness grew 26 → **31** checks (new BOM-MPN-vs-footprint gate). | `fabpack_out_v5_7/assembly/bom_{opaque,translucent}.csv` + `hand_solder_afterlist.csv` (MPN `PTS645SM43SMTR92 LFS`, LCSC `C221880`, FP `SW_SPST_PTS645Sx43SMTR92`); `verify_fabpack` 31/31 incl. the 5 new MPN↔footprint checks; MANIFEST rows for the 3 CSVs + 2 zips |
 | **I** | **Plate fab set re-synced to the 2026-07-21 long-axis trim (2026-08-05)**: this bundle's nine plate artifacts were PRE-TRIM at **84.400 × 100.200 mm**, 0.2 mm outside the fab's **≤100 mm promo tier** (owner: *"Resize the top plates to 100mm. That 0.2 is gonna cost us 25%. Not worth it."*). Now **84.400 × 100.000**. Outline-only: 8 of 93 primitives (4 long edges + 4 corner arcs, 0.1 mm/edge, outline stays centred on y = 50.0); every cutout, opening and screw hole holds its exact position. The case model keeps `C.PLATE_H = 100.2` on purpose (it drives the band pocket, which must not move — the plate-to-lip gap merely relaxes 0.30 → 0.40 mm/end). Board, fabpack and firmware **untouched**. | `fab/agentpad13_v2_plate_{v5,tented_ring_v5,blank_v5}.kicad_pcb` + the 3 gerber zips + DXF + top PNG/SVG (new md5s in MANIFEST); `validate_fab_v5.py` **ALL GATES PASS 3/3** (`bbox 84.400 x 100.000`, shapes 89, `N->plate-top` 2.570, `NE->screw` 1.555 ≥ 1.5); CASE-V2-NOTES **§19** + annotated §14/§1/§6 |
@@ -541,11 +541,11 @@ CPL artifacts, which did not change.
 | Item | State | Action before it bites |
 |---|---|---|
 | **JS_POT_HALF = 4.5** | PROVISIONAL — a conservative pot-box/edge-tab half-width envelope, not a metered dimension (CASE-V2-NOTES §15). Does not gate the build. | Refine from the YA13 mechanical drawing **before the resin band order**. |
-| **Cap socket depth 4.0** | DESIGN CHOICE — the blade-engagement depth is assumed 4.0 mm (drawing gives the tip + cross-section, not the run length). | Two files cover fit: start with `clearance_low`; use the deliberately generous `clearance_high` when a printer closes the internal socket. If the physical blade is shorter, drop socket depth (cap top is referenced off the tip, unaffected). |
+| **Cap socket depth 4.0** | DESIGN CHOICE — the blade-engagement depth is assumed 4.0 mm (drawing gives the tip + cross-section, not the run length). | The current three joystick toppers use one `cell2` socket, 2.00 × 1.25 × 4.00 mm. Fit remains printer/material-sensitive, especially in TPU; verify the first print rather than selecting from the retired LOW/HIGH ladder. |
 | **EC11 shaft grip window** | The knob prints in two bounded D-bore sizes: nominal `clearance_low` Ø6.0 / 4.5 across-flat and FDM-compensation `clearance_high` Ø6.3 / 4.8 (0.15 mm maximum clearance). Top **+27.0** is sized to the published Alps EC11E-Switch-Vertical **H20** drawing (tip +24.5 + 1.0 headroom + 1.5 roof), so the board's own shaft seats **UNCUT**. | Start with `clearance_low`; use `clearance_high` if the printed bore closes. A Bourns **PEC11R-40/42-20F (L20)** shaft is longer and **rides proud** — cut it or use the L15. |
 | **Insert-wall 1.65 mm** | `notch_insert_wall[3.7,3.7] = 1.651` at the notched corner boss (printed this build). | First-article print check of the M3 heat-set insert wall. |
 | **Touch-foam (TP5) coupon** | Pre-existing open item (CASE-V2-NOTES §5/§8): conductive-foam pad + electrode construction pending the touch coupon. | Owner decision on the touch coupon (carried from Rev A). |
-| **Joystick-topper clearance** | Both the nub and puck now preserve the joystick's full **30°** travel; neither contains a restrictor. Their outer profiles are verified against the adjacent key at full throw. | Confirm both full-throw clearances and both socket levels on the first printed set. |
+| **Joystick-topper clearance** | The nub and restored puck preserve the joystick's full **30°** travel. The Ø12 topper is paired with a separate restrictor cap and was verified at **15.354–15.487°** contact, with 0.431 mm minimum adjacent-key clearance. | Confirm seating and throw on the first print. The restrictor is digitally verified but TPU/printer retention remains process-sensitive. |
 
 ---
 
@@ -673,36 +673,37 @@ clearances.
 **PEC11R-40/42-20F (L20)** is longer than the Alps and **rides proud** — shorten
 it or use the L15.
 
-**Two stick toppers, not four caps.** The v1 taper/dome/dish/knurl caps are
-gone, replaced by two parts that do different jobs:
+**Three current stick toppers, one socket.** The four old nub/puck LOW/HIGH
+files are gone. These three parts all use the same 2.00 × 1.25 × 4.00 mm
+`cell2` rectangular socket:
 
 - **The Ø6.189 dot nub** (`stick_nub_v2_C2`) — a low seven-dot button. It needs
   **no restrictor** and is clear of the SW4 keycap at the **full 30° throw**
   (+0.2508 mm at the governing point, which is the chamfered rim, not the top).
   It is solid except for its rectangular shaft socket and prints
   **bottom-down**.
-- **The one-piece TPU puck** (`stick_puck_v2_TPU`) — a round **Ø6.350 mm**
+- **The restored one-piece TPU puck** (`stick_puck_v2_TPU`) — a round
+  **Ø9.412 mm**
   cupped thumb surface with four raised X-dashes. It is also solid except for the rectangular shaft
   socket. There is no cone land, hollow cylinder or restrictor: it preserves
   the joystick's **full 30° throw** and its outer profile is sized against SW4
   at that angle. **Print it in TPU ~95A.**
+- **The conventional Ø12 restricted topper** (`stick_topper_v2_restricted_12mm_cell2.stl`) —
+  use it with `ya13_restrictor_cap_TPU_print_roof_down.stl`. The separate cap's
+  continuous wall and four narrow U-notches limit the joystick to
+  **15.354–15.487°**, leaving **0.431 mm** minimum clearance to the adjacent
+  17.5 mm key. The topper itself contains no restrictor.
 
-**Clearance pair (both stick toppers):** each ships as `clearance_low` and
-`clearance_high`. Start with low; use high when a small FDM/TPU internal socket
-will not seat. Low is **2.10 × 1.30 mm**; high is **2.30 × 1.50 mm**, against
-the measured **1.70 × 1.00 mm** blade. The rejected 2.50 × 1.80 mm socket was
-large enough to let the shaft rotate fully; the current high short side stays
-below the shaft's 1.70 mm long side. Four
-STLs total = 2 parts × 2 clearances.
+**One current socket:** all three ship at **2.00 × 1.25 × 4.00 mm**. This
+replaces the obsolete 2.10 × 1.30 LOW and 2.30 × 1.50 HIGH files. Small
+internal TPU features are printer-sensitive; confirm that the first print
+seats without rotation. The restrictor is also TPU/process-sensitive and its
+self-retention must be checked on the physical switch.
 
-**Provenance.** Both generators are gated and both transcripts ship verbatim:
-`outputs/encoder_knob_v2_gate.txt` and `outputs/stick_topper_v2_gate.txt`, each
-ending **GATE RUN CLEAN — every gate passed and every negative control rejected
-its bad input**. Handedness is **measured from the exported STL bytes**, not
-assumed: the knurl's hand is read by phase-clustering groove vertices, and the
-nub and puck are proven to own their mirror plane (0.000000 mm³). The case model
-consumes `params/{encoder_knob_v2,stick_topper_v2}_params.json` and sweeps both
-joystick toppers through the full 30° travel.
+**Provenance.** The six encoder outputs retain their existing generator gates.
+The four joystick files are byte-for-byte copies of the approved development
+outputs; their byte identities are recorded in `MANIFEST.md`. The public
+release is consumption-only and does not regenerate these files.
 
 **A note on the STL sizes:** these files were re-exported 2026-08-21 at the
 house topper deflection (5e-3 mm / 0.2 rad) after the first cut shipped at a
