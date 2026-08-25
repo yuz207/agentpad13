@@ -37,7 +37,8 @@ S.test('fixed config snapshot -> exact PCBWay package', () => {
   eq(e[1].text, 'plate_v5_ring_gerbers.zip');
   eq(e[2].value, 'Black');
   eq(e[4].value, 'HASL-LF');
-  ok(e[5].text.includes('hand-solder afterlist'), 'assembly note required by spec §3.1');
+  ok(e[5].text.includes('factory-populated'), 'assembly note must state the v5.8 population boundary');
+  ok(e[5].text.includes('TP5'), 'assembly note must identify the optional user-soldered contact');
 });
 
 S.test('the exposed-pad plate is the ONE that must be ordered lead-free gold', () => {
@@ -80,17 +81,16 @@ S.test('printed plate -> the plate leaves the fab order entirely', () => {
   ok(!ids(sheet, 'pcbway').includes('plate_finish'), 'no fab finish on the printed path');
 });
 
-S.test('printed plate -> STEP + DXF move into the print manifest, with the touch note', () => {
+S.test('printed plate -> STL moves into the print manifest, with the touch note', () => {
   const sheet = buildSheet(withPath(base(), 'plate.make', 'printed'), data);
   const print = sec(sheet, 'print').entries;
-  eq(print.find((e) => e.id === 'plate_step').text, 'agentpad13_v2_plate.step');
-  eq(print.find((e) => e.id === 'plate_dxf').text, 'agentpad13_v2_plate_v5.dxf');
+  eq(print.find((e) => e.id === 'plate_stl').text, 'agentpad13_v2_plate.stl');
   ok(print.some((e) => e.id === 'plate_printed_touch' && e.kind === 'note'), 'the touch note is required');
 });
 
-S.test('FR4 plate -> no plate STEP/DXF in the print manifest', () => {
+S.test('FR4 plate -> no plate STL in the print manifest', () => {
   const list = ids(buildSheet(withPath(base(), 'plate.make', 'fr4'), data), 'print');
-  ok(!list.includes('plate_step') && !list.includes('plate_dxf'), 'the fab plate is not printed');
+  ok(!list.includes('plate_stl'), 'the fab plate is not printed');
 });
 
 S.test('footer is the single UF2, the flash line and the two docs', () => {
@@ -207,6 +207,14 @@ S.test('toppers are data-driven: any catalog style resolves to its STL', () => {
     const sheet = buildSheet(withPath(base(), 'toppers.stick', c.id), data);
     const want = (c.socks && c.socks[data.catalog.toppers.default_stick_sock]) || c.stl;
     eq(sec(sheet, 'print').entries.find((e) => e.id === 'stick_cap').text, want.split('/').pop());
+    const files = c.print_files || [{ id: 'stick_cap', stl: want }];
+    for (const file of files) {
+      eq(sec(sheet, 'print').entries.find((e) => e.id === file.id).text, file.stl.split('/').pop());
+    }
+    if (!files.some((f) => f.id === 'stick_restrictor')) {
+      ok(!sec(sheet, 'print').entries.find((e) => e.id === 'stick_restrictor'),
+        `${c.id} must not add a restrictor`);
+    }
   }
 });
 
@@ -214,7 +222,8 @@ S.test('toppers set to none drop out of the print manifest', () => {
   let s = withPath(base(), 'toppers.knob', 'none');
   s = withPath(s, 'toppers.stick', 'none');
   const list = ids(buildSheet(s, data), 'print');
-  ok(!list.includes('knob') && !list.includes('stick_cap'), 'no topper files expected');
+  ok(!list.includes('knob') && !list.includes('stick_cap') && !list.includes('stick_restrictor'),
+    'no topper files expected');
 });
 
 S.test('the notes land in the print section, one line each', () => {
@@ -237,7 +246,7 @@ S.test('self-buy carries only the spec §3.2 lines', () => {
      Each is sourced in its rule's `_` comment in rules.json. */
   let s = withPath(base(), 'view.caps', true);
   deep(ids(buildSheet(s, data), 'selfbuy'),
-    ['encoder', 'switches', 'stab', 'screws', 'inserts', 'touch_foam', 'gasket_sheet']);
+    ['switches', 'stab', 'screws', 'inserts', 'touch_contact', 'gasket_sheet']);
 });
 
 /* --- prices ----------------------------------------------------------- */

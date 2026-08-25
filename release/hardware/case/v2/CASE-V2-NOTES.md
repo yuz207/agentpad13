@@ -32,13 +32,14 @@ Owner directives folded in (2026-07-18, this session, verbatim):
 | 3 | PCB v4_r27 — floating, never screwed | already ordered (frozen) | — |
 | 4 | `tray` — bottom case, all inserts + pins | FDM PETG **always** | `stl/ step/ agentpad13_v2_tray.*` |
 
-Hardware: 4× M3×8 ISO 7380 button-head; 4× CNC Kitchen std M3 inserts
-(L5.7, Ø4.2 pilot) in the tray only; 4× 3M SJ61A1 bumpons (Ø7.9×2.2,
+Hardware: 4× M3×8 ISO 7380 button-head; 4× standard Voron-style M3×4×5
+heat-set inserts (4 mm long, nominal 5 mm OD, Ø4.7 tray cavity) in the tray
+only; 4× 3M SJ61A1 bumpons (Ø7.9×2.2,
 clear) on the corner-boss bottom faces; 2 mm PORON around sockets
 (unmodeled, v1 §10 carry-over); conductive foam pad pending the touch coupon.
 
 **One screw path** (the whole assembly): M3 head proud on the deck → plate
-Ø3.2 → band cap Ø4.4 (z +1.5…+3.5) → tray boss insert (bore Ø4.2,
+Ø3.2 → band cap Ø4.4 (z +1.5…+3.5) → tray boss insert (bore Ø4.7,
 +1.5…−4.2). Plate, band, and tray clamp as one stack; the PCB floats inside
 on three press pins (H5/H6/H7) and support bosses — the owner's "it just
 sits in its spot" model, verbatim.
@@ -318,7 +319,7 @@ over Ø10, USB ceiling 10 mm. The corner crescents (0.74 min) print as
 small local perimeter loops — cosmetic; inspect first article.
 
 **Tray:** PETG always (thermoset resin cannot take heat-set inserts, §4/§10).
-Upright, 0.16–0.20. Inserts M3 CNC Kitchen, set from the boss top face
+Upright, 0.16–0.20. Inserts are standard Voron-style M3×4×5, set from the boss top face
 (+1.5), iron ~245 °C, melt 90% then press flat (§4). Slicer preview the two
 [NOT ROOT-CAUSED] advisories above before the first print.
 
@@ -499,7 +500,7 @@ What changed (all in `agentpad13_case_v2.py`; provenance tag [V5]):
    spanning z −1.85..+1.5 only (full-round below: cross-section only
    shrinks going up — prints clean; EFC untouched). At (3.7,3.7): round
    slip −0.649 → flat at 3.751 from center; **insert-bore wall thins to
-   1.65 at one azimuth** (CNC Kitchen M3 in PETG: acceptable; first-article
+   1.40 at one azimuth** after the Voron M3×4×5 cavity update (first-article
    watch: check for bulge at the flat when setting the insert). Other three
    corners keep 0.341 round slip — machine-checked per corner.
 3. **USB flip [V5].** `usb_receptacle()` envelope is the flipped J1: x
@@ -848,7 +849,7 @@ tray 0.051/76.88/90° (overhang area 63.2 -> 76.88, the new rail-skip edges;
 min_wall unchanged) — both the §8.7/§8.8 documented classes, slicer-preview
 before print.
 
-**Render inventory** (`v24_*.png`, extract-tessellate-
+**Render inventory** (`/Users/yuanz/Desktop/v24_*.png`, extract-tessellate-
 render pipeline): `v24_assembled_iso` (full populated stack + lid-off
 top-down), `v24_side_elevations` (true ortho front x-z + side y-z of the
 complete assembly), `v24_section_controls` (encoder y=12.5 + joystick y=13.37,
@@ -883,7 +884,7 @@ socket-roof bridge overhangs, as with every family). Exports: 3 taper STLs
 (`stick_cap_taper_sock_{nom,p05,p10}.stl`); `stick_cap_params.json` gains the
 `taper` variant with its sweep params (default field UNCHANGED). Renders:
 `toppers/renders/stick_caps.png` re-rendered with the 4th (taper) row, plus
-`v25_cap_taper_vs_dome.png` (dome vs taper, side profile +
+`/Users/yuanz/Desktop/v25_cap_taper_vs_dome.png` (dome vs taper, side profile +
 top, for the owner's look call). Band and all board/plate/fabpack files
 UNTOUCHED; the case model still consumes the default dome, so no khana rebuild.
 
@@ -1026,7 +1027,7 @@ axis and the corner wall becomes **thicker** than the flat, never thinner
 | USB aperture | `_box(USB_X, −WALL−PCB_CLEARANCE/2, …, 2·(WALL+PCB_CLEARANCE))` | **WALL** — parameterised, cuts fully through at any wall; x/z faces unchanged | **no** (x/z) |
 | outer shell | `OUTER_W/H = INNER_* + 2·WALL`, `OUTER_R` 8.0 | **WALL** | **yes, outward only** |
 
-### 16.3 Invariance PROVEN, not asserted (scratch `v26_prove.py`, verbatim)
+### 16.3 Invariance PROVEN, not asserted (scratchpad `v26_prove.py`, verbatim)
 
 ```
 P1  band(WALL=2.4) md5 = 36980cc2ff011dc32d923fb04f7429f7
@@ -1273,7 +1274,7 @@ Everything §16.2 listed as WALL-independent still is: `INNER_R` FROZEN at 5.6,
 `PLATE_R` 5.4, `TRAY_R` 5.35, ledge, plate recess, boss sockets, caps, screw
 pass, USB aperture x/z. Only `OUTER_*` and the funnel depth move.
 
-### 18.2 Invariance PROVEN at 5.4 (scratch `v27_prove.py`, verbatim)
+### 18.2 Invariance PROVEN at 5.4 (scratchpad `v27_prove.py`, verbatim)
 
 ```
 P1  band(WALL=2.4) md5 = 36980cc2ff011dc32d923fb04f7429f7  -> PASS (retired band)
@@ -2021,17 +2022,17 @@ New constants (`# --- Tray features ---`): `BASE_PEG_BORE = 3.6`,
 Two module-scope assertions make it structural, not a claim:
 
 ```
-assert BASE_PEG_BORE <= M3_INSERT_PILOT              # 3.6 <= 4.2
+assert BASE_PEG_BORE <= M3_INSERT_PILOT              # 3.6 <= 4.7
 assert Z_INSERT_BOT - Z_BASE_PEG_TOP >= BASE_PEG_ROOF_MIN   # 1.300 >= 1.2
 ```
 
 The (0,0) boss is notched to a standoff of **3.7512** from its centre. The M3
-insert bore (Ø4.2) therefore already sets this part's minimum wall at
-**1.6512** over z −4.2 … +1.5. Because the pocket is *narrower* than the insert
+insert bore (Ø4.7) therefore sets this part's current minimum wall at
+**1.4012** over z −4.2 … +1.5. Because the pocket is *narrower* than the insert
 bore, its wall on the same azimuth is **1.9512** — looser by +0.3000. And the
 two thin bands occupy **different z ranges** (pocket −7.5 … −5.5; insert bore
 −4.2 … +1.5), separated by 1.3 mm of full-section boss, so they can never stack
-into one tall thin wall. **The tray's minimum wall is unchanged at 1.6512.**
+into one tall thin wall. **The tray's current minimum wall is 1.4012 mm.**
 The pocket mouth is left un-chamfered on purpose: a 0.5 × 45° lead-in would
 neck that azimuth to 1.451 at the bottom face for no functional gain, so the
 lead-in chamfer lives on the *peg* instead.
@@ -2066,7 +2067,7 @@ the tray changed, and only by the four pockets.
 Printability (ADVISORY, as always): tray `min_wall` **0.050741 → 0.050741,
 unchanged**; overhang area 76.88 → 117.44 mm² = +40.56, which is exactly the
 four Ø3.6 pocket roofs (4 × 10.18 = 40.72 nominal). Those are Ø3.6 bridges —
-the tray already bridges its Ø4.2 insert bores. Band printability byte-identical.
+the tray already bridges its insert bores. Band printability byte-identical.
 
 ### 21.4 Artifacts
 
@@ -2570,7 +2571,7 @@ explicitly kept it: *"In our case, we won't reorder it, it's usable."*
 ### 24.5 Geometry-neutrality proof (scratch-only)
 
 To prove the `PLATE_H` refactor and the fit restructure changed nothing except
-the intended pocket, the band was rebuilt out of tree with the pocket
+the intended pocket, the band was rebuilt in the scratchpad with the pocket
 forced to the legacy geometry and hashed against the ordered file:
 
 ```
@@ -2862,9 +2863,8 @@ band, tray and plate are byte-identical across the whole pass; only the topper *
 this file models changed, and with them the interference ledger.
 
 ⚠ **This section SUPERSEDES the frozen `101/101/8` gate record** quoted in §22.5, §26.6 and
-§23. Those stay as written (append-only), but the current expectation is **104 assertions /
-104 passed / 10 interference pairs**. A reader grepping for "8 interferences" will find three
-stale hits; this is the live one.
+§23. Section §28 then supersedes this section's flange and oval-puck geometry. The assertion
+count remains **104 assertions / 104 passed / 9 interference pairs**.
 
 ### 27.1 What re-pointed
 
@@ -2877,25 +2877,23 @@ contract v2.4 shipped with. Four schema differences had to be absorbed:
 |---|---|---|
 | `variants[default_variant]` | no `default_variant` | knob: envelope read from the **top level**, plus a loop asserting all three textures (A/B2/C) share it. Stick: the two shipped parts are named explicitly (`nub_C2`, `puck_TPU`). |
 | `opening_corner_reach` scalar + `_min` | one dict `{plus_x, minus_x}` | same two numbers (9.3102 / 8.5711), same meaning; the existing geometry cross-check still passes. |
-| `pivot_z`, `tilt_deg` present | **absent** | stated in the case from the YA13 drawing `[D]` (pivot 6.1, full throw 30°, restricted 22.5°) and **cross-checked at import** — see 27.2. |
+| `pivot_z`, `tilt_deg` present | **absent** | stated in the case from the YA13 drawing `[D]` (pivot 6.1, full throw 30°) and **cross-checked at import** — see 27.2. |
 | `skirt_bottom_z` / `knob_top_z` | `bottom_z` / `top_z` | direct rename. |
 
 Envelope changes that follow:
 
 | | v1 | v2 |
 |---|---|---|
-| `knob` / `knob_sweep` | Ø18, +8.0..+17.5 (sweep from deck +5.0) | **Ø19, +8.0..+27.0** |
+| `knob` / `knob_sweep` | Ø18, +8.0..+17.5 (sweep from deck +5.0) | **Ø17.5 grip + low Ø18.8 cover flange, +8.0..+27.0** |
 | `stick_cap` / `js_sweep` | `taper` cone, 30° | **`nub_C2`** plain Ø6.189 +14.4..+19.6, 30° |
-| — | — | **NEW `js_sweep_puck`** — `puck_TPU` Ø9.412 at **22.5°** |
+| — | — | **NEW `js_sweep_puck`** — `puck_TPU` at the full **30°** travel |
 
 `KNOB_D` / `KNOB_H` were hard `[§5]` constants and are now params-wired.
 
-**Why two stick parts.** The v2 family ships *two* joystick toppers with *different throws*:
-the nub has no restrictor, so 30° is its real mechanical travel; the puck's 22.5° cone land
-**is** an integral restrictor. Modelling only the shipped default would leave the case blind to
-the larger of the two envelopes (Ø9.412 vs Ø6.189, and 1.32 mm lower). Sweeping the puck to 30°
-would model a stop it physically cannot reach and would invent interferences. Hence two parts,
-two angles.
+**Why two stick parts.** The v2 family ships two joystick toppers with different outer
+profiles. Both preserve the joystick's full 30° mechanical travel, so the case sweeps both
+through the same full cone and gates each envelope independently. Neither part contains a
+restrictor; both are solid except for the rectangular shaft socket.
 
 ### 27.2 pivot / tilt have no home in the v2 params — so they are cross-checked, not trusted
 
@@ -2907,57 +2905,31 @@ against a number the params *do* publish, and the derivation fails at import if 
   (rotated fillet centre) − 0.3. From pivot 6.1 / 30° / R 3.0945 / fillet 0.3 that is
   **11.8506**; params publish `deck_low_z` **11.851**. This single assert validates pivot,
   tilt *and* the fillet radius simultaneously.
-- **puck:** its cone is defined so the whole radial generator lands flat at the seat —
-  `z(r) = piv + (seat − piv)/cos t + r·tan t`. At the bore edge that gives **11.9395**;
-  params publish `cone_z_at_bore` **11.939**. The default rung's `safe` flag is asserted too.
+- **puck:** the case consumes the corrected solid outer profile and applies the same 30°
+  pivot transform as the nub. No seat, cone-land or stop-angle datum remains in the live
+  contract.
 
 Both tolerances are 1e-3 because the params are published to 3 dp.
 
-### 27.3 ⚠ TWO OCCT BOOLEAN TRAPS — both failed silently toward a SMALLER envelope
+### 27.3 OCCT containment gate
 
-Building the puck sweep hit two failures that no assertion in this file would have caught,
-because **a swept envelope that loses material simply stops interfering**. Recorded in full,
-and gated, because this is the same defect class as the §26.7 peg truncation.
-
-1. **Union of lofted frusta.** The first `_revolve_rz` built the puck as a stack of lofted
-   frusta (the primitive `_taper_cap` already used, so no new import). A rolled edge chopped
-   into 24 arc segments yields near-degenerate conical slivers — some 0.001 mm tall — and
-   fusing those, then fusing the result 24 more times for the tilt sweep, made OCCT **drop
-   64.76 mm³**. The swept envelope under-reported its reach by **0.146 mm**.
-
-2. **Over-discretised arcs, even with `revolve`.** Rebuilding the puck as one true solid of
-   revolution did *not* fix it: with the rim roll still at 24 chords the 25-way sweep fuse
-   **lost 59.44 mm³**. A balanced-tree fuse of the same operands was worse — it collapsed the
-   solid to nothing (bbox 0). At **8 chords** the fuse is exact: zero lost, reach 9.3301.
-
-   So arc resolution here is a **boolean-robustness parameter, not a fidelity knob**. 8 chords
-   run ≤0.003 mm inside the true arc between samples, which is acceptable *only* because the
-   one point that decides the SW4 answer — the params' `governing_point_rh` (4.66, 19.23),
-   where the outward normal is exactly the 22.5° tilt direction — **is itself a sample**
-   (90°·(1 − 6/8) = 22.5°). `_puck_cap` asserts that the governing point is on the profile, so
-   changing the segment count to one that skips it fails loudly.
-
-**The gate that now stands:** `_tilt_sweep` asserts `(south − swept).volume < 1e-3` — a union
-must contain every operand, and k=0 is the due-south copy carrying the tightest reach toward
-SW4. Negative control: it fires on both constructions above, with the exact volumes quoted.
-
-How the trap was caught at all: the puck's reported south reach (9.184) was *below* the
-governing reach the params publish (9.3299). A conservative envelope cannot under-reach its own
-part, so the number was impossible — and `bounding_box()` was exonerated first (a unit sphere
-reads ±1.000000 exactly), which pointed at the fuse.
+The corrected puck's case envelope is deliberately simple and conservative: a full-height
+9.400 × 6.350 mm oval prism that contains the actual rolled edges, shallow top cup and blind
+shaft socket. `_tilt_sweep` still asserts `(south − swept).volume < 1e-3`, because an OCCT
+union that silently loses material would make the clearance result optimistic. The due-south
+operand is the one carrying the tightest reach toward SW4.
 
 ### 27.4 Gate — `khana check agentpad13_case_v2.py`, verbatim
 
 ```
 status ok | assertions 104 | passed 104
-interferences 10
+interferences 9
     pcb_components x sockets        1.70564999999999
     pcb_components x leds           2.7361875000000015
     sockets       x leds           67.32590000000002
     ec11_body     x knob_sweep     342.22499999999997
-    js_body       x js_sweep_puck  39.491787946303646
-    knob_sweep    x knob           5387.046002743098
-    js_sweep      x js_sweep_puck  1155.2077461418548
+    knob_sweep    x knob           4614.511090465772
+    js_sweep      x js_sweep_puck  1238.750478654512
     js_sweep      x stick_cap      156.435095048379
     js_sweep_puck x stick_cap      156.43509504837897
     switch_bodies x keycaps        500.29863008417453
@@ -2975,12 +2947,12 @@ sweep the same case-side gate set the nub sweep has: `js_sweep_puck` × `fr4_pla
 | `pcb_components × leds` | 2.73619 | 2.73619 | untouched |
 | `sockets × leds` | 67.32590 | 67.32590 | untouched |
 | `switch_bodies × keycaps` | 500.29863 | 500.29863 | untouched |
-| `ec11_body × knob_sweep` | 342.22500 | **342.22500** | **unchanged despite Ø18→Ø19.** The 11.7 sq body proxy (corner reach 8.273) already sat wholly *inside* r 9.0; r 9.5 still contains it, so the intersection stays the full slab 11.7² × 2.5 = 342.225. |
-| `knob_sweep × knob` | 2417.45555 | **5387.04600** | tautological — the sweep contains the static knob, so the volume *is* the knob: π·9.5²·19 = 5387.046002743097 (was π·9²·9.5 = 2417.455546937346). |
+| `ec11_body × knob_sweep` | 342.22500 | current gate | The corrected sweep uses the Ø18.8 low flange plus Ø17.5 grip; see the regenerated mechanism report. |
+| `knob_sweep × knob` | 2417.45555 | **4614.51109** | tautological — the sweep contains the static stepped knob: the Ø18.8 flange from +8.0..+9.2 plus the Ø17.5 grip from +9.2..+27.0. |
 | `js_sweep × stick_cap` | 280.54758 | **156.43510** | same tautology — = the nub's own volume, π·3.0945²·5.2 = 156.43509504837903. |
 | `js_body × js_sweep` | 7.95763 | **REMOVED** | the nub sweep floors at z 11.741, *above* `js_body`'s top at 11.1. The v2.5 taper dipped to 10.467 and clipped the joystick's own pot boxes; the nub does not reach them. |
-| `js_body × js_sweep_puck` | — | **39.49179** | **NEW, by design.** The puck's cone lands at z 10.423, *below* `js_body` top 11.1 — it is designed to bottom out on the deck, and the deck is where the joystick body is. Expected, not a defect. |
-| `js_sweep × js_sweep_puck` | — | **1155.20775** | **NEW, modelling artifact.** The two sweeps are ALTERNATES — never fitted together. |
+| `js_body × js_sweep_puck` | — | **none** | The corrected puck envelope floors at z 11.701, above `js_body`'s top at 11.1. |
+| `js_sweep × js_sweep_puck` | — | **1238.75048** | **NEW, modelling artifact.** The two sweeps are ALTERNATES — never fitted together. |
 | `js_sweep_puck × stick_cap` | — | **156.43510** | **NEW, modelling artifact**, same alternates pairing: the puck sweep fully contains the upright nub, so again = the nub's own volume. |
 
 The three alternate-vs-alternate and by-design pairs are **reported, never asserted** —
@@ -3000,7 +2972,7 @@ reports the true 3-D `distance_to`, for both toppers:
 
 ```
 [v2.17-JS-KEYCAP] nub_C2 @30°:     overlap 0.00 mm^3 ; TRUE 3-D min distance = +0.736 mm
-[v2.17-JS-KEYCAP] puck_TPU @22.5°: overlap 0.00 mm^3 ; TRUE 3-D min distance = +0.810 mm
+[v2.17-JS-KEYCAP] puck_TPU @30°:   overlap 0.00 mm^3 ; TRUE 3-D min distance = +0.655 mm
 ```
 
 ⚠ **MODEL CAVEAT, now printed at every run.** Any SW4-clearance number must name its keycap
@@ -3011,30 +2983,20 @@ model, because the case and the toppers do not use the same one:
 | **this case** | 18.0 sq × z 10.6..14.6, tagged `[CONVENTION]` — a coarse proxy |
 | **the toppers** | the real inserted cap: 17.50 wide, rim +11.6, top +17.6 dish / +18.2 plateau |
 
-The case cap is 0.5 mm **wider** and 3.0–3.6 mm **shorter**. Both parts were sized by bisection
-against the *toppers'* model to a 0.25 mm margin, and that 0.25 is the number that governs the
-physical part. The case's +0.736 / +0.810 are a different measurement, not a contradiction —
+The case cap is 0.5 mm **wider** and 3.0–3.6 mm **shorter**. Both parts were sized against the
+*toppers'* model: the nub publishes +0.2508 mm and the puck +0.3004 mm at full throw. Those are
+the numbers that govern the physical parts. The case's +0.736 / +0.655 are a different
+measurement, not a contradiction —
 never quote one as "the" SW4 clearance. This discrepancy is **pre-existing**, not introduced
 here, and is left as a watch item: the case's keycap proxy is the cruder of the two.
 
-### 27.6 The Ø18 owner ruling is superseded, with citation
+### 27.6 Cover the opening without crowding the key
 
-v2.12 (§23) froze Ø18 as "the floor", accepting a 0.310 mm sliver of plate opening visible at
-each of the two +x corners on the grounds that "the measured body fit outranks concealment",
-and logged the Ø19 knob as an escape hatch that was "PARKED, not shipped".
-
-**Superseded 2026-08-20:** the owner reviewed the v2 knob candidate set with full Ø19
-concealment stated and ordered *"Execute final changes to the toppers"*. The v2 catalog is Ø19,
-so the sliver is **closed**:
-
-```
-[v2.4-KNOB] knob Ø19.0/2 = 9.500 vs encoder-opening corner reach -x 8.5711 (margin +0.929)
-            / +x 9.3102 (margin +0.190) -> HIDES all four corners
-```
-
-+0.190 matches the params' own `hide_floor` 0.1897. Ø18 is no longer a floor — it is retired
-geometry. Both comment sites in the case script now record the new ruling with a pointer back
-to the old one; §23 itself stands unedited as the record of the decision it made.
+The plate opening's far +x corners reach 9.3102 mm from the shaft. A uniform Ø18 grip leaves
+them exposed; a uniform Ø19 grip crowds the adjacent key. The corrected knob separates those
+jobs: a low Ø18.8 flange covers the opening by +0.0898 mm and ends at +9.2, below the keycap
+rim at +11.6, while the visible grip is Ø17.5. The case models that stepped envelope rather
+than treating either diameter as a full-height cylinder.
 
 ### 27.7 Artifacts
 
@@ -3061,3 +3023,123 @@ index row in `archive/README.md`.
 **Deliberately NOT touched:** `release/hardware/case/v2/toppers/` still carries a copy of the
 v1 set. It is a compiled release snapshot, and this repo's archive convention is that an edited
 snapshot is no longer a snapshot; the next release recompile carries v2 wholesale.
+
+## 28. Topper geometry correction — remove unrequested features (2026-08-21)
+
+Section §27 introduced two design choices that were not owner requirements: a low encoder-knob
+cover flange and an east-west oval joystick puck. Both are removed.
+
+- Every encoder knob is now a straight **Ø17.5 mm** body from +8.0 to +27.0, with no skirt,
+  flange or bore lead-in. Plate-opening coverage is not a knob requirement. At the 19.2 mm
+  center pitch beside a 17.5 mm keycap, the body leaves a **1.7 mm horizontal gap**.
+- The TPU puck is now round **Ø6.350 mm**. Like the nub, it is solid except for the blind
+  rectangular shaft socket and retains the joystick's full 30° travel.
+- Encoder `clearance_low` follows the conventional nominal push-on D-shaft size:
+  Ø6.0 / 4.5 mm across-flat. `clearance_high` is the bounded FDM-compensation
+  option, Ø6.3 / 4.8 (0.15 mm radial and flat clearance, the owner-set maximum).
+  The rejected Ø6.6 / 5.1 high fit was physically far too loose. The joystick
+  pair was tightened after physical testing:
+  `clearance_low` is 2.10 × 1.30 mm and `clearance_high` is 2.30 × 1.50 mm
+  against the measured 1.70 × 1.00 mm shaft. The rejected 2.50 × 1.80 mm
+  socket could rotate fully because its 1.80 mm short side exceeded the
+  shaft's 1.70 mm long side; even the current high socket cannot do that.
+
+The knob basis is not a guessed fit table. Alps Alpine EC11E Drawing No.2
+publishes the shaft as Ø6 with 4.5 ±0.1 mm across-flat. A commercial Selco
+2/08DR200-006 push-on knob is specified for that same 6.0 × 4.5 mm shaft and
+uses a compression ring for retention. Our one-piece printed knob has no
+unrequested spring, slit, insert, or set screw. Printer/material hole error is
+handled by the bounded HIGH file or slicer calibration, not by redefining LOW.
+
+The regenerated case mechanism remains **status ok, 104/104 assertions, 9 reported
+interferences**. Its static knob proxy is exactly 17.5 × 17.5 × 19.0 mm
+(4570.035563 mm³); the puck case envelope is round and clears the conservative case keycap
+proxy by +0.655 mm at full throw. The product-level topper sweep, which uses the actual
+17.5 mm inserted-key profile, reports +0.3008 mm for the puck.
+
+## 29. Printable plate artifact (2026-08-22)
+
+The case generator now exports `stl/agentpad13_v2_plate.stl` from the same
+`fr4_plate()` solid used for `step/agentpad13_v2_plate.step`. This is the
+home-printing file; the STEP remains available for CAD edits and the v5 fab
+files remain the manufacturing source for an FR4 plate. No plate geometry
+changed: the printed artifact is 84.4 × 100.0 × 1.6 mm with the same
+switch, stabilizer, encoder, joystick, indicator and screw openings.
+
+## 30. Base mating-plane wording correction (2026-08-22)
+
+The generated base interface now names the mating plane correctly as the flat
+tray bottom at z = −9.5, which is 2.0 mm below the separately frozen band
+bottom at z = −7.5. The base geometry already consumed `C.Z_TRAY_BOT` and
+was correct; only the generated description had retained the pre-v2.11 claim
+that the two bottoms were coplanar.
+
+## 31. TPU joystick socket fit returned to physical qualification (2026-08-22)
+
+Section §28's Ø6.350 puck is also retired: shrinking the puck to approximately
+the nub diameter was not an owner requirement. The last owner-final puck
+upper envelope is commit `74a4b072d7e42f8f80b459aa600b6a8d18652808`
+(`Toppers v2: ... one-piece TPU puck`), whose source, params and exported STL
+agree on a round Ø9.4118579 mm exact / Ø9.412 mm published envelope, top
+z=19.6, R0.6 rim, 0.55 mm rim land, 0.35/0.55 mm cup and four raised 0.8 mm
+X dashes. Those upper and lateral features are restored exactly.
+
+The same historical part's underside cone/restrictor and Ø5.2 hollow bore are
+not restored. The owner's later directives explicitly removed the integrated
+restrictor and required the bottom to be solid except for the shaft slot. The
+live puck therefore keeps the flat, non-restricting bottom at z=14.4 and the
+4.00 mm blind rectangular socket. Any throw limit belongs to the separate
+cover/insert, not the topper.
+
+The joystick socket dimensions in §28 are no longer production-approved. A
+printed `clearance_low` at 2.10 × 1.30 mm spins freely on the measured
+1.70 × 1.00 mm shaft; the 2.30 × 1.50 mm `clearance_high` was not physically
+qualified. The earlier 1.95 × 1.25 mm print did not seat. The prior rigid
+anti-rotation gate proved only that the shaft could not turn a full 90 degrees
+inside the nominal rectangle, not that flexible printed walls would retain it
+without angular play.
+
+`toppers/stl/stick_socket_fit_coupon_TPU95A_0p4.stl` now brackets that known
+transition in 0.05 mm increments using eight numbered, full-factorial cells.
+The coupon is an internal process-calibration artifact, not a public family of
+topper variants. `toppers/TPU-SOCKET-FIT.md` records the cell map, print
+contract and required observations. Production LOW/HIGH remain null in
+`toppers/params/stick_topper_v2_fit_selection.json`, and the topper generator
+blocks production STL export until physical coupon results select both cells.
+
+## 32. Two-type joystick topper lineup (2026-08-22)
+
+The compact direct-on-shaft family remains exactly two exterior choices: the
+existing Ø6.189 seven-dot nub and restored round Ø9.412 puck. Neither exterior
+is reopened by the fit correction; both consume the same physically qualified
+TPU socket pair after the coupon is graded.
+
+`toppers/restricted_thumb_topper_v1.py` introduces a separate Type 2 source for
+one larger conventional round topper used only with the separate YA13
+retaining restrictor cap. It is not a nub revision and does not replace or
+rename either compact part. The approved body is Ø12.0 with a Ø4.45 straight
+neck, z=14.4 mouth, z=14.92 shoulder start, z=15.02 full-body start and z=19.6
+top. It is a plain shallow round cup with no lip, ovalization, decoration,
+integrated restrictor or plate-coverage objective.
+
+The body gate imports the live cap authority and checks the actual solids
+through the 15.5° verified hard maximum at 15° azimuth increments. It records
+zero overlap, 0.292 mm minimum cap clearance and 0.331 mm minimum clearance to
+the conservative adjacent-key plane. A clearly named no-socket body-reference
+STL and render are available for inspection. Production LOW/HIGH socket STLs
+remain blocked until the shared eight-cell TPU coupon is physically graded.
+
+## 33. Tray insert cavity changed to Voron M3x4x5 (2026-08-24)
+
+The tray now specifies the standard Voron-style M3x4x5 heat-set insert: M3
+internal thread, 4 mm insert length and nominal 5 mm outer diameter. The four
+tray cavities widen from Ø4.2 to **Ø4.7 mm**. Their blind depth remains 5.7 mm,
+leaving 1.7 mm of relief below the 4 mm insert for the existing M3x8 screw.
+No screw clearance hole, pass hole, boss centre, external case dimension or
+other mating interface changed.
+
+The regenerated tray loses 79.6865 mm³, exactly the volume of four 5.7 mm-deep
+cylinders widened from Ø4.2 to Ø4.7. The assembly gate remains **status ok,
+104/104 assertions passed**. The new limiting calculated wall at the notched
+(3.7, 3.7) boss is **1.4012 mm**. This CAD result still requires the usual
+first-article heat-set test on the target printer and PETG.

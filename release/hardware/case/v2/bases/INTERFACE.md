@@ -26,7 +26,7 @@ it with a ruler on a finished case. Everything below is measured from there.
 | positions from datum | (-12.5, -12.5), (+12.5, -12.5), (-12.5, +12.5), (+12.5, +12.5) mm |
 | square pitch | 25.0 mm (bolt circle Ø35.355) |
 | mouth chamfer | 0.2 x 45 deg |
-| mating plane | the flat tray/band bottom — keep all your material below it |
+| mating plane | the flat tray bottom — keep all your material below it |
 
 Smallest base that carries the whole pattern with a 3 mm wall:
 **Ø47.4 mm.**

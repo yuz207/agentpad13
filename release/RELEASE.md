@@ -1,9 +1,22 @@
-# v5-release-compiled — release checkpoint (2026-07-20, band default updated 2026-07-24, SW14/15 BOM corrected 2026-08-05, board refreshed to v5_7 2026-08-19, plate encoder opening widened 2026-08-19, band plate-pocket fit corrected 2026-08-19, tray bases published 2026-08-20, base catalog finalised 2026-08-20)
+# AgentPad13 v5.8 release — 2026-08-24
 
 Self-contained snapshot of the v5 deliverables. Every file here is a **COPY**;
 the originals remain in their working locations. This bundle mirrors the
 `v4-release-compiled/` (Rev A) pattern, scoped to the v5 diff. Companion
 contract: `MANIFEST.md` (every file, md5, provenance).
+
+> **v5.8 release — optional touch contact, factory encoder, standard inserts.**
+> The PCB changes only at TP5: its top copper/mask landing grows from Ø1.5 to
+> Ø4.0 mm so a builder can solder a spring, wire, or other contact to an
+> electrode-equipped plate. Tracks, vias, zones, outline, nets, and every other
+> footprint are unchanged from v5.7. The encoder remains at the same footprint,
+> position, and rotation; it is now included in both factory CPL/BOM sets as
+> `PEC11R-4215F-S0024` / `C143790` / `PCBWay-THT`, rather than listed for hand
+> soldering. The optional `TP5_CONTACT` is user-soldered and never enters the
+> factory placement files. The tray now takes standard Voron-style M3×4×5
+> inserts in four Ø4.7 cavities; no screw path, boss centre, exterior dimension,
+> or mating interface moved. Digital gates pass; the v5.8 PCB and revised tray
+> have not yet had their own fabricated/printed first article.
 
 > **Revision 2026-07-24 — band `WALL` default 3.0 → 5.4 (owner decision).** The
 > band STL/STEP in this bundle are now `…_w5.4` (primary) plus the `…_w3.0` and
@@ -267,15 +280,11 @@ contract: `MANIFEST.md` (every file, md5, provenance).
 >
 > The opening is now **14.000 × 13.000 R1.5 at (14.025, 12.500)** — the left edge
 > **frozen** at x 7.025, the right edge out to 21.025, y 6.000..19.000 unmoved.
-> Corner radius stays **1.5 on purpose**: enlarging it to help the knob hide the
-> aperture would eat exactly the body-corner clearance the measured part needs.
-> **Cost, since SUPERSEDED:** the two +x corners now reach **9.310** from the
-> shaft, so the then-shipped **Ø18 knob (r 9.000) left a 0.310 mm sliver** at
-> each of them, which the owner accepted at the time. **That exception is
-> OBSOLETE as of the v2 topper family (2026-08-20/21):** every v2 knob is
-> **Ø19.0**, which hides the opening by **+0.190**, and `encoder_knob_v2.py`
-> now ships the old Ø18 default as a REJECTED negative control so the
-> under-covering geometry cannot come back. See §(f). `ENC_BODY_SQ` stays
+> Corner radius stays **1.5 on purpose**: enlarging it would eat exactly the
+> body-corner clearance the measured part needs. The knob is independently
+> sized as a straight **Ø17.5** body to leave a gap beside the adjacent key;
+> it does not attempt to cover this opening. See §(f).
+> `ENC_BODY_SQ` stays
 > **11.7** — the ~13.7 figure has **no
 > resolved datum**, and a shaft-centred 13.7 is contradicted by the owner's own
 > left-perfect / right-binding fit, so the opening was sized from the measured
@@ -400,17 +409,15 @@ contract: `MANIFEST.md` (every file, md5, provenance).
 > span the footprint and cannot tip in any of the 16 modelled cases. Section (a)
 > gains row **Q**; band, tray, plate, board and firmware untouched.
 
-> ## ⛔ ORDER HOLD IN FORCE (owner, 2026-07-20)
-> **No PCBWay upload, no order, no payment.** `fabpack_out_v5_7/` and the
-> `plate_v5` fab set are the **candidate** order set, held pending the owner's
-> release sequence (caliper confirmations → owner render sign-off → release).
-> The order set and the exact files to upload are listed in section (e) below.
+> **Public release boundary (2026-08-24):** v5.8 is the current open-source build.
+> Publishing these files does not place a fabrication order; builders remain
+> responsible for the first-article checks called out below.
 
 ## Version cross-map (one product checkpoint)
 
 | Workstream | Version | Canonical artifact in this bundle | md5 |
 |---|---|---|---|
-| PCB | **v5_7** (underglow LED20/LED21 rotation; the board shipped in this bundle) | `hardware/pcb/v5_7.kicad_pcb` | `08cf68dae979ab28aadd5e0dda34de01` |
+| PCB | **v5_8** (v5.7 underglow fix retained; Ø4.0 TP5 solder landing; factory RE1) | `hardware/pcb/v5_8.kicad_pcb` | `8c32ff4a6e6d77a87c4584029d4a1c75` |
 | PCB — as fabricated | **v5_6** (JS1→YA13 rev) — **the board that was actually made and populated**; kept as lineage, NOT shipped in this bundle | (lineage; not shipped here) | `221ebb98fcf44f860ed65f7ed8d1bc45` |
 | PCB base | v5_5 (J1-flip) | (lineage; not shipped here) | `27493b30f17de8cd568f9cdcb171f4a9` |
 | Case | **v2.17** (v2 topper re-point; E2E fitment + band `WALL` 5.4 default) | `hardware/case/v2/agentpad13_case_v2.py` | see MANIFEST |
@@ -422,15 +429,15 @@ contract: `MANIFEST.md` (every file, md5, provenance).
 
 **Independent verification (this packaging session):** all three release gates
 were **re-run on the PACKAGED copies** (not just cited from the ledger) — board
-harness `grade_board.py` on `hardware/pcb/v5_7.kicad_pcb`, `verify_fabpack.py`
-on `hardware/pcb/fabpack_out_v5_7/`, and `khana build agentpad13_case_v2.py`.
-(2026-08-19: the board and fabpack gates were re-run again on the refreshed
-`v5_7` copies, plus the new `render_orientation.py` emission gate.)
+harness `grade_board.py` on `hardware/pcb/v5_8.kicad_pcb`, `verify_fabpack.py`
+on `hardware/pcb/fabpack_out_v5_8/`, and the case/coupon khana checks.
+The LED orientation gate was also re-run on v5.8; it retains the intended
+**8 inward / 2 outward** result. Verbatim results are in section (b).
 Verbatim results in section (b).
 
 ---
 
-## (a) What changed vs Rev A — A–Q diff
+## (a) What changed vs Rev A — A–R diff
 
 Reconstructed from `hardware/pcb/V5-NOTES.md` + `hardware/case/v2/CASE-V2-NOTES.md`
 and **verified against the packaged artifacts** (right column). Rev A = the
@@ -443,7 +450,7 @@ and **verified against the packaged artifacts** (right column). Rev A = the
 | **C** | **Joystick JS1 → YA13** (v5_6): PSP-slider SMD footprint replaced by the YTL YA13-FL7.4 THT tilt gimbal (LCSC C37323742), placed (69.71, 13.37, rot 180) F.Cu, machine-placed THT, 10 pads. 180°-from-datum clocking → see `firmware/POLARITY-NOTE.md`. | `contract_v4.json` JS1; BOM JS1 line C37323742 / YA13 MPN (both SKUs); CPL JS1 row `69.710000,-13.370000,180.000000,top`; JS1 drill census 6×Ø1.0 + 4×Ø1.2 |
 | **D** | **Plate opening refab** (v5 plate): the circular Ø16 joystick opening replaced by the YA13 asymmetric rounded-rect (W 58.91 / N 2.57 / E 77.36 / S 21.02, R1.5); 1.6 mm FR4; 3 fab variants (plain / blank / tented-ring). | `fab/agentpad13_v2_plate_v5.kicad_pcb` + `validate_fab_v5.py` frozen expectations (W58.91/N2.57/E77.36/S21.02); CASE-V2-NOTES §14/§15 |
 | **E** | **Case v2.2 → v2.7**: board-v5 convergence (tray notch for the 13.2 chamfer → `tray_v5`), perimeter support rail (v2.3), true E2E populated-hardware fitment (v2.4), taper stick-cap default (v2.5), **band sidewall `WALL` 2.4 → 3.0 + parametric USB port funnel (v2.6/v2.6b, PCBWay thin-wall EQ)**, **`WALL` default → 5.4 (v2.7, owner decision)**. Tray gained the notch + JS1 rail-skip; the band grew OUTWARD ONLY — every mating interface is provably unmoved. | `agentpad13_case_v2.py` (v2.7); `outputs/case/mechanism.json` (101/101, status ok); band md5 `34be6bf7…` (w5.4) + tray_v5 md5 `d7d16481…` (UNCHANGED through every band rev) |
-| **F** | **House toppers — v2 family (2026-08-20/21; SUPERSEDES the v1 toppers entirely)**: three **Ø19** encoder knobs (**A** helical knurl / **B2** deep scoop / **C** cross-hatch), each in a 3-bore ladder (Ø5.9 tight / 6.0 nom / 6.1 loose); and **two** joystick toppers — the **Ø6.19 dot nub** in a 3-rung socket ladder (1.85×1.15 nom / +0.05 / +0.10) and the **one-piece TPU puck** in 2 rungs (nom ships, m05 tight spare). The v1 stick caps (taper/dome/dish/knurl) and Ø18 knobs are **RETIRED** to `archive/toppers-v1/`. | `toppers/` **14 STLs** (9 knob + 3 nub + 2 puck) + `params/{encoder_knob_v2,stick_topper_v2}_params.json` + 5 printability JSONs + **2 verbatim gate transcripts** (both GATE RUN CLEAN) + 6 render sheets |
+| **F** | **House toppers — current release set (2026-08-24)**: the six encoder-knob STLs remain unchanged (three straight Ø17.5 styles × LOW/HIGH D-bores). Joystick outputs are now exactly three `cell2` toppers sharing a **2.00 × 1.25 × 4.00 mm** socket: the **Ø6.189** dot nub, restored **Ø9.412** TPU puck, and conventional **Ø12** restricted topper. The four obsolete nub/puck LOW/HIGH STLs are removed. Nub and puck preserve the full **30°** travel; the Ø12 topper uses the separate continuous-wall TPU restrictor, which limits throw to **15.354–15.487°** so it clears the adjacent 17.5 mm key. | `toppers/stl/` **10 STLs** (6 knob + 3 joystick topper + 1 restrictor). The restrictor and small TPU sockets are printer/material-sensitive; verify seating and throw on the first print. |
 | **G** | **Fabpack reclassification**: JS1 reclassified HAND_SOLDER → PLACE (machine-placed THT), both SKUs; retired PSP-slider/Adafruit-3103 BOM + afterlist line removed; verify harness grew 17 → 26 checks. | `fabpack_out_v5_6/assembly/` BOM (JS1 Place / PCBWay-THT; no 3103/6193574/live-slider) + `hand_solder_afterlist.csv` (RE1 only); `verify_fabpack` 31/31 |
 | **H** | **SW14/SW15 tact MPN correction (2026-08-05, PCBWay component-verification catch)**: XKB **TS-1187A / C318884** (5.1 × 5.1 mm, 6.5 mm lead span) was specified against the C&K PTS645 6.0 × 6.0 / H4.3 gull-wing land pattern `SW_SPST_PTS645Sx43SMTR92` (7.96 mm pad span) — not solderable. Now C&K **PTS645SM43SMTR92 LFS / C221880** (DigiKey CKN9112CT-ND, 160 gf); alternates B3S-1000P (C180420) / ZX-QC66-4.3TP (C7470150) / PTS645SK43SMTR92 LFS; **forbidden:** PTS645SM43JSMTR92 LFS (C2801847, J-lead). +$0.59/board. Metadata-only: Gerbers/drills/CPL/`gerbers_v5_6.zip` byte-identical. Verify harness grew 26 → **31** checks (new BOM-MPN-vs-footprint gate). | `fabpack_out_v5_6/assembly/bom_{opaque,translucent}.csv` + `hand_solder_afterlist.csv` (MPN `PTS645SM43SMTR92 LFS`, LCSC `C221880`, FP `SW_SPST_PTS645Sx43SMTR92`); `verify_fabpack` 31/31 incl. the 5 new MPN↔footprint checks; MANIFEST rows for the 3 CSVs + 2 zips |
 | **I** | **Plate fab set re-synced to the 2026-07-21 long-axis trim (2026-08-05)**: this bundle's nine plate artifacts were PRE-TRIM at **84.400 × 100.200 mm**, 0.2 mm outside the fab's **≤100 mm promo tier** (owner: *"Resize the top plates to 100mm. That 0.2 is gonna cost us 25%. Not worth it."*). Now **84.400 × 100.000**. Outline-only: 8 of 93 primitives (4 long edges + 4 corner arcs, 0.1 mm/edge, outline stays centred on y = 50.0); every cutout, opening and screw hole holds its exact position. The case model keeps `C.PLATE_H = 100.2` on purpose (it drives the band pocket, which must not move — the plate-to-lip gap merely relaxes 0.30 → 0.40 mm/end). Board, fabpack and firmware **untouched**. | `fab/agentpad13_v2_plate_{v5,tented_ring_v5,blank_v5}.kicad_pcb` + the 3 gerber zips + DXF + top PNG/SVG (new md5s in MANIFEST); `validate_fab_v5.py` **ALL GATES PASS 3/3** (`bbox 84.400 x 100.000`, shapes 89, `N->plate-top` 2.570, `NE->screw` 1.555 ≥ 1.5); CASE-V2-NOTES **§19** + annotated §14/§1/§6 |
@@ -451,16 +458,17 @@ and **verified against the packaged artifacts** (right column). Rev A = the
 | **K** | **Bring-up calibration facility + isotropic RGB layout + the double `housekeeping_task_user()` call removed (2026-08-13 / 2026-08-15, firmware-only)**: three changes and one decision, none of which touch copper. **(1)** A third prebuilt, `firmware/prebuilt/loudest_micro_calibrate.uf2`, is a **BRING-UP TOOL, not daily firmware** — a `calibrate` keymap in which every key is `KC_NO` and dispatch happens on `row`/`col`, so it can never emit a stray character; four guided `SW1` presses make the board **type its own calibration report** (measured `low`/`rest`/`high`, per-axis `inverted=YES/NO`, re-derived `JS_CENTER`/`JS_THRESHOLD`, a per-direction `fires`/`NEVER FIRES` verdict against the SHIPPED `512`/`300`, and finished config lines with the `POLARITY-NOTE.md` `low`/`high` swap already applied). This closes the standing gap in which every document said *"do the bring-up ADC sweep"* and none said how — protocol v0 is LOCKED and carries no ADC readout, and Vial exposes no raw analog. The owner-facing procedure ships as **`firmware/BRING-UP.md`** (new in this bundle; moved out of `firmware/BUILD.md` §4a so it travels with the payload). **(2)** `rgb_matrix.layout` is regenerated **isotropically** — one scale on both axes (`64 / bbox_height = 0.64`) centred on QMK's own `k_rgb_matrix_center {112, 32}` — closing the 4.157 : 1 anisotropy under which `cycle_pinwheel`, `cycle_spiral`, `dual_beacon` and `rainbow_moving_chevron` rendered skewed; all 24 `y` unchanged, `flags` and `matrix` untouched. **(3)** `housekeeping_task_kb()` no longer re-calls `housekeeping_task_user()`, which `quantum/keyboard.c:436` already calls — it had been running twice per loop. **(4)** `CAPS.led_count` **stays 24 on both SKUs, closed by decision** (redefined as addressable chain length; LOCKED protocol v0, zero wire change). **Board, fabpack, plate and case untouched.** | `firmware/prebuilt/loudest_micro_default.uf2` `1c0ff911…` (88576 B) + `loudest_micro_vial.uf2` `286fb09d…` (104448 B) + `loudest_micro_calibrate.uf2` `aabf7954…` (96768 B); `firmware/sim/behavior.cjs --touch=board` **33/33, 0 failures** on BOTH shipped builds with the `--touch=firmware` counterfactual still **4 failures** (the A/B still discriminates on the new binaries); `firmware/sim/calibrate.cjs` **37/37 PASS**, `--no-adc-fix` arm **15 failures** as required; `check_pins_v4.py` **30/30** and **56/56**; conformance **80/80**; emulator smoke **PASS** both builds; isotropy proven from the SHIPPED binary — `g_led_config`'s 88-byte initialiser read out of the `default` ELF `.data` and found in the UF2 payload at offset 42676, LED cloud x 88..136 symmetric about 112 |
 | **L** | **On-board joystick calibration (SW14) + protocol v1 + encoder direction, and BOTH prebuilts RENAMED (2026-08-15, firmware-only)**: the joystick shipped on placeholder calibration with no mechanism to replace it, and row K's answer — a separate `calibrate` firmware that TYPED its numbers for a human to paste into source and rebuild — is **retired here along with the host-only variant that followed it**, on the owner's ruling that *"calibrated usage does not depend on a daemon."* **(1)** Holding **SW14** (the BOOTSEL button, inert while firmware runs) for ~1 s starts a bounded ~15 s routine in which the 13 key LEDs are the entire UI — white armed, blue bar for centre, amber→green bar for the swing, green flash stored, red flash rejected — writing a 14-byte EEPROM datablock that survives unplug and reflash. Keys keep working throughout; no mode, no layer change, nothing inert. Reading SW14 at runtime means briefly overriding `QSPI_CS`, during which flash is unreadable, so `sw14_pressed()` is **RAM-resident** (`.time_critical` → `.data`, proven by `nm`) with interrupts masked for a measured **14016 cycles / 112.1 µs at 0.112 % duty** — 450–3500× shorter than the flash erase this firmware already masks for on every Vial keymap save. **(2)** Protocol v1 (`0x50`/`0x51`/`0x52`, IDs outside VIA's 0x01–0x13 so `via_command_kb()` claims them without heuristics) is the host path; it and SW14 share **one `js_cal_store()`**, so both write byte-identical EEPROM by construction. Per-axis centre/threshold replace `JS_CENTER 512`/`JS_THRESHOLD 300`, which remain the uncalibrated fallback. **(3)** Encoder direction flipped to the as-built A/B landing (clockwise was volume-down) and `vial.json` now declares the encoder. **(4)** `loudest_micro_vial.uf2` → **`agentpad13.uf2`**, `loudest_micro_default.uf2` → **`agentpad13_reference.uf2`**; `loudest_micro_calibrate.uf2`, `keymaps/calibrate/` and `sim/calibrate.cjs` **deleted**. `firmware/BRING-UP.md` rewritten — the copy in this bundle had been instructing a flash of the now-nonexistent calibrate UF2. **Board, fabpack, plate and case untouched.** | `firmware/prebuilt/agentpad13.uf2` `a7b8da85…` (109568 B) + `agentpad13_reference.uf2` `4caac0bc…` (93696 B); `firmware/sim/behavior.cjs` **33/33** on both builds with the encoder A/B failing **0/2/4/6** across the four arms; `firmware/sim/joystick.cjs` **62/62** with **both** counterfactuals failing **6**, incl. §10b asserting the SW14 and 0x51 EEPROM images are byte-identical (**8-byte** divergence when forced to disagree); protocol conformance **410/410** against `daemon/loudestd/protocol.py`; `check_pins_v4.py` **30/30** and **56/56**; daemon suite **219**; emulator smokes PASS; `qmk lint --strict` pass; EEPROM persistence proven by emulated power-cycle (required teaching rp2040js to write flash at all) |
 | **M** | **Underglow bottom pair rotated 180° — 4 of 10 underglow LEDs were firing OUT of the case (v5_7, 2026-08-19, board-only)**: this bundle previously shipped `v5_6`, in which `LED20` and `LED21` emitted away from the diffuser instead of into it. **Root cause, re-derived from the board rather than inherited:** `gen/build_pcb.py:82` declares `UGLOW_ROT = [180,180,90,90,90,0,0,270,270,270]` — a coherent all-inward set **in the un-flipped frame** — and `:252-254` applies the rotation and *only then* flips the part to B.Cu. `FOOTPRINT::Flip()` mirrors local geometry in Y **and negates the orientation**, so emission goes `(−sinθ,−cosθ) → (−sinθ,+cosθ)`: the parts aimed along **±Y reverse** while the parts aimed along **±X survive**. That is why exactly the top and bottom pairs were wrong and the left/right rails were right — 6 inward / 4 outward. **Fix:** `LED20` and `LED21` `rot 0 → 180`, x/y/side unchanged; 126/126 footprints compared against v5_6 show **only those two differing and only in `rot`**, and 414/414 pads carry **0 net changes**. **`LED15`/`LED16` are deliberately left outward** on the owner's pre-authorised reduced scope (*"that side looks kinda cool with the hotspot near the USB, just rotate the bottom ones"*) — the emission gate's target is therefore **8 inward, not 10**. **4 signal vias were added, declared BEFORE any copper moved and coordinator-approved as a registered prediction violation:** a between-pad escape is topologically impossible (pitch 0.85 − pad 0.42 = **0.430 mm** available against **0.456 mm** needed for a 0.152 trace with 0.152 clearance both sides — a **0.026 mm** deficit), and with +5V now landing on the middle pad both data nets must detour south where their spans strictly interleave, forcing a crossing in either lane order ⇒ one layer hop per LED. The via-free alternative was **measured and rejected**: it stretches `C45→LED20.2` from **1.16 mm to ≈8 mm**, trading a data-line via against a decoupling path. **`v5_6` remains the fabricated and populated revision** — v5_7 is the public-release / future-spin fix, not a rescue of hardware in hand. **Firmware, plate and case untouched.** | `hardware/pcb/v5_7.kicad_pcb` `08cf68da…`; `grade_board.py --no-ring` **PASS all gates** (DRC 0, unconnected 0, contract **45/45 refs ok**, bbox 84.200 × 100.000, +5V spine 183 segs min 0.5000, USB pair clean, TP5 pour 177.0 mm²) re-run on the packaged copy; **new** `render_orientation.py` emission gate **INWARD 8 / OUTWARD 2, GATE PASS** (v5_6 scores 6/4) — the standard pad/copper plot is *structurally incapable* of catching this class, since a 180° rotation of this part moves the four pad x-positions by **0.004952 mm**; `verify_fabpack.py fabpack_out_v5_7` **31/31 PASS**, ratsnest 0, drill census 285 → **289** (vias 182 → **186** = exactly the 4 authorized vias, NPTH unchanged at 48); translucent CPL differs in **exactly 2 of 110 rows** (`LED20`/`LED21` `Rot 0.000000 → 180.000000`), opaque CPL and both BOMs and the afterlist **byte-identical**; `contract_v4.json` LED20/LED21 adjudicated with the owner's directive quoted verbatim |
-| **N** | **Plate encoder opening widened +1.000 mm, ALL of it to the right (v2.12, 2026-08-19, plate-only)**: the assembled plate's encoder aperture was **13.000 × 13.000 R1.5** centred on the shaft (13.525, 12.5); the owner's encoders measure **~13.7 mm** across the pin axis and the part fouled the aperture's right-hand wall (*"left side of hole is perfect, right side needs more space"*). Now **14.000 × 13.000 R1.5 @ (14.025, 12.500)** — LEFT edge FROZEN at x 7.025, right edge to x 21.025, y 6.000..19.000 unmoved (*"don't widen the hole symmetrically, widen to fit the parts"* / *"just expand the width to the right by 1mm"*). R stays 1.5 deliberately: a larger corner radius eats the very body-corner clearance the measured part needs. **Cost, since SUPERSEDED:** the two +x corners reach **9.310** from the shaft, so the then-shipped Ø18 knob (r 9.000) left a **0.310 mm sliver** at each. **OBSOLETE as of the v2 topper family (row F):** every v2 knob is Ø19.0 and hides the opening by **+0.190**; the Ø18 default now ships only as a REJECTED negative control in `encoder_knob_v2.py`. `ENC_BODY_SQ` stays **11.7** — the ~13.7 measurement has no resolved datum (a shaft-centred 13.7 contradicts the owner's own left-perfect/right-binding fit), so the OPENING was sized from the measured fit, not from a guessed body. This regeneration also ships the §20 **`WayWayWay` B.SilkS token for the first time**, discharging §20.4. Shipped alongside: the bundle's `validate_fab_v5.py` (which still asserted the **pre-trim 84.40 × 100.20** outline and would have rejected the bundle's own gerbers) and its **pre-v2.8 tray**, both now current. **Board, fabpack, firmware and band untouched.** | `fab/agentpad13_v2_plate_{v5,tented_ring_v5,blank_v5}.kicad_pcb` + the 3 gerber zips + DXF + top PNG/SVG (new md5s in MANIFEST); `validate_fab_v5.py` **ALL GATES PASS (57 PASS / 0 FAIL)** incl. a new assert pinning the frozen left edge; **independent Edge_Cuts gerber parse** of all three variants (14.0000 × 13.0000 @ x 7.0250..21.0250, y 6.0000..19.0000, R1.5; outline 84.400 × 100.000; `WayWayWay` present on B_Silkscreen, mirrored); `outputs/case/mechanism.json` khana **101/101 status ok**, same 8 interference pairs at identical volumes; band `34be6bf7…` unchanged, tray now `8bfd7eaf…` (v2.11) |
+| **N** | **Plate encoder opening widened +1.000 mm, ALL of it to the right (v2.12, 2026-08-19, plate-only)**: the assembled plate's encoder aperture was **13.000 × 13.000 R1.5** centred on the shaft (13.525, 12.5); the owner's encoders measure **~13.7 mm** across the pin axis and the part fouled the aperture's right-hand wall (*"left side of hole is perfect, right side needs more space"*). Now **14.000 × 13.000 R1.5 @ (14.025, 12.500)** — LEFT edge FROZEN at x 7.025, right edge to x 21.025, y 6.000..19.000 unmoved (*"don't widen the hole symmetrically, widen to fit the parts"* / *"just expand the width to the right by 1mm"*). R stays 1.5 deliberately: a larger corner radius eats the very body-corner clearance the measured part needs. The corrected topper is independently a straight **Ø17.5** body with no skirt or flange, chosen to preserve a gap beside the adjacent key rather than cover this opening. `ENC_BODY_SQ` stays **11.7** — the ~13.7 measurement has no resolved datum (a shaft-centred 13.7 contradicts the owner's own left-perfect/right-binding fit), so the OPENING was sized from the measured fit, not from a guessed body. This regeneration also ships the §20 **`WayWayWay` B.SilkS token for the first time**, discharging §20.4. Shipped alongside: the bundle's `validate_fab_v5.py` (which still asserted the **pre-trim 84.40 × 100.20** outline and would have rejected the bundle's own gerbers) and its **pre-v2.8 tray**, both now current. **Board, fabpack, firmware and band untouched.** | `fab/agentpad13_v2_plate_{v5,tented_ring_v5,blank_v5}.kicad_pcb` + the 3 gerber zips + DXF + top PNG/SVG (new md5s in MANIFEST); `validate_fab_v5.py` **ALL GATES PASS (57 PASS / 0 FAIL)** incl. a new assert pinning the frozen left edge; **independent Edge_Cuts gerber parse** of all three variants (14.0000 × 13.0000 @ x 7.0250..21.0250, y 6.0000..19.0000, R1.5; outline 84.400 × 100.000; `WayWayWay` present on B_Silkscreen, mirrored); case mechanism gate current; band and tray geometry unchanged |
 | **O** | **Band plate-pocket fit corrected — the deck floated 0.8 mm (v2.13, 2026-08-19, band-only)**: the pocket was `PLATE_H + 2x0.3` with `PLATE_H` = the **pre-trim 100.2**, so a **85.0 x 100.8** pocket held an **84.4 x 100.0** plate — 0.8 mm of end-float, visible as a ~1 mm gap at one end. The 2026-07-21 trim (row I) had been applied only inside the plate generator because the band was frozen then, leaving the model plate and the shipped plate permanently disagreed. `PLATE_LONG_TRIM` moved into the case model, `PLATE_H` is now the shipped **100.0**, and the generator consumes it. Pocket -> **84.6 x 100.2 R5.5**, a uniform **0.1 mm/side** on both axes and the corner R (arcs exactly concentric, so 0.1 on flats AND corners); float **0.2/0.2**. A second "loose" variant was planned and then dropped — owner: *"I'm kind of inclined to make this the only version actually. Since even on crappy printers, someone can sand."* One band ships. 0.1/side is genuinely tight and may need a light sand at worst-case fab+print stack; that is the deliberate, correctable direction. All three wall variants re-cut in place. **The 2026-07 ordered band is the old loose pocket, usable, not recalled. Plate fab set, board, fabpack, firmware and tray untouched.** | band md5s `60c74d75…` (w5.4) / `ed313f69…` (w3.0) / `4f3bf6f2…` (w7.4); **plate fab UUID-blind dry render = ZERO geometric delta** on all three variants (nothing overwritten); **scratch-only byte-identity proof**: the band rebuilt with the pocket forced to the legacy geometry hashes `34be6bf79a6bb81995807448639f4822`, byte-identical to the ordered band, proving the refactor is geometry-neutral; khana **101/101 status ok**, same 8 interference pairs at identical volumes; band printability advisory **unchanged** (min_wall 0.7333333333333292, overhang 896.53 mm^2); band volume +142.65 mm^3, matching the closed-form pocket-shrink prediction exactly; tray `8bfd7eaf…` byte-identical |
 | **P** | **Tray bases published + every foot recess deleted (v2.15, 2026-08-20, bases only)**: the insertable-base family ships for the FIRST time — `pedestal` (Ø70 x 20 circular, ballast required), `mat` (91.6 x 107.4 TPU sheet) and `wedge` (same outline, 6.5 deg back-raised), each on a 4-rung peg fit ladder, plus a fit gauge and the `INTERFACE.md` spec. Owner scope: *"I see the official offering as tray only or tray + insertable bases."* **Feet deleted** (*"NO, there are no more recesses!"*): all Ø8.3 bumpon pockets gone, undersides FLAT, no part number prescribed, every stance figure EXCLUDES feet — mat overhang -> ZERO, wedge 245.87 -> 30.25 mm² (its arrow deboss alone), and the larger support polygons take the wedge to 16/16 non-tipping load cases. **x-symmetry is now a DESIGN LAW** asserted exactly per variant per build (*"if they're not, they're designed wrong"*); it immediately caught the off-centre BOOT/RESET service window, now cut as a symmetric PAIR. **Bases mirrored at export** like the tray (free: this pass rebuilt them all). Rebuilt against the v2.11 tray, which exposed `BASE_T = C.TRAY_T` — the plinth had silently made the mat 4.4 mm / +83 % mass; decoupled to a literal 2.4. **Band, tray, plate, board and firmware untouched.** | 24 new MANIFEST rows (13 STL + INTERFACE.md + params + render + 3 printability + 3 mechanism + 2 sources); per-variant khana **ok, 3/3 assertions**, pegs asserted INTO the pocket witness against the CURRENT tray; peg-in-pocket proven at coordinate level in the EXPORTED frame (all four pegs CONTAINED, 0.000000 mm³ outside); wedge tilt verified thin 2.80 mm at the exported user edge / thick 14.35 mm at the USB edge; x-symmetry exact (0.000000 mm³) on all three variants with a negative control proving the assert fires; pedestal ballast floor 85 -> **69 g** and worst margin 1.161 -> **1.217** (the heavier plinthed tray helps); frozen hashes re-verified — tray `8bfd7eaf…`, bands `ed313f69…`/`60c74d75…`/`4f3bf6f2…` |
 | **Q** | **Base catalog finalised: riser / wedge / pedestal (v2.16, 2026-08-20, bases only)**: the v2.15 demonstration family becomes a product line. **`riser`** (NEW, replaces the retired `mat`) is the 91.6 x 107.4 plan at a **3.0 mm** body, printed in TPU for grip or PETG for a rigid stand. **`wedge`** goes **6.5 deg -> 8.0 deg** — the owner asked what a real keyboard pitch is rather than accepting a guess; mainstream standard 7 deg, comfort band 4-8, high-profile customs 6-8, so 8.0 (top of band, because this deck is a 13-key pad not a full board); far edge derives to 17.49 mm. **`pedestal`** is rebuilt exactly as the owner described it — the wedge INTERSECT a O78 vertical cylinder — inheriting angle, mating plane and pegs by construction, with **no ballast, no cavity and no service window**. **O78 is forced, not styled:** the largest circle meeting the old 2 mm slot-margin rule is O74.36 and reaches only SM 1.45 against the 1.50 design bar, so keep-out and stability were mutually exclusive; the keep-out is re-derived against the tray's REAL radiused slot geometry (0.518 mm clear, not the 0.182 mm the bbox corner implies) with a 0.40 mm print-tolerance floor and a hard never-reach-a-slot assert. **The pedestal must be printed SOLID** — solid 59.1 g gives abuse SM 1.03; a 3-wall/20% gyroid print is 36.6 g and SM 0.93, clearing the 3 N design case but not 5 N abuse. **Band, tray, plate, board and firmware untouched.** | MANIFEST: 6 mat rows REMOVED, 6 riser rows ADDED, 18 rehashed (net 154 rows, -375017 bytes); per-variant khana **ok 3/3** each with pegs asserted INTO the pocket witness against the current tray; x-symmetry design law **exact (0.000000 mm^3)** on all three, the pedestal symmetric by construction; mirror-at-export retained with all four pegs of all three variants proven CONTAINED in the mirrored tray's pockets (0.000000 mm^3 outside) and both tilted variants verified thick at the exported USB edge (wedge 3.03 -> 17.00 mm, pedestal 5.10 -> 14.94 mm); riser/wedge cannot tip in 16/16 load cases; main khana untouched 101/101/8; tray `8bfd7eaf...` and all three band STLs byte-identical |
+| **R** | **v5.8 public release (2026-08-24):** TP5's stock top pad/mask opening grows **Ø1.5 → Ø4.0** for an optional user-soldered spring or wire contact; RE1 stays geometrically and electrically unchanged but moves into both factory CPL/BOM sets; the afterlist drops RE1 and adds optional `TP5_CONTACT`. Separately, the tray adopts standard Voron-style **M3×4×5** inserts with four **Ø4.7** blind cavities. No PCB track, via, zone, outline, net, screw path, boss centre, exterior case dimension, or other mating interface changes. The configurator and order guide remove the obsolete conductive-foam and self-buy-encoder instructions. | Board harness PASS (DRC 0, unconnected 0, contract 45/45); orientation 8 inward / 2 outward; fabpack **37/37**; case **104/104**; coupon check PASS; board-vs-v5.7 proof = TP5-only footprint delta with 1311/1311 tracks/vias and 3/3 zones identical; selected tray STL/STEP valid and development-to-release copies exact. PCB and tray still await their own physical first articles. |
 
 ---
 
 ## (b) Verbatim gate records
 
-**1. Board harness — `grade_board.py hardware/pcb/v5_7.kicad_pcb` (no-ring; RE-RUN 2026-08-19 on the packaged v5_7 board):**
+**1. Board harness — `grade_board.py hardware/pcb/v5_8.kicad_pcb --no-ring` (re-run 2026-08-24):**
 
 ```
   [PASS] DRC errors   : 0  
@@ -476,7 +484,7 @@ RESULT: PASS (all gates green)
 `+5V spine 184 → 183 segs` (3 segments ripped, 2 added at the rotated LEDs) — the
 gate is min-width, not segment count.
 
-**1b. Emission orientation — `render_orientation.py hardware/pcb/v5_7.kicad_pcb --expect-inward 8` (NEW gate, 2026-08-19, run on the packaged board):**
+**1b. Emission orientation — `render_orientation.py hardware/pcb/v5_8.kicad_pcb --expect-inward 8` (re-run 2026-08-24):**
 
 ```
   centre (42.100, 50.000)  ->  INWARD 8 / OUTWARD 2
@@ -490,11 +498,11 @@ cross_check (coordinator adjudicates)` — the adjudicated JS1/J1/RE1 refs pass
 **45/45**; the WARN only flags that the geometry adjudication is provisional
 pending the coordinator's cross_check (owner-directed changes, per protocol).
 
-**2. Case khana — `khana build agentpad13_case_v2.py` (v2.7, `WALL = 5.4` DEFAULT; RE-RUN this session):**
+**2. Case khana — `khana check agentpad13_case_v2.py` (re-run 2026-08-24):**
 
 ```
-mechanism.json: status=ok, 101 assertions, 101 passed, 0 failed
-interferences : 8 (the documented set, unchanged)
+mechanism.json: status=ok, 104 assertions, 104 passed, 0 failed
+interferences : 11 (the documented model set)
 [corner] band_crescent_wall = 4.400   (class = flat)
 [corner] head_to_plate_edge = 0.287 ; plate_hole_edge_web = 1.537  (PLATE
          measures — WALL-INVARIANT; see the CASE-V2-NOTES §18.4 erratum)
@@ -507,15 +515,14 @@ interferences : 8 (the documented set, unchanged)
 [v2.5-JS-KEYCAP] js_sweep x keycaps overlap = 0.00 mm^3 ;
                  taper wall -> SW4 keycap edge (22.7) clearance = +0.293 mm
 ```
-Interferences dropped 9 → 8 at v2.5 (the v2.4 dome `js_sweep×keycaps` 40.78 mm³
-SW4 graze is **GONE** with the taper default) and have stayed at 8 through every
-band rev. **All three walls {3.0, 5.4, 7.4} are gated at 101/101 with the same 8
-interferences** (variants build via `AGENTPAD13_WALL=… khana build`). Frozen
-artifacts held: tray_v5 STL md5 `d7d16481df24bae4c7769d7624dfc620` **UNCHANGED**,
-and the plate + tray solids are md5-identical at every wall. The band's own
-md5-invariance gate (`36980cc2…`) was **RETIRED by owner order** at v2.6 — that
-hash is now the identity of the **superseded 2.4-wall band, which must not be
-printed** and is no longer carried in this bundle.
+The insert revision changes only four tray cavities, Ø4.2 → Ø4.7 mm. The tray
+STL remains one valid watertight solid with the same exterior bounding box;
+its measured volume loss agrees with the four-cylinder prediction within mesh
+tessellation error. The selected STL is `6d18c6e62eef4e63b6576d635829a1a3`.
+The STEP source imports as one valid solid at 38594.881521 mm³ and matches the
+selected development artifact in volume, bounding box, face count, and topology.
+The limiting calculated wall at the notched boss is 1.4012 mm. This still needs
+a first-article heat-set test in the builder's PETG and printer.
 
 **Band wall = a documented parameter.** `WALL` is the one owner-tunable sidewall
 number; `INNER_R` is FROZEN at 5.6 so it cannot move any mating interface.
@@ -525,12 +532,12 @@ me"*). Proven, not asserted: the v2.7 source re-exports the 2.4 and 3.0 bands
 byte-for-byte, `vol(band_2.4 − band_5.4) = 0`, and
 `vol((band_5.4 − band_2.4) ∩ mating envelope) = 0`. See CASE-V2-NOTES §18.
 
-**3. Fabpack — `verify_fabpack.py fabpack_out_v5_7` (RE-RUN 2026-08-19 on the packaged v5_7 fabpack):**
+**3. Fabpack — `verify_fabpack.py fabpack_out_v5_8` (re-run 2026-08-24):**
 
 ```
-RESULT: 31/31 checks PASS
+RESULT: 37/37 checks PASS
 ```
-Includes (all PASS): CPL opaque/translucent row counts 90/110; CPL J1 ==
+Includes (all PASS): CPL opaque/translucent row counts 91/111; CPL J1 ==
 `42.100000,-3.050000,0.000000,bottom` both SKUs; CPL JS1 ==
 `69.710000,-13.370000,180.000000,top` both SKUs; BOM DNP 23/3; BOM JS1 line
 LCSC C37323742 / YA13 MPN both SKUs; no Adafruit-3103 / 6193574 / live PSP-slider;
@@ -549,11 +556,11 @@ CPL artifacts, which did not change.
 | Item | State | Action before it bites |
 |---|---|---|
 | **JS_POT_HALF = 4.5** | PROVISIONAL — a conservative pot-box/edge-tab half-width envelope, not a metered dimension (CASE-V2-NOTES §15). Does not gate the build. | Refine from the YA13 mechanical drawing **before the resin band order**. |
-| **Cap socket depth 4.0** | DESIGN CHOICE — the blade-engagement depth is assumed 4.0 mm (drawing gives the tip + cross-section, not the run length). | Covered by the **3-rung fit ladder**; if the physical blade is shorter, drop socket depth (cap top is referenced off the tip, unaffected). |
-| **EC11 shaft grip window** | The knob prints in a 3-bore ladder (Ø5.9 tight / 6.0 nom / 6.1 loose) for the EC11 D-shaft. Top **+27.0** is sized to the published Alps EC11E-Switch-Vertical **H20** drawing (tip +24.5 + 1.0 headroom + 1.5 roof), so the board's own shaft seats **UNCUT** with 10.00 mm of D-bore on the flat. | Confirm the grip/press fit **at knob print** (start at nom, size up/down). A Bourns **PEC11R-40/42-20F (L20)** shaft is longer and **rides proud** — cut it or use the L15. |
-| **Insert-wall 1.65 mm** | `notch_insert_wall[3.7,3.7] = 1.651` at the notched corner boss (printed this build). | First-article print check of the M3 heat-set insert wall. |
+| **Cap socket depth 4.0** | DESIGN CHOICE — the blade-engagement depth is assumed 4.0 mm (drawing gives the tip + cross-section, not the run length). | The current three joystick toppers use one `cell2` socket, 2.00 × 1.25 × 4.00 mm. Fit remains printer/material-sensitive, especially in TPU; verify the first print rather than selecting from the retired LOW/HIGH ladder. |
+| **EC11 shaft grip window** | The knob prints in two bounded D-bore sizes: nominal `clearance_low` Ø6.0 / 4.5 across-flat and FDM-compensation `clearance_high` Ø6.3 / 4.8 (0.15 mm maximum clearance). Top **+27.0** is sized to the published Alps EC11E-Switch-Vertical **H20** drawing (tip +24.5 + 1.0 headroom + 1.5 roof), so the board's own shaft seats **UNCUT**. | Start with `clearance_low`; use `clearance_high` if the printed bore closes. A Bourns **PEC11R-40/42-20F (L20)** shaft is longer and **rides proud** — cut it or use the L15. |
+| **Insert-wall 1.40 mm** | `notch_insert_wall[3.7,3.7] = 1.401` at the notched corner boss after adopting the Ø4.7 cavity for a Voron-style M3×4×5 insert. This revision has passed the CAD gate but has not yet been physically qualified. | First-article print and insertion check of the M3 heat-set insert wall. |
 | **Touch-foam (TP5) coupon** | Pre-existing open item (CASE-V2-NOTES §5/§8): conductive-foam pad + electrode construction pending the touch coupon. | Owner decision on the touch coupon (carried from Rev A). |
-| **Puck needs its stop** | RETIRES the v1 dome-cap caveat (the dome/dish/knurl caps that grazed SW4 are gone). On the v2 puck, first SW4 contact is at **23.90°** and at a full 30° the clearance would be **−1.026 mm**, so its restrictor is **MANDATORY** — the integral 22.5° cone land IS it. The **nub** needs no restrictor and is safe at the full 30° throw. | Ships as **one** seat rung (`s10p5`), the only one whose stop stays ≤22.5° across the whole 11 ±0.5 seat band. Confirm the seated stop angle at first article. |
+| **Joystick-topper clearance** | The nub and restored puck preserve the joystick's full **30°** travel. The Ø12 topper is paired with a separate restrictor cap and was verified at **15.354–15.487°** contact, with 0.431 mm minimum adjacent-key clearance. | Confirm seating and throw on the first print. The restrictor is digitally verified but TPU/printer retention remains process-sensitive. |
 
 ---
 
@@ -569,18 +576,16 @@ CASE-V2-NOTES §6.
 
 ---
 
-## (e) PCBWay order set — upload list for when the hold lifts
-
-> ⛔ **ORDER HOLD STANDS.** Do not upload/order/pay. The list below is the
-> *staged* set for when the owner lifts the hold; it is not authorization.
+## (e) PCBWay order set
 
 **Board (PCBWay, both SKUs):**
-- `hardware/pcb/fabpack_out_v5_7/gerbers_v5_7.zip`
-- `hardware/pcb/fabpack_out_v5_7/assembly/cpl_opaque.csv` **and** `cpl_translucent.csv`
-- `hardware/pcb/fabpack_out_v5_7/assembly/bom_opaque.csv` **and** `bom_translucent.csv`
-  (the v5_7 BOM carries the JS1 `C37323742` line — unlike the v5_5 set, both
+- `hardware/pcb/fabpack_out_v5_8/gerbers_v5_8.zip`
+- `hardware/pcb/fabpack_out_v5_8/assembly/cpl_opaque.csv` **and** `cpl_translucent.csv`
+- `hardware/pcb/fabpack_out_v5_8/assembly/bom_opaque.csv` **and** `bom_translucent.csv`
+  (the v5.8 BOM carries both JS1 `C37323742` and factory-placed RE1 `C143790`; both
   CPL **and** both BOM must go up.)
-- Hand-solder afterlist: RE1 only (`hand_solder_afterlist.csv`).
+- The afterlist contains optional assembly opt-outs and the optional user-soldered
+  `TP5_CONTACT`; RE1 is factory-placed.
 
 **Plate (FR4 fab):**
 - `hardware/case/v2/fab/plate_v5_gerbers.zip` (choose the variant: plain /
@@ -648,16 +653,12 @@ CASE-V2-NOTES §6.
 ## (f) The topper family (v2)
 
 **If you printed the v1 toppers, reprint them — all of them.** Every v1 part is
-retired and none of it ships here any more. Two of the
+retired to `archive/toppers-v1/` and none of it ships here any more. Two of the
 changes are fit corrections, not taste:
 
-- **The Ø18 knob never covered the plate opening.** The v2.12 plate widened the
-  encoder aperture to the right, putting the far corners **9.310 mm** from the
-  shaft, and an Ø18 knob (r 9.000) left a **0.310 mm sliver** showing at each of
-  the two +x corners. That was accepted at the time as a measured-fit-beats-
-  concealment trade. **It is now obsolete:** every v2 knob is **Ø19.0** and
-  hides the opening by **+0.190**. The old Ø18 default is kept in
-  `encoder_knob_v2.py` only as a **negative control the gate rejects**.
+- **The knob is a straight Ø17.5 body.** It has no skirt or flange and does not
+  attempt to cover the encoder opening. At the 19.2 mm center pitch beside a
+  17.5 mm keycap, it leaves a **1.7 mm horizontal gap**.
 - **The v1 knob was too short for the shaft on your board.** v2 tops out at
   **+27.0**, derived from the published Alps **EC11E-Switch-Vertical H20**
   drawing: shaft tip **+24.5**, plus 1.0 mm headroom, plus a 1.5 mm roof. The
@@ -665,9 +666,8 @@ changes are fit corrections, not taste:
   D-bore gripping the flat (house floor is 6.0). The knob stays **plain below
   keycap height** so it reads as part of the deck, not a tower.
 
-**Three knobs, one size.** All **Ø19.0**, all +8.0..+27.0, all with the same
-bore stack (Ø9.0 counterbore → Ø6.2 journal → D-bore); they differ only in
-surface:
+**Three knobs, one envelope.** All use the same straight Ø17.5 body,
++8.0..+27.0 height and D-bore; they differ only in surface:
 
 | Knob | Surface | Print orientation |
 |---|---|---|
@@ -675,50 +675,48 @@ surface:
 | **B2** `B2_scoop` | Smooth barrel with a deep dished top: rim down at **+18.2** (level with the knurl line), 1.447 mm of concavity | **bottom-down** |
 | **C** `C_cross_hatch` | 17 grooves/family at 45°, crossed — ~71 diamonds of 2.66 × 2.66 | **top-face-down** |
 
-**Fit ladder (knobs):** 3 bores — **Ø5.9 `tight` / Ø6.0 `nom` / Ø6.1 `loose`**
-on the EC11 D-shaft. **Print `nom` first**, then size up or down by one rung if
-it binds or spins. 9 STLs = 3 knobs × 3 bores.
+**Clearance pair (knobs):** `clearance_low` is the conventional nominal push-on
+D-shaft size, **Ø6.0 / 4.5 mm across-flat**; `clearance_high` is **Ø6.3 / 4.8 mm**
+(0.15 mm radial and flat clearance, the owner-set maximum). The rejected Ø6.6 / 5.1 mm high fit was
+physically far too loose. Start with low and move to high only if the internal
+D-bore prints closed. 6 STLs = 3 knobs × 2
+clearances.
 
 **A Bourns caveat:** a **PEC11R-42xxF (L15)** shaft seats with room to spare; a
 **PEC11R-40/42-20F (L20)** is longer than the Alps and **rides proud** — shorten
 it or use the L15.
 
-**Two stick toppers, not four caps.** The v1 taper/dome/dish/knurl caps are
-gone, replaced by two parts that do different jobs:
+**Three current stick toppers, one socket.** The four old nub/puck LOW/HIGH
+files are gone. These three parts all use the same 2.00 × 1.25 × 4.00 mm
+`cell2` rectangular socket:
 
-- **The Ø6.19 dot nub** (`stick_nub_v2_C2`) — a low seven-dot button. It needs
+- **The Ø6.189 dot nub** (`stick_nub_v2_C2`) — a low seven-dot button. It needs
   **no restrictor** and is clear of the SW4 keycap at the **full 30° throw**
-  (+0.2500 mm at the governing point, which is the chamfered rim, not the top).
-  **Fit ladder:** 3 socket rungs — **1.85 × 1.15 `nom` / `p05` +0.05 / `p10`
-  +0.10**. Start at `nom`. Prints **bottom-down**.
-- **The one-piece TPU puck** (`stick_puck_v2_TPU`) — Ø9.412, a cupped top with
-  four raised X-dashes for the thumb, and an **integral 22.5° cone-land stop**.
-  The stop is **mandatory, not decorative**: first SW4 contact is at **23.90°**,
-  and at a full 30° the clearance would be **−1.026 mm**. The cone land is the
-  restrictor, so the part that protects the keycap cannot be lost or forgotten.
-  **Print it in TPU ~95A** — stiff enough that the socket holds its shape, soft
-  enough that the land yields progressively, which is what makes a 22.5° throw
-  feel acceptable. **Fit ladder:** 2 socket rungs — **`nom` 1.85 × 1.15 ships**,
-  **`m05` 1.80 × 1.10** is the tight spare (TPU absorbs the interference).
-  Prints **top-face-down**; the rim land and the four dash tops are the first
-  layer, so it needs no support.
+  (+0.2508 mm at the governing point, which is the chamfered rim, not the top).
+  It is solid except for its rectangular shaft socket and prints
+  **bottom-down**.
+- **The restored one-piece TPU puck** (`stick_puck_v2_TPU`) — a round
+  **Ø9.412 mm**
+  cupped thumb surface with four raised X-dashes. It is also solid except for the rectangular shaft
+  socket. There is no cone land, hollow cylinder or restrictor: it preserves
+  the joystick's **full 30° throw** and its outer profile is sized against SW4
+  at that angle. **Print it in TPU ~95A.**
+- **The conventional Ø12 restricted topper** (`stick_topper_v2_restricted_12mm_cell2.stl`) —
+  use it with `ya13_restrictor_cap_TPU_print_roof_down.stl`. The separate cap's
+  continuous wall and four narrow U-notches limit the joystick to
+  **15.354–15.487°**, leaving **0.431 mm** minimum clearance to the adjacent
+  17.5 mm key. The topper itself contains no restrictor.
 
-**Only one seat rung ships** for the puck (`s10p5`). Across the joystick's
-11 ±0.5 mm seat-height band it is the **only** rung whose stop stays ≤22.5° at
-every height — i.e. the only one geometrically incapable of letting the puck
-reach SW4. Sensitivity is **−14.15°/mm**, so a nominal-seat rung would
-over-travel to 27.18° at worst case; the gate ships that as a rejected negative
-control.
+**One current socket:** all three ship at **2.00 × 1.25 × 4.00 mm**. This
+replaces the obsolete 2.10 × 1.30 LOW and 2.30 × 1.50 HIGH files. Small
+internal TPU features are printer-sensitive; confirm that the first print
+seats without rotation. The restrictor is also TPU/process-sensitive and its
+self-retention must be checked on the physical switch.
 
-**Provenance.** Both generators are gated and both transcripts ship verbatim:
-`outputs/encoder_knob_v2_gate.txt` and `outputs/stick_topper_v2_gate.txt`, each
-ending **GATE RUN CLEAN — every gate passed and every negative control rejected
-its bad input**. Handedness is **measured from the exported STL bytes**, not
-assumed: the knurl's hand is read by phase-clustering groove vertices, and the
-nub and puck are proven to own their mirror plane (0.000000 mm³). The case model
-consumes `params/{encoder_knob_v2,stick_topper_v2}_params.json` — see
-`outputs/case/mechanism.json` (status ok, **104/104 assertions, 10 documented
-interferences**).
+**Provenance.** The six encoder outputs retain their existing generator gates.
+The four joystick files are byte-for-byte copies of the approved development
+outputs; their byte identities are recorded in `MANIFEST.md`. The public
+release is consumption-only and does not regenerate these files.
 
 **A note on the STL sizes:** these files were re-exported 2026-08-21 at the
 house topper deflection (5e-3 mm / 0.2 rad) after the first cut shipped at a

@@ -4,7 +4,7 @@
 Asserts every pin in the firmware configuration against the definitive Rev A
 per-GPIO table embedded below. The table was extracted twice from the final
 board (netlist + pcbnew copper, identical on all 57 U1 pads), re-verified 20/20
-against v5_6, and remains unchanged on the current public v5_7 board.
+against v5_6, and remains unchanged on the current public v5_8 board.
 
 Checks, in order:
   1. keyboard.json matrix_pins.direct == the table, per logical key position.
@@ -68,7 +68,7 @@ TABLE = {
 # [3,2] = touch (NOT a scanned matrix pin - see below), [3,3] unused.
 #
 # [3,2] is None ON PURPOSE (2026-08-13). The board straps the TTP223 ACTIVE-HIGH
-# (R10 0R: TOUCH_AHLB -> GND on v5_6.kicad_pcb), the opposite sense of the 13
+# (R10 0R: TOUCH_AHLB -> GND on the current v5_8 board), the opposite sense of the 13
 # switch-to-GND keys, and QMK's MATRIX_INPUT_PRESSED_STATE is global. So GP16 is
 # removed from matrix_pins.direct and polled with its own sense in
 # loudest_micro.c, which injects the key event at logical [3,2]. The check that
@@ -200,7 +200,7 @@ def main():
     args = ap.parse_args()
 
     print("agentpad13 Rev A pin-map check "
-          "(embedded definitive table; current public board v5_7)")
+          "(embedded definitive table; current public board v5_8)")
 
     kb_json = json.loads((KEYBOARD_DIR / "keyboard.json").read_text())
     assert_pin_config(kb_json, "keyboard.json")

@@ -1,4 +1,4 @@
-"""agentpad13 v5 toppers — SHARED FRAME (v2 family).
+"""work-loudest v5 toppers — SHARED FRAME (v2 family).
 
 The single source of cited facts, the collision law, the profile helpers and
 the gate primitives used by BOTH v2 topper scripts:
@@ -8,8 +8,8 @@ the gate primitives used by BOTH v2 topper scripts:
 
 Run either with the khana python (has build123d):
 
-    cad-khana-python encoder_knob_v2.py
-    cad-khana-python stick_topper_v2.py
+    /Users/yuanz/.local/share/uv/tools/cad-khana/bin/python encoder_knob_v2.py
+    /Users/yuanz/.local/share/uv/tools/cad-khana/bin/python stick_topper_v2.py
 
 This module has a __main__ of its own that runs the frame-level gates (the
 collision law, the keycap chain cross-check and their negative controls) and
@@ -100,7 +100,6 @@ PIVOT_Z = 6.1                   # [YA13 front elev, dim "6.1"]
 FRAME_TOP_Z = 11.0              # [YA13 front elev, dim "11"]
 FRAME_TOP_TOL = 0.5             # [YA13 tol block: 10..100 -> +/-0.5]
 BLADE_TIP_Z = 18.4              # [YA13 front elev, dim "18.4"]
-BLADE_X, BLADE_Y = 1.85, 1.15   # [YA13 section A-A]
 TILT_FULL = 30.0                # [YA13 "60 deg" mechanical fan / 2]
 TILT_RESTRICTED = 22.5          # pot electrical half-angle 45/2 [YA13 spec 1.1]
 JS_FRAME_HALF = 6.5             # [CASE:662] 13x13 frame half-extent
@@ -294,14 +293,6 @@ def capsule(length, width, h):
     return (Box(length, width, h)
             + Pos(length / 2, 0, 0) * Cylinder(width / 2, h)
             + Pos(-length / 2, 0, 0) * Cylinder(width / 2, h))
-
-
-def blade_socket(add):
-    """The SHIPPED blade socket, unchanged: blind rectangle, mouth +14.4,
-    roof +18.4  [TOPPER stick_cap.py:297-303]."""
-    z0 = SOCKET_MOUTH_Z - 1.0
-    return Pos(0, 0, (z0 + SOCKET_ROOF_Z) / 2.0) * Box(
-        BLADE_X + add, BLADE_Y + add, SOCKET_ROOF_Z - z0)
 
 
 def rung_name(add):

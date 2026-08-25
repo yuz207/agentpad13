@@ -3,14 +3,14 @@
 > **Historical ledger.** This file preserves the v4/v5_6 verification record,
 > including names of private working-tree ledgers that were not published. For
 > the current public state use `firmware/BUILD.md`, the definitive table in
-> `firmware/check_pins_v4.py`, the v5_7 board at
-> `hardware/pcb/agentpad13/agentpad13.kicad_pcb`, and the self-contained host
+> `firmware/check_pins_v4.py`, the v5_8 board at
+> `release/hardware/pcb/v5_8.kicad_pcb`, and the self-contained host
 > oracle at `firmware/tests/conformance/protocol_oracle.py`.
 
 Ledger for the firmware wave that brought `firmware/` from the pre-v4 scaffold
 pin map to the shipped Rev A board. Every change below cites its authority.
-Pin authority throughout: **`hardware/pcb/v4/ORDER-READINESS.md` Layer 4** —
-the definitive 30-GPIO table for `hardware/pcb/v4/v4_r27.kicad_pcb`, extracted
+Pin authority throughout: the unpublished v4 `ORDER-READINESS.md` Layer 4 —
+the definitive 30-GPIO table for the historical `v4_r27.kicad_pcb`, extracted
 twice from the final board (netlist + pcbnew copper read, identical on all 57
 U1 pads).
 
@@ -83,13 +83,13 @@ affects RGB animation geometry only, not the protocol's chain indexing).
 > on 23 of the 24 entries (LED13 is the bbox center and was already 112). The
 > LED cloud now spans x 88–136, y 3–62. Still cosmetic: chain indexing, and
 > therefore the protocol, is untouched. Re-run the generator against
-> `v5/hardware/pcb/v5_6.kicad_pcb`, not `v4_r27.kicad_pcb`.
+> the released v5 board, not the historical `v4_r27.kicad_pcb`.
 
 ### Other keyboard.json changes
 
 * `usb.device_version` 0.0.1 → **1.0.0** (Rev A production build). VID/PID
   unchanged (`0xFEED`/`0x4C4D` — locked with `daemon/loudestd/protocol.py`).
-* Provenance comments now cite `hardware/pcb/v4/ORDER-READINESS.md` instead of
+* Provenance comments now cite the private v4 `ORDER-READINESS.md` instead of
   a pre-v4 internal design note.
 
 ## 2. Product rebrand → agentpad13
@@ -167,7 +167,7 @@ GPIOs, and (d) that the vial-qmk tree carries the §3 patch. Output of the
 shipping run (51 checks):
 
 ```
-agentpad13 Rev A pin-map check (authority: hardware/pcb/v4/ORDER-READINESS.md Layer 4, board v4_r27)
+agentpad13 Rev A pin-map check (authority: unpublished v4 ORDER-READINESS Layer 4, board v4_r27)
 -- keyboard.json
   [ok] keyboard.json: matrix is 4 rows x 4 cols
   [ok] keyboard.json: [0,0] SW1 = GP12

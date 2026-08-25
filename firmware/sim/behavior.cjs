@@ -93,7 +93,7 @@ const touchUp = () => mcu.gpio[16].setInputValue(TOUCH_IDLE_LEVEL);
 // harness used to hard-code one answer (the seq[] order below == clockwise),
 // which was an assumption about the v5 board, not a measurement of it.
 //
-//   'board'    (DEFAULT — measured on fabricated v5_6; unchanged in v5_7)
+//   'board'    (DEFAULT — measured on fabricated v5_6; unchanged in v5_8)
 //              Measured on the owner's populated board, 2026-08-15: turning the
 //              knob clockwise on the PRE-FLIP firmware produced volume-DOWN. So
 //              on this board a physically-clockwise detent is the REVERSED walk,

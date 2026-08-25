@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // agentpad13 Rev A - keyboard-level configuration.
 //
-// THE CURRENT PUBLIC BOARD IS hardware/pcb/agentpad13/agentpad13.kicad_pcb
-// (v5_7, md5 08cf68dae979ab28aadd5e0dda34de01). The pin map was re-verified
-// 20/20 GPIO against v5_6; v5_7 changes only the rotations of underglow LEDs 20
-// and 21, with zero net or pin-map changes. The definitive table is embedded in
-// firmware/check_pins_v4.py. See hardware/pcb/README.md for the revision delta.
+// THE CURRENT PUBLIC BOARD IS release/hardware/pcb/v5_8.kicad_pcb
+// (v5_8, md5 8c32ff4a6e6d77a87c4584029d4a1c75). The pin map was re-verified
+// 20/20 GPIO against v5_6; v5_8 retains the LED20/LED21 correction from v5_7
+// and changes only the TP5 solder landing, with zero pin-map changes. The definitive table is embedded in
+// firmware/check_pins_v4.py. See release/hardware/pcb/V5-NOTES.md for the revision delta.
 #pragma once
 
 // --- Joystick (analog 2-axis tilt gimbal on ADC) ---
@@ -30,8 +30,8 @@
 // AHLB pad active-low ... idle high, touched low". That was wrong about this
 // board, and because nothing inverted the read, [3,2] scanned as permanently
 // pressed: the pad booted into layer 1, layer 0 was unreachable, and touch fired
-// on finger lift. Corroborated by hardware/pcb/SCHEMATIC-REVIEW.md:156,
-// BOM-FINAL.csv "AHLB strap (GND=active-high)", and the R10 symbol description.)
+// on finger lift. Corroborated directly by R10 on the released v5_8 board:
+// pad 1 is TOUCH_AHLB and pad 2 is GND.)
 // QMK's only direct-pin polarity knob, MATRIX_INPUT_PRESSED_STATE, is GLOBAL --
 // quantum/matrix.c applies it in readMatrixPin() to every direct pin -- so
 // setting it would invert the 13 genuinely active-low switches. GP16 is
@@ -55,7 +55,7 @@
 
 // --- SW14: two roles, and why they can never collide ---
 // SW14 is the button in the back that connects net BOOTSEL to GND, with R6 (1k)
-// tying BOOTSEL to QSPI_CS on the public v5_7 board - the stock Pico
+// tying BOOTSEL to QSPI_CS on the public v5_8 board - the stock Pico
 // topology. It does two entirely different jobs:
 //   * HELD AT POWER-UP -> the RP2040 MASK ROM samples this line before one
 //     instruction of our firmware has run, and enters the UF2 bootloader. This

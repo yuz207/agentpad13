@@ -1,8 +1,19 @@
 ==============================================================================
-JOYSTICK TOPPERS v2 — NUB C2 (seven-dot) / ONE-PIECE TPU PUCK
+JOYSTICK TOPPERS v2 — FULL 30 DEG THROW / NO RESTRICTOR
 ==============================================================================
 
-1.  THE KEYCAP CHAIN the collision gate keys off
+1.  PHYSICAL FIT — measured shaft and exactly two choices
+  measured blade 1.70 x 1.00 mm
+  previous maximum 1.95 x 1.25 mm: physically failed to fit
+  LOW  2.10 x 1.30  clearance/side 0.20 x 0.15  DEFAULT
+    [PASS] low exceeds the failed prior maximum on both axes: 2.10 > 1.95 and 1.30 > 1.25
+  HIGH 2.30 x 1.50  clearance/side 0.30 x 0.25  LOOSER
+    [PASS] high exceeds the failed prior maximum on both axes: 2.30 > 1.95 and 1.50 > 1.25
+    [PASS] fit catalog has exactly LOW and HIGH: keys ['low', 'high']; default low
+    [PASS] LOW is a materially tighter fit than HIGH on both axes: delta 0.20 x 0.20 mm
+    [PASS] even HIGH cannot rotate the shaft through 90 degrees: socket short 1.50 < shaft long 1.70; the rejected 1.80 mm short side exceeded it
+
+2.  KEYCAP AND COLLISION DATUM
   deck (plate top)          z = +5.0
   fixed top-housing face    z = +11.01
   STEM SHOULDER = cap rim   z = +11.60   <- the cap's socket mouth lands HERE
@@ -12,108 +23,67 @@ JOYSTICK TOPPERS v2 — NUB C2 (seven-dot) / ONE-PIECE TPU PUCK
   cap top, PLATEAU          z = +18.20
   the WRONG stack (cap + switch, no insertion) = +21.20, i.e. 3.60 too high = exactly N
     [PASS] keycap chain vs the repo's emitted keycap_params.json: dish 17.6 / plateau 18.2 / engagement 3.6 / seats_on 'stem shoulder'
-  every clearance below is measured against the INSERTED band z 11.6 .. 17.6
+    [PASS] adjacent keycap geometry is the 17.5 mm family: KEYCAP_W 17.5 mm; near y face 22.950
 
-2.  THE COLLISION LAW
-  y_edge = 31.7 - 17.5/2 = 22.95;  reach budget 9.580;  m = 0.25;  pivot +6.1
-    th=30.0 deg : r_max(+19.6) = 2.9791  -> straight-wall o5.9583
-    th=22.5 deg : r_max(+19.6) = 4.5068  -> straight-wall o9.0137
+3.  NUB C2 — solid except blind rectangular socket
+  OD 6.189 mm; full-throw clearance +0.2500 mm
+    [PASS] nub clears the adjacent key at full 30 degree throw: actual-solid all-azimuth worst +0.2508 mm at 90.00 deg
+    [PASS] nub deck-floor sweep at full throw: z_low 11.851 >= 5.600
+    [PASS] nub wall at HIGH clearance: 1.945 >= 1.200
 
-3.  NUB C2 — no restrictor, FULL 30 deg throw
-  o6.189  z 14.4 .. 19.6  H/D 0.84
-    governing point r=3.095 h=19.400 -> y=22.7000  z'=16.071  — the CHAMFERED RIM, not the top
-    z' 16.071 vs the inserted keycap band 11.6..17.6: INSIDE -> the gate binds  (1.529 below the dish top, 4.471 above the rim)
-    [PASS] nub C2 SW4 clearance at the FULL 30 deg: +0.2500 >= 0.25
-    [PASS] nub C2 deck-floor sweep at 30 deg: z_low 11.851 >= 5.6 -> margin +6.251
-    [PASS] nub C2 socket wall (loosest rung): 2.120 >= 1.2
-    roof over the blade tip under a dimple: 0.850 (= 19.6 - 0.35 dimple - 18.4 blade tip)
-    [PASS] NEG-CTRL nub C2 SW4 clearance: a nub 0.1 mm fatter than the bisected o6.189 -> REJECTED as required
+4.  TPU PUCK — round grip, solid bottom, full 30 degree throw
+  round diameter 6.350 mm
+  actual-solid all-azimuth full-throw worst +0.3008 mm at tilt azimuth 90.00 deg
+    [PASS] puck clears the adjacent 17.5 mm key at full 30 degree throw: +0.3008 >= 0.250; infinite near-face plane
+    [PASS] puck deck-floor sweep at full throw: z_low 11.900 >= 5.600
+    [PASS] puck bottom wall at HIGH clearance: radial corner wall 1.402 >= 1.200
+    [PASS] cup surface ordering remains monotonic after full-throw resize: pad 1.250 < ramp 1.450 <= lip foot 1.525 < rim 2.125
+    [PASS] socket roof under deepest puck cup floor: 0.800 >= 0.800
+    [PASS] raised dashes remain printable above the exterior cup: minimum proud height 0.300 >= 0.280
+  NO cone land; NO lower lip; NO cylindrical bore; NO seat-height stop
 
-4.  ONE-PIECE TPU PUCK
-  MAX OD by bisection on the REAL profile at 22.5 deg: o9.412
-    governing point r=4.660 h=19.230 -> y=22.7000 z'=16.447   clearance +0.2500
-    that point is on the TOP RIM ROLL (R0.6); a knife-edged straight wall to +19.6 would be only o9.014, so the roll buys +0.398
-    [PASS] puck SW4 clearance at the 22.5 deg stop: +0.2500 >= 0.25
-    [PASS] puck deck-floor sweep at the stop: z_low 10.500 >= 5.6 -> margin +4.900
-    first SW4 CONTACT at 23.90 deg;  at the full 30.0 deg the clearance would be -1.026
-    -> the restrictor is still MANDATORY; the cone land IS it, integral
+5.  EXACT SOLID CAVITY AUDIT
+    [PASS] nub low: only removed volume is rectangular socket: lost 10.920000 vs rectangle 10.920000 mm3; error +1.05e-13
+    [PASS] nub low: valid one-shell solid: valid True; shells outer/finished 1/1
+    [PASS] nub high: only removed volume is rectangular socket: lost 13.800000 vs rectangle 13.800000 mm3; error +1.03e-13
+    [PASS] nub high: valid one-shell solid: valid True; shells outer/finished 1/1
+    [PASS] puck low: only removed volume is rectangular socket: lost 10.920000 vs rectangle 10.920000 mm3; error +1.41e-11
+    [PASS] puck low: valid one-shell solid: valid True; shells outer/finished 1/1
+    [PASS] puck high: only removed volume is rectangular socket: lost 13.800000 vs rectangle 13.800000 mm3; error +1.42e-11
+    [PASS] puck high: valid one-shell solid: valid True; shells outer/finished 1/1
 
-  4a.  THE RAISED X-DASHES vs THE COLLISION LAW
-       The dashes are the new highest points on the top face, so the
-       governing point is RECOMPUTED with them folded into the
-       silhouette as a conservative ring of revolution.
-       dash outer extreme r = 3.250 at h = 19.6
-       r_max(19.6) = 4.5068  -> the dash is inboard by +1.2568
-       at r 3.250 the law would allow a height of +22.634, i.e. 3.034 mm of unused
-       headroom.  The governing point therefore STAYS on the rim roll
-       at r 4.660 / h 19.230, and the OD stays o9.412.
-    [PASS] the raised dashes do NOT become the governing point: governing r 4.660 > dash r 3.250 and h 19.230 is on the rim roll
-    [PASS] adding the dashes cost the envelope nothing: clearance with dashes +0.2500 vs without +0.2500
-    [PASS] NEG-CTRL puck SW4 clearance: a puck 0.1 mm fatter than the bisected o9.412 -> REJECTED as required
+6.  EXPORT + STRICT STL BYTE AUDIT
+  wrote stick_nub_v2_C2_clearance_low.stl                socket 2.10 x 1.30; sanitized 7 zero-area facets
+    [PASS] nub low mesh has zero degenerate triangles: 0 among 7306
+    [PASS] nub low mesh is closed two-manifold: non-two-manifold edges 0
+    [PASS] nub low STL is finite with no trailing bytes: finite True; trailing 0
+    [PASS] nub low exported cavity is exactly one rectangular socket: z 15.00: loops 2, bad-degree 0, inner 2.100 x 1.300
+    [PASS] nub low has no cavity above the socket roof: z 18.50: loops 1, bad-degree 0
+  wrote stick_nub_v2_C2_clearance_high.stl               socket 2.30 x 1.50; sanitized 7 zero-area facets
+    [PASS] nub high mesh has zero degenerate triangles: 0 among 7306
+    [PASS] nub high mesh is closed two-manifold: non-two-manifold edges 0
+    [PASS] nub high STL is finite with no trailing bytes: finite True; trailing 0
+    [PASS] nub high exported cavity is exactly one rectangular socket: z 15.00: loops 2, bad-degree 0, inner 2.300 x 1.500
+    [PASS] nub high has no cavity above the socket roof: z 18.50: loops 1, bad-degree 0
+  wrote stick_puck_v2_TPU_clearance_low.stl              socket 2.10 x 1.30; sanitized 0 zero-area facets
+    [PASS] puck low mesh has zero degenerate triangles: 0 among 7254
+    [PASS] puck low mesh is closed two-manifold: non-two-manifold edges 0
+    [PASS] puck low STL is finite with no trailing bytes: finite True; trailing 0
+    [PASS] puck low exported cavity is exactly one rectangular socket: z 15.00: loops 2, bad-degree 0, inner 2.100 x 1.300
+    [PASS] puck low has no cavity above the socket roof: z 18.50: loops 1, bad-degree 0
+  wrote stick_puck_v2_TPU_clearance_high.stl             socket 2.30 x 1.50; sanitized 0 zero-area facets
+    [PASS] puck high mesh has zero degenerate triangles: 0 among 7254
+    [PASS] puck high mesh is closed two-manifold: non-two-manifold edges 0
+    [PASS] puck high STL is finite with no trailing bytes: finite True; trailing 0
+    [PASS] puck high exported cavity is exactly one rectangular socket: z 15.00: loops 2, bad-degree 0, inner 2.300 x 1.500
+    [PASS] puck high has no cavity above the socket roof: z 18.50: loops 1, bad-degree 0
 
-  4b.  THE CUP AND THE DASHES
-    pad      r 0 .. 1.15      depth 0.35  -> socket roof 0.850
-    ramp     r 1.15 .. 2.0   depth 0.35 -> 0.55  (13.2 deg)
-    floor    r 2.0 .. 2.727   depth 0.55
-    cove lip r 2.727 .. 3.556  R0.9, rising to the rim plane at 67.1 deg
-    rim land r 3.556 .. 4.106  (0.55 wide) = the FIRST LAYER, flat on the bed
-    [PASS] socket roof under the cup pad: 0.850 >= 0.8 (Cap C1 ships 0.850 as a BRIDGE; this one is solid-on-solid because the puck prints top-face-down)
-    [PASS] the cup pad covers the whole socket footprint: pad r 1.15 >= socket corner reach 1.0892 -> margin +0.0608
-    [PASS] NEG-CTRL socket roof: a 0.45 cup pad, which would thin the roof to 0.750 -> REJECTED as required
-    dash: r 1.45 .. 2.85 (1.40 long) x 0.8 wide, top FLUSH with the rim plane +19.6
-          proud height 0.421 at the inner end, 0.542 at the outer end, minimum 0.421 along the run
-          2 nozzle widths wide -> two crisp perimeters; 2.1 layers tall at 0.20
-    [PASS] raised dashes stay proud enough to survive a 0.4 nozzle: min proud 0.421 >= 0.4 (= 2 layers at 0.20)
-    [PASS] NEG-CTRL dash proud height: a dash starting at r 0.5, i.e. running across the shallow pad -> REJECTED as required
-    BRIDGE.  The cup floor is the only bridged face (top-down print): the four dashes anchor it,
-    leaving a largest free chord of 2.219 mm between adjacent arms at r 2.0; the rim land
-    carries the outer edge and the deepest span is only 0.55 mm off the bed.
+7.  FDM PRINTABILITY
+  stick_nub_v2_C2      PASS wall=1.945 roof=0.850; both exported meshes closed and nondegenerate
+  stick_puck_v2_TPU    PASS wall=1.402 roof=0.800; both exported meshes closed and nondegenerate
+  Both parts now print bottom-down from a flat solid base; the only
+  underside opening is the small rectangular shaft socket.
 
-  4c.  THE SEAT TOLERANCE BAND — does ONE part cover 11 +/-0.5?
-   cut for |  seat 10.5  seat 11.0  seat 11.5 |  worst  clr@worst  safe?  nom throw
-     s10p5 |     22.50      15.95       8.35  |  22.50     +0.250    YES      70.9%
-    s10p75 |     24.92      19.39      12.54  |  24.92     -0.179     no      86.2%
-     s11p0 |     27.18      22.50      16.23  |  27.18     -0.565     no     100.0%
-    s11p25 |     29.30      24.84      19.52  |  29.30     -0.913     no     110.4%
-     s11p5 |     30.00*     27.02      22.50  |  30.00     -1.026     no     120.1%
-   (* the land never reaches the seat: the module's own 30 deg
-      mechanical stop governs and the puck is NOT protected)
-  sensitivity d(stop)/d(seat) = -14.15 deg/mm
-  ONE part ships: s10p5 — the only rung whose stop is <= 22.5 deg at EVERY seat height in
-  the band, i.e. the only one geometrically incapable of letting the
-  puck touch SW4.  TPU is what makes its throw acceptable.
-    [PASS] the shipped seat rung is safe across the whole +/-0.5 band: worst stop 22.50 deg -> clearance +0.2500
-    [PASS] NEG-CTRL seat rung safety: the nominal-seat rung, which over-travels to 27.18 deg worst case -> REJECTED as required
-  land cone: rho 2.6 -> +11.939, rho 3.6 -> +12.354; rest gap over the +11.0 frame top +0.939
-    [PASS] land contact at rho 2.6 stays on the 13x13 frame: plan radius 4.844 <= inscribed 6.5 -> margin +1.656
-    [PASS] land contact at rho 3.6 stays on the 13x13 frame: plan radius 5.926 <= inscribed 6.5 -> margin +0.574
-    [PASS] puck sleeve wall: body r 3.8 - bore r 2.6 = 1.200 >= 1.2 (exactly the house floor)
-    [PASS] puck socket wall: 2.875 >= 1.2
-  FLAGGED, not hidden: the 0.2 mm lip at the land's outer corner thins to 1.000 at the geometric corner itself.  FDM rounds it; TPU does not care.
-  TPU 95A [TPU-EST]: stiff enough that the socket keeps its shape, soft enough that the land yields progressively.
-
-5.  EXPORT INTO THE PRINT FRAME + the handedness measurement
-    Both parts are mirrored at export like the knobs and the tray.
-    For these two it should be a MEASURED no-op: the seven dots sit
-    at azimuths {0,60,...,300} and the four dashes at {45,135,225,
-    315}, and BOTH sets are closed under y -> -y, as is the
-    rectangular blade socket.  Measured, not assumed:
-    [PASS] nub_C2 owns the XZ mirror plane (export mirror is a no-op): 0.000000 / 0.000000 mm^3
-    [PASS] puck_TPU owns the XZ mirror plane (export mirror is a no-op): 0.000000 / 0.000000 mm^3
-    wrote stick_nub_v2_C2_sock_nom.stl       socket 1.85 x 1.15
-    wrote stick_nub_v2_C2_sock_p05.stl       socket 1.90 x 1.20
-    wrote stick_nub_v2_C2_sock_p10.stl       socket 1.95 x 1.25
-    wrote stick_puck_v2_TPU_sock_nom.stl     socket 1.85 x 1.15   (SHIPS)
-    wrote stick_puck_v2_TPU_sock_m05.stl     socket 1.80 x 1.10   (TIGHT spare — TPU absorbs interference elastically)
-
-6.  FDM PRINTABILITY (khana inspect, ADVISORY)
-    stick_nub_v2_C2    ADVISORY  min_wall=0.10445305250870765  overhang_area=6.413246485601524  (print BOTTOM-down)
-    stick_puck_v2_TPU  ADVISORY  min_wall=0.4173045255778743  overhang_area=44.76892449489374  (print TOP-down)
-    The nub prints BOTTOM-DOWN (flat annulus on the bed, socket roof a
-    short bridge, dots facing up).  The puck prints TOP-FACE-DOWN: the
-    rim land and the four dash tops ARE the first layer, every section
-    above is smaller, and no support is needed anywhere.
-
-wrote params/stick_topper_v2_params.json  (3 nub + 2 puck = 5 STL)
+wrote params/stick_topper_v2_params.json  (2 nub + 2 puck = 4 STL)
 ==============================================================================
 GATE RUN CLEAN — every gate passed and every negative control rejected its bad input.

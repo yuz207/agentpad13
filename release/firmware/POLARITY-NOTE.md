@@ -18,7 +18,7 @@ pressed and the pad booted into layer 1 — and **rebuilt again 2026-08-15** for
 the isotropic RGB layout (finding 7) and the duplicate `housekeeping_task_user()`
 call, then **rebuilt and renamed a third time later on 2026-08-15** for protocol
 v1 and the encoder direction flip. Details in
-`firmware/loudest_micro/config.h` and `release/RELEASE.md` rows J–L.
+`firmware/loudest_micro/config.h` and `v5/V5-NOTES.md`.
 **None of those rebuilds changed which WAY an axis reads, so everything below
 still applies unchanged** — the v1 work added *where the ends are*, not *which
 end is which*. Shipped bytes:
@@ -64,8 +64,8 @@ pointer for the one-line axis fix if a direction feels reversed.
 
 ## Why the sense is inverted (board fact, not a firmware bug)
 
-Board ledger (`release/RELEASE.md` row C, JS1→YA13 rev, datasheet check for LCSC
-C37323742): the YA13 datasheet datum has VR1 body **South** and VR2 body
+Board ledger (`hardware/pcb/V5-NOTES.md`, JS1→YA13 rev, datasheet check for
+LCSC C37323742): the YA13 datasheet datum has VR1 body **South** and VR2 body
 **East**. The v5 placement clocks the part **180° from that datum** — VR1 (the
 Y pot) faces **North**, VR2 (the X pot) faces **West** — which was forced by the
 placement-study freeze (pot groups exit West + North to clear the neighbors).

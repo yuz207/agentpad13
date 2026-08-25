@@ -16,7 +16,7 @@ parts. It picks the fabpack below and nothing else — the 13 per-key LEDs are o
 
 ## 2. Board — the one part you cannot make at home
 
-Upload to PCBWay (or any turnkey fab), from `hardware/pcb/fabpack_out_v5_7/`: **`gerbers_v5_7.zip`**
+Upload to PCBWay (or any turnkey fab), from `hardware/pcb/fabpack_out_v5_8/`: **`gerbers_v5_8.zip`**
 for the PCB quote, **`assembly/bom_<sku>.csv`** + **`assembly/cpl_<sku>.csv`** for assembly
 (`<sku>` = `translucent` or `opaque`) — or the all-in-one **`fabpack_<sku>.zip`**.
 
@@ -27,13 +27,17 @@ cheapest. Remarks box:
 > Please plug/fill the via-in-pad locations (two are on LED pads). Please confirm the 0.2 mm via
 > drill is standard tier. Board has intentional reverse-mount LED apertures (through-board cutouts).
 
-Boards arrive fully soldered except `assembly/hand_solder_afterlist.csv` — the encoder, plus
-anything you omitted.
+The encoder and joystick are both included in the factory placement files. The only normal
+user-solder item is the optional `TP5_CONTACT`: a spring, wire, or other conductive contact from
+TP5 to an electrode-equipped plate. Omit it for a blank or non-touch plate. The afterlist also
+records opt-out rows in case you deliberately exclude the MX sockets or BOOT/RESET switches from
+factory assembly.
 
 ## 3. Plate — FR4 from a fab, or printed
 
-**Printed:** print `hardware/case/v2/step/agentpad13_v2_plate.step` in PETG or resin at 100 % infill
-and skip the rest of this card. No copper, so the touch key senses through the panel.
+**Printed:** print `hardware/case/v2/stl/agentpad13_v2_plate.stl` in PETG or resin at 100 % infill
+and skip the rest of this card. The matching STEP remains in `hardware/case/v2/step/` for CAD
+edits. No copper, so the touch key senses through the panel.
 
 **FR4:** order ONE of these as a bare board, from `hardware/case/v2/fab/`.
 
@@ -110,28 +114,33 @@ a 2U plate-mount stabilizer? Print `2u_stab` instead.
 
 From `hardware/case/v2/toppers/stl/`; renders of all of them in `../toppers/renders/`.
 
-- **ONE encoder knob** — `knob_v2_A` (helical knurl), `_B2` (deep scoop) or `_C` (cross hatch), all
-  Ø19, each in three bores: `_bore_tight` 5.9 / `_bore_nom` 6.0 / `_bore_loose` 6.1. **Print `nom`
-  first**, size up or down if it binds or spins.
-- **ONE stick topper** — two different parts, not two styles. `stick_nub_v2_C2_sock_{nom,p05,p10}`
-  is the dot nub; start at `nom`. `stick_puck_v2_TPU_sock_{nom,m05}` is the puck, and **it must be
-  printed in TPU ~95A** — it works by a soft integral stop, so a rigid print is not the part.
+- **ONE encoder knob** — `knob_v2_A` (helical knurl), `_B2` (deep scoop) or `_C` (cross hatch).
+  Each comes as `_clearance_low` and `_clearance_high`. Start with `clearance_low`; use
+  `clearance_high` if your printer closes the small internal D-bore. Low is the nominal
+  Ø6.0 / 4.5 mm D-shaft size used by commercial push-on knobs; high is Ø6.3 / 4.8 mm
+  (0.15 mm clearance, the maximum) for printer/material hole error.
+- **ONE stick topper** — choose the compact Ø6.189 dot nub, the restored round Ø9.412 TPU puck,
+  or the conventional Ø12 restricted topper. All three use the same 2.00 × 1.25 × 4.00 mm
+  rectangular `cell2` socket; the old LOW/HIGH socket ladder is retired. The nub and puck preserve
+  the joystick's full 30° travel. The Ø12 topper must be used with
+  `ya13_restrictor_cap_TPU_print_roof_down.stl`, which limits throw to about 15.5° so it clears the
+  adjacent key. **Print the puck and restrictor in TPU ~95A.** Small TPU sockets and the restrictor's
+  retention ribs are printer-sensitive, so confirm seating and throw on the first print.
 
 ## 9. Self-buy list
 
 None of this is in the bundle, and every price is an estimate that changes.
 
 - 13 × MX switches
-- 1 × EC11 encoder — Alps 11.2 mm mounting-tab pattern, flatted D-shaft
 - 1 × Ø6 D-shaft knob, if you are not printing one
 - 1 × 2u plate-mount stabilizer, if you want one
 - 4 × M3×8 ISO 7380 button-head screws
-- 4 × M3 heat-set inserts — Ø4.2 pilot, 5.7 mm long
-- 1 × conductive foam pillar — ≈Ø8–10 × 5 mm, sits on the TP5 pad
+- 4 × standard Voron-style M3×4×5 heat-set inserts — 4 mm long, nominal 5 mm OD
+- optional solderable spring, wire, or other conductive contact from TP5 to an electrode-equipped plate
 - 1 × 0.5 mm adhesive-backed PORON sheet, smallest sold — the optional gasket. **Buy 0.5 mm, not
   thicker:** it compresses into a 0.3 mm gap, which 1–2 mm stock will not do. Cut it against
   `hardware/case/v2/gasket/gasket_template.pdf` **at 100 % scale**; see that folder's `README.md`.
-- rubber feet, and a USB-C cable
+- USB-C cable
 
 ## 10. Print notes
 
@@ -146,8 +155,8 @@ The five the configurator prints on your sheet — the ones that change what you
 ## 11. Assemble
 
 1. Heat-set the four inserts into the tray posts (~245 °C).
-2. Hand-solder the afterlist — encoder last, seated flush.
-3. Foam pillar onto the PCB's TP5 pad; gasket, if you cut one, onto the band ledge.
+2. If using an electrode-equipped touch plate, solder your chosen spring or wire contact to TP5.
+3. Fit that contact against the plate electrode; gasket, if you cut one, onto the band ledge.
 4. Stack tray → PCB (it just sits on the posts, no screws) → band → plate; drive the four M3 screws.
 5. Snap in the switches, supporting the plate from behind on the first few, and cap everything.
 

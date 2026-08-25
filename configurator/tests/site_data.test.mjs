@@ -50,6 +50,16 @@ S.test('every mesh the catalog names exists next to the catalog', () => {
   for (const m of meshes) ok(existsSync(join(STUB_DIR, m)), `missing stub mesh: ${m}`);
 });
 
+S.test('the restricted topper stays on the YA13 origin and prints with its restrictor', () => {
+  const item = data.catalog.toppers.stick_caps.find((x) => x.id === 'restricted_12mm');
+  ok(item, 'restricted_12mm catalog item');
+  eq(item.placement, 'origin', 'the asymmetric composite must not be bbox-centred');
+  deep(item.print_files.map((x) => [x.id, x.role]), [
+    ['stick_cap', 'topper'],
+    ['stick_restrictor', 'restrictor'],
+  ]);
+});
+
 S.test('the site owns the five stand-ins the release ships no file for', () => {
   /* Round 4 added the two THT modules: "the configurator still doesn't show
      the encoder or joystick itself, just the toppers." Both are self-buy
@@ -79,7 +89,7 @@ const partBoxes = (rel) => {
 S.test('the MX stand-in seats the cap ON the stem, not on top of it', () => {
   const p = partBoxes('assets/switch_mx.glb');
   const seat = data.positions.keycap_seat_z;
-  // Cherry MX chain, public topper_frame_v2.py CASE / PART FACTS block.
+  // Cherry MX chain, hardware/case/keycaps/keycaps.py:149-165 + :289-291.
   eq(Math.round(p.shoulder.max[1] * 100) / 100, seat, 'the stem shoulder IS the cap seat');
   eq(Math.round(p.housing.max[1] * 100) / 100, 11.01, 'fixed housing top face, h = 6.01');
   eq(Math.round(p.stem.min[1] * 100) / 100, seat, 'the cross starts at the seat');
@@ -134,10 +144,10 @@ S.test('the YA13 stand-in carries its rot-180 clocking as geometry', () => {
   ok(p.frame.min[0] + p.frame.max[0] < -1, 'the part must NOT be symmetric: 180deg clocking, west+north pots');
   eq(r2(p.frame.min[1]), 0, 'the frame sits on the PCB top face');
   eq(r2(p.frame.max[1]), 11.0, 'body top, dome crown');
-  /* The blade is the printed stick cap's mating feature, so it is consumed
-     from stick_cap_params, never invented: 1.85 x 1.15, tip +18.4, and the cap
-     sockets over it from socket_mouth_z 14.4. */
-  eq(r2(p.stick.max[1]), 18.4, 'blade tip = stick_cap_params blade.tip_z');
+  /* The blade is the printed topper's mating feature. Its measured section is
+     1.70 x 1.00 in stick_topper_v2_params; its tip remains +18.4 and the
+     topper sockets over it from socket_mouth_z 14.4. */
+  eq(r2(p.stick.max[1]), 18.4, 'blade tip = stick_topper_v2_params socket_roof_z');
   const blade = 14.4;                                     // socket_mouth_z
   ok(p.stick.min[1] < blade, 'the shank must emerge below the cap socket mouth');
   ok(p.frame.max[1] < blade, 'and the body must clear it, or no cap would seat');
@@ -222,6 +232,28 @@ S.test('stub meshes sit in glTF Y-up space at the real z stack', () => {
   eq(Math.round((cap.max[0] - cap.min[0]) * 10) / 10, 17.5, '17p5 cap footprint');
   const wedge = bbox('meshes/base_wedge.glb');
   eq(Math.round(wedge.max[1] * 100) / 100, -8.1, 'base pegs stop at peg_top_z');
+});
+
+S.test('topper meshes carry the current knob, nub, puck, and restricted profiles', () => {
+  const span = (box, axis) => box.max[axis] - box.min[axis];
+  const r3 = (v) => Math.round(v * 1000) / 1000;
+  const onlyPart = (path) => Object.values(partBoxes(path))[0];
+  const knob = onlyPart('data-stub/meshes/knob_A.glb');
+  ok(Math.abs(span(knob, 0) - 17.5) < 0.02, 'straight knob body sets the nominal OD');
+  eq(r3(span(knob, 1)), 19.0, 'knob runs from +8.0 to +27.0');
+  const nub = onlyPart('data-stub/meshes/stick_cap_nub_C2.glb');
+  ok(Math.abs(span(nub, 0) - 6.189) < 0.01, 'nub X span');
+  ok(Math.abs(span(nub, 2) - 6.189) < 0.01, 'nub Y span');
+  const puck = onlyPart('data-stub/meshes/stick_cap_puck_TPU.glb');
+  ok(Math.abs(span(puck, 0) - 9.412) < 0.01, 'restored round puck X span');
+  ok(Math.abs(span(puck, 2) - 9.412) < 0.01, 'restored round puck Y span');
+  for (const topper of [nub, puck]) {
+    eq(r3(topper.min[1]), 14.4, 'topper bottom/socket mouth');
+    eq(r3(topper.max[1]), 19.6, 'topper top');
+  }
+  const restricted = onlyPart('data-stub/meshes/stick_cap_topper_12_restricted.glb');
+  ok(span(restricted, 0) > 18 && span(restricted, 2) > 18,
+    'restricted composite includes both the 12 mm topper and its cap');
 });
 
 /* --- the lean: hinge, desk plane, and the meshes that must meet it ---- */

@@ -10,7 +10,7 @@ out of the KiCad board file, scales them into QMK rgb_matrix space
 paste into keyboard.json.
 
 THE TRANSFORM IS ISOTROPIC: ONE scale factor for BOTH axes.
-    s        = 64 / bbox_height            (0.640 units/mm on v5_7)
+    s        = 64 / bbox_height            (0.640 units/mm on v5_8)
     y_qmk    = round((y_mm - y0) * s)
     x_qmk    = round(112 + (x_mm - x_center) * s)
 The board is portrait (84.2 x 100.0 mm) and QMK's coordinate space is landscape
@@ -34,11 +34,12 @@ the same arithmetic as (y_mm - y0) / h * 64 -- so only x moved, on 23 of the 24
 entries. LED13 was already 112 under both transforms, because 42.1 mm is the
 midpoint of the 0..84.2 span as well as the bbox center.)
 
-THE CURRENT PUBLIC BOARD IS `hardware/pcb/agentpad13/agentpad13.kicad_pcb`
-(v5_7, md5 08cf68dae979ab28aadd5e0dda34de01) -- run this against that file.
+THE CURRENT PUBLIC BOARD IS `release/hardware/pcb/v5_8.kicad_pcb`
+(v5_8, md5 8c32ff4a6e6d77a87c4584029d4a1c75) -- run this against that file.
 The layout was originally diffed against v5_6 at 24/24 entries and 0
-mismatches. v5_7 changes only the rotations of LED20 and LED21, not any LED
-centroid, net, or board-outline coordinate (`hardware/pcb/README.md`).
+mismatches. v5_8 retains the v5.7 LED20/LED21 correction and changes only TP5,
+not any LED centroid, net, or board-outline coordinate
+(`release/hardware/pcb/V5-NOTES.md`).
 
 Chain order (electrical, verified on the board: U5.B -> RGB_D00 -> LED1 ...
 LED14 -> RGB_D14 -> LED15 ... LED24):
@@ -96,7 +97,7 @@ def outline_bbox(board_text):
 # the default correct, so the keyboard does not have to override it.
 QMK_CENTER_X = 112
 
-# The current public v5_7 board, for the sanity assertion below.
+# The current public v5_8 board, for the sanity assertion below.
 PUBLIC_BOARD_SCALE = 0.64  # = 64 / 100.0 mm bbox height
 PUBLIC_BOARD_X_CENTER = 42.1  # = (0.0 + 84.2) / 2 mm
 _EPS = 1e-9
@@ -117,11 +118,11 @@ def main():
 
     # Fail loudly rather than silently emit a layout for some other board: every
     # number downstream (keyboard.json rgb_matrix.layout, and the claim that the
-    # default k_rgb_matrix_center is correct) is pinned to the public v5_7 board.
+    # default k_rgb_matrix_center is correct) is pinned to the public v5_8 board.
     if abs(s - PUBLIC_BOARD_SCALE) > _EPS or abs(x_center - PUBLIC_BOARD_X_CENTER) > _EPS:
         sys.exit(
             "REFUSING TO EMIT: this board's derived transform does not match the\n"
-            "current public v5_7 board.\n"
+            "current public v5_8 board.\n"
             f"  Edge.Cuts bbox : x {x0} .. {x1}  (w {w})   y {y0} .. {y1}  (h {h})\n"
             f"  derived scale  : 64/h = {s!r}          expected {PUBLIC_BOARD_SCALE!r}\n"
             f"  derived center : (x0+x1)/2 = {x_center!r}   expected {PUBLIC_BOARD_X_CENTER!r}\n"

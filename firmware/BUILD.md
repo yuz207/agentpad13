@@ -15,12 +15,12 @@ Status: **both keymaps compile to a clean `.uf2` with zero code warnings**
 (`-Werror` is on). No features were stubbed — the joystick, RGB status
 protocol, touch toggle, encoder map, Vial + VialRGB, and joystick modes are
 all real code. The pin map targets the **current public board
-`hardware/pcb/agentpad13/agentpad13.kicad_pcb`** (v5_7, md5
-`08cf68dae979ab28aadd5e0dda34de01`). The map was re-verified 20/20 GPIO against
-v5_6; v5_7 changes only the rotations of underglow LEDs 20 and 21, with zero net
-or pin-map changes. `check_pins_v4.py` (below) embeds the definitive table and
-asserts this tree against it. Board revision details and the v5_6-to-v5_7 delta
-are in `hardware/pcb/README.md` and `release/RELEASE.md` row M.
+`release/hardware/pcb/v5_8.kicad_pcb`** (v5_8, md5
+`8c32ff4a6e6d77a87c4584029d4a1c75`). The map was re-verified 20/20 GPIO against
+v5_6; v5_8 retains the v5.7 LED20/LED21 correction and changes only the TP5
+solder landing, with zero pin-map changes. `check_pins_v4.py` (below) embeds the definitive table and
+asserts this tree against it. Board revision details and the v5_6-to-v5_8 deltas
+are in `release/hardware/pcb/V5-NOTES.md` and `release/RELEASE.md` rows M and R.
 
 ---
 
@@ -275,13 +275,13 @@ checks.
 
 ---
 
-## 5. Pin map (Rev A — public board `v5_7`; map unchanged from `v5_6`)
+## 5. Pin map (Rev A — public board `v5_8`; map unchanged from `v5_6`)
 
 Source table: the definitive 30-GPIO table embedded in `check_pins_v4.py`,
 originally extracted twice from the final copper and re-verified 20/20 GPIO
 against v5_6. The current public board is
-`hardware/pcb/agentpad13/agentpad13.kicad_pcb` (v5_7); its only v5_6 delta is
-LED20/LED21 orientation, so the GPIO table is unchanged. Direct-pin matrix —
+`release/hardware/pcb/v5_8.kicad_pcb` (v5_8); relative to v5_6 it retains the
+LED20/LED21 correction and adds only the TP5 solder landing, so the GPIO table is unchanged. Direct-pin matrix —
 logical `[row][col]` positions unchanged, physical GPIOs follow the board's
 x-monotonic routing remap:
 

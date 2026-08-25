@@ -7,16 +7,16 @@
   },
   "board": {
     "fabpacks": {
-      "opaque": "release/hardware/pcb/fabpack_out_v5_7/fabpack_opaque.zip",
-      "translucent": "release/hardware/pcb/fabpack_out_v5_7/fabpack_translucent.zip"
+      "opaque": "release/hardware/pcb/fabpack_out_v5_8/fabpack_opaque.zip",
+      "translucent": "release/hardware/pcb/fabpack_out_v5_8/fabpack_translucent.zip"
     },
-    "gerbers": "release/hardware/pcb/fabpack_out_v5_7/gerbers_v5_7.zip",
+    "gerbers": "release/hardware/pcb/fabpack_out_v5_8/gerbers_v5_8.zip",
     "assembly": {
-      "bom_opaque": "release/hardware/pcb/fabpack_out_v5_7/assembly/bom_opaque.csv",
-      "bom_translucent": "release/hardware/pcb/fabpack_out_v5_7/assembly/bom_translucent.csv",
-      "cpl_opaque": "release/hardware/pcb/fabpack_out_v5_7/assembly/cpl_opaque.csv",
-      "cpl_translucent": "release/hardware/pcb/fabpack_out_v5_7/assembly/cpl_translucent.csv",
-      "hand_solder_afterlist": "release/hardware/pcb/fabpack_out_v5_7/assembly/hand_solder_afterlist.csv"
+      "bom_opaque": "release/hardware/pcb/fabpack_out_v5_8/assembly/bom_opaque.csv",
+      "bom_translucent": "release/hardware/pcb/fabpack_out_v5_8/assembly/bom_translucent.csv",
+      "cpl_opaque": "release/hardware/pcb/fabpack_out_v5_8/assembly/cpl_opaque.csv",
+      "cpl_translucent": "release/hardware/pcb/fabpack_out_v5_8/assembly/cpl_translucent.csv",
+      "hand_solder_afterlist": "release/hardware/pcb/fabpack_out_v5_8/assembly/hand_solder_afterlist.csv"
     },
     "outline_mm": [
       84.2,
@@ -71,6 +71,7 @@
       },
       "note": "STUB \u2014 no image ships here. In the generated catalog this is an RGBA map, WHITE and opaque where the plate is material and fully TRANSPARENT where the fab routes. Board frame: image row 0 is board y = 0, the FAR / USB edge; column 0 is board x = -0.1."
     },
+    "stl": "release/hardware/case/v2/stl/agentpad13_v2_plate.stl",
     "step": "release/hardware/case/v2/step/agentpad13_v2_plate.step",
     "dxf": "release/hardware/case/v2/fab/agentpad13_v2_plate_v5.dxf",
     "size_mm": [
@@ -279,33 +280,30 @@
       {
         "id": "A",
         "default": true,
-        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_nom.stl",
+        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_A_clearance_low.stl",
         "bores": {
-          "tight": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_tight.stl",
-          "nom": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_nom.stl",
-          "loose": "release/hardware/case/v2/toppers/stl/knob_v2_A_bore_loose.stl"
+          "low": "release/hardware/case/v2/toppers/stl/knob_v2_A_clearance_low.stl",
+          "high": "release/hardware/case/v2/toppers/stl/knob_v2_A_clearance_high.stl"
         },
         "mesh": "meshes/knob_A.glb"
       },
       {
         "id": "B2",
         "default": false,
-        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_nom.stl",
+        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_B2_clearance_low.stl",
         "bores": {
-          "tight": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_tight.stl",
-          "nom": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_nom.stl",
-          "loose": "release/hardware/case/v2/toppers/stl/knob_v2_B2_bore_loose.stl"
+          "low": "release/hardware/case/v2/toppers/stl/knob_v2_B2_clearance_low.stl",
+          "high": "release/hardware/case/v2/toppers/stl/knob_v2_B2_clearance_high.stl"
         },
         "mesh": "meshes/knob_B2.glb"
       },
       {
         "id": "C",
         "default": false,
-        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_nom.stl",
+        "stl": "release/hardware/case/v2/toppers/stl/knob_v2_C_clearance_low.stl",
         "bores": {
-          "tight": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_tight.stl",
-          "nom": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_nom.stl",
-          "loose": "release/hardware/case/v2/toppers/stl/knob_v2_C_bore_loose.stl"
+          "low": "release/hardware/case/v2/toppers/stl/knob_v2_C_clearance_low.stl",
+          "high": "release/hardware/case/v2/toppers/stl/knob_v2_C_clearance_high.stl"
         },
         "mesh": "meshes/knob_C.glb"
       }
@@ -314,27 +312,51 @@
       {
         "id": "nub_C2",
         "default": true,
-        "stl": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_nom.stl",
-        "socks": {
-          "nom": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_nom.stl",
-          "p05": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_p05.stl",
-          "p10": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_sock_p10.stl"
-        },
-        "mesh": "meshes/stick_cap_nub_C2.glb"
+        "stl": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_cell2.stl",
+        "mesh": "meshes/stick_cap_nub_C2.glb",
+        "print_files": [
+          {
+            "id": "stick_cap",
+            "role": "topper",
+            "stl": "release/hardware/case/v2/toppers/stl/stick_nub_v2_C2_cell2.stl"
+          }
+        ]
       },
       {
         "id": "puck_TPU",
         "default": false,
-        "stl": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_sock_nom.stl",
-        "socks": {
-          "m05": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_sock_m05.stl",
-          "nom": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_sock_nom.stl"
-        },
-        "mesh": "meshes/stick_cap_puck_TPU.glb"
+        "stl": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_cell2.stl",
+        "mesh": "meshes/stick_cap_puck_TPU.glb",
+        "print_files": [
+          {
+            "id": "stick_cap",
+            "role": "topper",
+            "stl": "release/hardware/case/v2/toppers/stl/stick_puck_v2_TPU_cell2.stl"
+          }
+        ]
+      },
+      {
+        "id": "restricted_12mm",
+        "default": false,
+        "stl": "release/hardware/case/v2/toppers/stl/stick_topper_v2_restricted_12mm_cell2.stl",
+        "mesh": "meshes/stick_cap_topper_12_restricted.glb",
+        "placement": "origin",
+        "print_files": [
+          {
+            "id": "stick_cap",
+            "role": "topper",
+            "stl": "release/hardware/case/v2/toppers/stl/stick_topper_v2_restricted_12mm_cell2.stl"
+          },
+          {
+            "id": "stick_restrictor",
+            "role": "restrictor",
+            "stl": "release/hardware/case/v2/toppers/stl/ya13_restrictor_cap_TPU_print_roof_down.stl"
+          }
+        ]
       }
     ],
-    "default_knob_bore": "nom",
-    "default_stick_sock": "nom",
+    "default_knob_bore": "low",
+    "default_stick_sock": "cell2",
     "renders": {
       "knobs": "release/hardware/case/v2/toppers/renders/toppers_v2_knobs.png",
       "stick_caps": "release/hardware/case/v2/toppers/renders/toppers_v2_stick.png"

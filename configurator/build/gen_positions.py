@@ -451,7 +451,7 @@ def build() -> dict:
             f"{case.cite('RE1_SHAFT_DESIGN')}. The plate opening is centred on "
             "the shaft, so this is the visible knob axis."
         ),
-        "stick": f"{contract_rel} refs.JS1 (YTL YA13-FL7.4, v5_6 rev) / " + case.cite("JS1"),
+        "stick": f"{contract_rel} refs.JS1 (YTL YA13-FL7.4, current v5_7 board) / " + case.cite("JS1"),
         "deck_z": case.cite("PLATE_TOP_TO_PCB", "MX switch shoulder -> PCB = 5.0"),
         "plate_z": (
             case.cite("Z_PLATE_TOP")

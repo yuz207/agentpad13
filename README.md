@@ -14,12 +14,10 @@ the exact file you upload to a fab or drop into a slicer. That is the way in. Pr
 [`release/HOW-TO-ORDER.md`](release/HOW-TO-ORDER.md) is the same thing, static.
 
 <p align="center">
-  <img src="hardware/case/renders/agentpad13-v2-hero.png" alt="agentpad13 product render" width="48%">
-  <img src="release/renders/v27_hero.png" alt="agentpad13 v5 board in the v2 case, from CAD" width="48%">
+  <img src="release/renders/v27_hero.png" alt="agentpad13 v5 board in the v2 case, from CAD" width="72%">
 </p>
 
-<p align="center"><sub>Left: product concept, drawn against an earlier and thinner band.
-Right: the shipping v5 board in the v2 case, straight from the CAD.</sub></p>
+<p align="center"><sub>The shipping v5 board in the v2 case, straight from the CAD.</sub></p>
 
 ## What is where
 
@@ -30,8 +28,7 @@ release/            The bundle — everything you order, print or flash.
   MANIFEST.md         Every file in the bundle with its md5 and byte count.
   hardware/           Board fab package, case, plate, bases, keycaps, toppers, gasket.
   firmware/           Flashable UF2s, BRING-UP.md, POLARITY-NOTE.md.
-configurator/       The site above, plus the pipeline that generates its data.
-hardware/pcb/       KiCad 9 project, vendored footprint libs, BOM, renders.
+configurator/       The published site and its consumption assets; current outputs are copied from development.
 firmware/           vial-qmk tree, simulations, conformance tests, BUILD.md.
 docs/               The Raw HID protocol contract, and the design reviews.
 ```
@@ -42,13 +39,13 @@ hiding in the bundle.
 
 ## Printed toppers already? Print them again
 
-The v1 encoder knobs and stick caps are retired: the old Ø18 knob never covered the plate's encoder
-opening and was too short for the shaft on your board. The family is now three Ø19 knobs and two
-stick parts. The reasoning and the measurements are in [`release/RELEASE.md`](release/RELEASE.md) §(f).
+The v1 encoder knobs and stick caps are retired. The current release carries three Ø17.5 encoder
+knob styles and three joystick toppers: a compact nub, restored TPU puck, and a conventional Ø12
+topper paired with a TPU restrictor. Details are in [`release/RELEASE.md`](release/RELEASE.md) §(f).
 
 ## Status
 
-- **PCB — complete.** v5_7, 84.2 × 100 mm, 2-layer, DRC clean, fab package ready to upload.
+- **PCB — complete.** v5_8, 84.2 × 100 mm, 2-layer, DRC clean, fab package ready to upload. It retains the v5.7 LED correction, adds the Ø4.0 TP5 solder landing, and factory-populates the encoder.
 - **Case — complete.** v2.17: FR4 or printed plate, band in three sidewalls, printed tray.
 - **Bases — complete.** Three optional printed bases; the case is finished without one.
 - **Firmware — validated.** Emulator-booted and protocol-conformant. Flash `agentpad13.uf2`.
@@ -97,11 +94,8 @@ byte-reproducible build is [`agentpad13_reference.uf2`](release/firmware/prebuil
 
 ## Licensing
 
-- `hardware/` and `release/hardware/` — **CERN-OHL-W-2.0** (schematic, PCB, case CAD).
+- `release/hardware/` — **CERN-OHL-W-2.0** (PCB and case CAD).
 - `firmware/` and `release/firmware/` — **GPL-2.0-or-later** (QMK/vial-qmk
   derivative), except `firmware/tests/conformance/protocol_oracle.py`, which is
   **MIT**. Corresponding source for the prebuilt UF2s = this tree built against
   [vial-qmk](https://github.com/vial-kb/vial-qmk) per `firmware/BUILD.md`.
-
-Vendored footprint libraries under `hardware/pcb/lib/` keep their upstream
-licenses (marbastlib: CERN-OHL-P v2; MX_V2: MIT) — see `hardware/pcb/lib/LIBS.md`.

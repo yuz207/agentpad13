@@ -1,4 +1,4 @@
-"""agentpad13 v2.9 — TRAY BASE family, built on the CENTRAL MOUNT contract.
+"""work-loudest v2.9 — TRAY BASE family, built on the CENTRAL MOUNT contract.
 
 Owner directives, verbatim.
 
@@ -43,7 +43,8 @@ reference implementation, not its definition)
     datum      centre of the case outline in plan. The band outer
                (95.6 x 111.4) and the tray outline (84.3 x 100.1) are BOTH
                centred there, so a builder finds it with a ruler.
-    mating     the flat tray/band bottom plane. All base material below it.
+    mating     the flat tray bottom plane. All base material below it. Since
+               v2.11 this is 2.0 mm below the separate band bottom.
     features   4 blind flat-bottomed pockets Ø6.0 x 1.6 deep, axes vertical,
                at (±12.5, ±12.5) from the datum.
     peg        Ø from the printed FIT LADDER below, 1.4 long, 0.4 tip chamfer.
@@ -80,8 +81,8 @@ pockets do not already deliver: the base is LOCATED by the four pegs and
 LOADED through the flat mating plane, never through the pegs.
 
 Magnets stay rejected on the v2.8 arithmetic, which this pass did not revisit:
-a Ø6 pocket necks the notched (0,0) boss wall to 0.651 mm against a 1.6512 mm
-minimum that is already a first-article watch-item.
+a Ø6 pocket would further neck the notched (0,0) boss wall, whose current
+Ø4.7 insert cavity already leaves only 1.4012 mm at the limiting azimuth.
 
 TPU: fine, and the reason the ladder has a dedicated rung. A TPU peg compresses
 into the pocket instead of shearing the pocket wall, so it wants the TIGHT rung
@@ -818,6 +819,11 @@ def _variant_support(name):
         # [v2.16] The plan silhouette of a VERTICAL cylinder is the circle
         # itself, whatever the tilt cut does to its faces — so the support
         # polygon is exactly r = PED_D/2, not an approximation of an ellipse.
+        # base_h here is the STABILITY-MODEL height input: the full-wedge
+        # envelope, deliberately conservative for the tip condition (a taller
+        # assumed CG understates stability). The pedestal SOLID's true height
+        # is lower (~15.43, STL-verified in the configurator's positions data)
+        # because the Ø78 circle never reaches the footprint's far edge.
         return ("circle", PED_D / 2.0), BASE_T + tilt_rise(WEDGE_DEG), 0.0, MU_HARD
     if name == "riser":
         # Full-footprint sheet: the whole outline touches the desk. Printed in
@@ -1120,7 +1126,7 @@ if __name__ == "__main__":
                     "on it — measure the finished case, no source read needed"),
             },
             "mating_plane": {"z": MATE_Z,
-                             "what": "tray bottom = band bottom, coplanar and flat",
+                             "what": "flat tray bottom; 2.0 mm below band bottom",
                              "rule": "all base material at or below this plane"},
             "orientation": {
                 "far_edge": "y = 0, the USB / control-band edge, away from the user",
@@ -1290,7 +1296,7 @@ it with a ruler on a finished case. Everything below is measured from there.
 | positions from datum | {pos} mm |
 | square pitch | {ft["pitch_mm"]} mm (bolt circle Ø{ft["bolt_circle_mm"]}) |
 | mouth chamfer | {ft["mouth_chamfer_mm"]} x 45 deg |
-| mating plane | the flat tray/band bottom — keep all your material below it |
+| mating plane | the flat tray bottom — keep all your material below it |
 
 Smallest base that carries the whole pattern with a 3 mm wall:
 **Ø{bolt_circle + PEG_BORE + 6:.1f} mm.**
